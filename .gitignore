@@ -36,3 +36,6 @@ screenshots/
 
 # Python http.server cache (none, but just in case)
 __pycache__/
+
+.dev.vars*
+!.dev.vars.example
