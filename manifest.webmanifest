@@ -1,0 +1,26 @@
+{
+  "name": "DataCruise Arcade",
+  "short_name": "Arcade",
+  "description": "Ten little browser games that teach the feel of data — chart-building, word puzzles, and more.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff8f1",
+  "theme_color": "#ff6a00",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "180x180",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "education", "kids"]
+}

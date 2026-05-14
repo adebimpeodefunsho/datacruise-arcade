@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunt the Data Treasure · DataCruise Word Games</title>
+<link rel="stylesheet" href="style.css?v=20260513b">
+  <script src="/shared/arcade-nav.js" defer></script>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="start-screen" class="screen">
+  <div class="start-card">
+    <div class="magni-big">
+      <svg viewBox="0 0 120 120" width="110" height="110">
+        <circle cx="48" cy="48" r="34" fill="#fff8ec" stroke="#5a3a1a" stroke-width="6"/>
+        <circle cx="38" cy="44" r="4" fill="#222"/>
+        <circle cx="58" cy="44" r="4" fill="#222"/>
+        <path d="M36 58 Q48 66 60 58" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="74" y1="74" x2="106" y2="106" stroke="#5a3a1a" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>Hunt the Data Treasure</h1>
+    <p class="subtitle">DataCruise Word Games · #5</p>
+    <p class="intro">
+      A data term hides behind one of the 30 objects on the shelf each round.
+      Any one of them could be the hider — they are shuffled each session.
+      Decode Magni's SQL clue: a poetic riddle for the hiding object's
+      <b>nature</b> and another riddle for its <b>colour</b>. Find the match
+      and click it to reveal the treasure!
+    </p>
+    <h3>Pick your difficulty</h3>
+    <div class="difficulty-buttons">
+      <button data-diff="easy" class="diff-btn easy">
+        <span class="diff-name">Easy</span>
+        <span class="diff-meta">60s · 3 tries · 2/row</span>
+      </button>
+      <button data-diff="medium" class="diff-btn medium">
+        <span class="diff-name">Medium</span>
+        <span class="diff-meta">45s · 2 tries · 2/row</span>
+      </button>
+      <button data-diff="hard" class="diff-btn hard">
+        <span class="diff-name">Hard</span>
+        <span class="diff-meta">30s · 1 try · 2/row</span>
+      </button>
+    </div>
+    <p class="rule-note">A row locks after 2 wrong clicks — pick carefully!</p>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" class="screen hidden">
+  <header class="game-header">
+    <div class="brand">
+      <svg viewBox="0 0 120 120" width="40" height="40">
+        <circle cx="48" cy="48" r="34" fill="#fff8ec" stroke="#5a3a1a" stroke-width="6"/>
+        <circle cx="38" cy="44" r="4" fill="#222"/>
+        <circle cx="58" cy="44" r="4" fill="#222"/>
+        <path d="M36 58 Q48 66 60 58" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="74" y1="74" x2="106" y2="106" stroke="#5a3a1a" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+      <h2>Hunt the Data Treasure</h2>
+    </div>
+    <div class="header-stats">
+      <div class="stat"><label>Session</label><b><span id="session-num">1</span>/5</b></div>
+      <div class="stat"><label>Score</label><b id="score">0</b></div>
+      <div class="stat timer"><label>Time</label><b id="timer">90</b><span>s</span></div>
+      <div class="stat tries"><label>Tries</label><b id="tries">4</b></div>
+    </div>
+  </header>
+
+  <main class="game-main">
+    <aside class="sql-panel">
+      <div class="sql-header">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="sql-title">magni@datacruise ~ %</span>
+      </div>
+      <h3>SQL Clue</h3>
+      <pre id="sql-display"></pre>
+
+      <div class="hint-banner" id="hint-banner">
+        Hint: <span id="hint-text">decode the values, then click the matching object →</span>
+      </div>
+
+      <div class="scoreboard">
+        <h4>Treasures Found</h4>
+        <ul id="treasures-list"></ul>
+      </div>
+    </aside>
+
+    <section class="shelf-area">
+      <div id="shelf"></div>
+      <div id="feedback" class="feedback hidden"></div>
+    </section>
+  </main>
+</div>
+
+<!-- SESSION END MODAL -->
+<div id="session-end-modal" class="modal hidden">
+  <div class="modal-card">
+    <h2 id="session-end-title">Session Complete!</h2>
+    <p class="reveal-line">The data treasure was</p>
+    <p class="reveal-word" id="reveal-word">JOIN</p>
+    <div class="explanation">
+      <h4>How the SQL clue decoded:</h4>
+      <ul id="explanation-list"></ul>
+      <p class="word-meaning" id="word-meaning"></p>
+    </div>
+    <button id="next-session-btn">Next Session →</button>
+  </div>
+</div>
+
+<!-- GAME END MODAL -->
+<div id="game-end-modal" class="modal hidden">
+  <div class="modal-card final">
+    <h2>Treasure Hunt Complete!</h2>
+    <p class="final-label">Final Score</p>
+    <p class="big-score" id="final-score">0</p>
+    <ul id="final-list" class="final-list"></ul>
+    <button id="play-again-btn">Play Again</button>
+  </div>
+</div>
+
+<script type="module" src="game.js?v=20260513b"></script>
+</body>
+</html>

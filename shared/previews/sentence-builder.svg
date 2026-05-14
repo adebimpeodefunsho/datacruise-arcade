@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="A sentence with word-shaped gaps being bridged by floating word tiles">
+  <rect width="320" height="180" fill="#ece6ff"/>
+  <!-- paper card -->
+  <rect x="22" y="60" width="276" height="60" rx="6" fill="#fff" stroke="#0e0e10" stroke-width="3"/>
+  <!-- sentence: word | ___ | word | ___ | word -->
+  <g font-family="ui-rounded, system-ui" font-weight="900" font-size="16" fill="#0e0e10">
+    <text x="40" y="98">A</text>
+    <!-- gap 1 -->
+    <rect x="58"  y="80" width="50" height="22" rx="4" fill="#fff1c2" stroke="#0e0e10" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="118" y="98">is</text>
+    <!-- gap 2 -->
+    <rect x="138" y="80" width="60" height="22" rx="4" fill="#fff1c2" stroke="#0e0e10" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="208" y="98">in</text>
+    <!-- gap 3 -->
+    <rect x="228" y="80" width="50" height="22" rx="4" fill="#fff1c2" stroke="#0e0e10" stroke-width="2" stroke-dasharray="4 3"/>
+  </g>
+  <!-- word tiles floating to bridge -->
+  <g font-family="ui-rounded, system-ui" font-weight="900" font-size="13" fill="#0e0e10">
+    <g transform="translate(60,20)">
+      <rect width="56" height="22" rx="4" fill="#ff6a00" stroke="#0e0e10" stroke-width="2"/>
+      <text x="28" y="16" text-anchor="middle" fill="#fff">value</text>
+    </g>
+    <g transform="translate(140,20)">
+      <rect width="60" height="22" rx="4" fill="#a78bfa" stroke="#0e0e10" stroke-width="2"/>
+      <text x="30" y="16" text-anchor="middle">stored</text>
+    </g>
+    <g transform="translate(225,18)">
+      <rect width="60" height="22" rx="4" fill="#0ea5a4" stroke="#0e0e10" stroke-width="2"/>
+      <text x="30" y="16" text-anchor="middle" fill="#fff">a row</text>
+    </g>
+    <!-- dotted bridge arrows -->
+    <g stroke="#0e0e10" stroke-width="1.5" fill="none" stroke-dasharray="3 3">
+      <path d="M88 42 Q83 60 83 78"/>
+      <path d="M170 42 Q168 60 168 78"/>
+      <path d="M255 40 Q253 60 253 78"/>
+    </g>
+  </g>
+</svg>

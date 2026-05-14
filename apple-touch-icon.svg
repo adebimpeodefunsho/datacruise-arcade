@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="DataCruise Arcade">
+  <rect width="180" height="180" rx="40" fill="#0e0e10"/>
+  <circle cx="90" cy="90" r="56" fill="#ff6a00" stroke="#fff" stroke-width="8"/>
+  <circle cx="90" cy="90" r="18" fill="#0e0e10"/>
+  <text x="90" y="160" text-anchor="middle" font-family="ui-rounded, 'SF Pro Rounded', system-ui, sans-serif" font-weight="900" font-size="18" fill="#fff">ARCADE</text>
+</svg>

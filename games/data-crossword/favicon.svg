@@ -1,0 +1,19 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="10" fill="#06080c"/>
+  <g stroke="#00ff9c" stroke-width="2" fill="#0a0e14">
+    <rect x="8"  y="8"  width="12" height="12"/>
+    <rect x="22" y="8"  width="12" height="12"/>
+    <rect x="36" y="8"  width="12" height="12"/>
+    <rect x="22" y="22" width="12" height="12"/>
+    <rect x="22" y="36" width="12" height="12"/>
+    <rect x="8"  y="36" width="12" height="12"/>
+    <rect x="36" y="36" width="12" height="12"/>
+  </g>
+  <text x="14" y="18" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">D</text>
+  <text x="28" y="18" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">A</text>
+  <text x="42" y="18" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">T</text>
+  <text x="28" y="32" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">X</text>
+  <text x="14" y="46" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">K</text>
+  <text x="28" y="46" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">E</text>
+  <text x="42" y="46" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">Y</text>
+</svg>

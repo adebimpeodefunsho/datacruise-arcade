@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local-only build artifacts
+*.zip
+*.tar.gz
+*.log
+.cache/
+tmp/
+build/
+dist/
+
+# Source assets that aren't shipped
+_source_images/
+mockups/
+screenshots/
+
+# Env / secrets (none today, but never commit if added later)
+.env
+.env.*
+!.env.example
+
+# Cloudflare Pages local emulation
+.wrangler/
+
+# Python http.server cache (none, but just in case)
+__pycache__/

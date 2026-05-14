@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="A magnifying glass over a shelf of curious objects with a SQL clue card">
+  <rect width="320" height="180" fill="#ece6ff"/>
+  <!-- shelf -->
+  <rect x="20" y="110" width="280" height="6" fill="#0e0e10"/>
+  <rect x="20" y="50"  width="280" height="6" fill="#0e0e10"/>
+  <!-- objects on top shelf -->
+  <g stroke="#0e0e10" stroke-width="2.5">
+    <!-- key -->
+    <g transform="translate(50,80)">
+      <circle cx="-8" cy="0" r="10" fill="#ffc94d"/>
+      <rect x="2" y="-3" width="20" height="6" fill="#ffc94d"/>
+      <rect x="16" y="3" width="4" height="6" fill="#ffc94d"/>
+    </g>
+    <!-- treasure chest -->
+    <g transform="translate(95,72)">
+      <rect width="34" height="22" fill="#ff6a00"/>
+      <path d="M0 8 Q17 -8 34 8" fill="#ffc94d"/>
+      <rect x="14" y="10" width="6" height="8" fill="#0e0e10"/>
+    </g>
+    <!-- scroll -->
+    <g transform="translate(150,72)">
+      <rect width="34" height="22" fill="#fff"/>
+      <line x1="6" y1="7" x2="28" y2="7" stroke="#0e0e10" stroke-width="1.5"/>
+      <line x1="6" y1="12" x2="28" y2="12" stroke="#0e0e10" stroke-width="1.5"/>
+      <line x1="6" y1="17" x2="22" y2="17" stroke="#0e0e10" stroke-width="1.5"/>
+    </g>
+    <!-- crystal -->
+    <g transform="translate(205,72)">
+      <path d="M0 22 L8 0 L24 0 L32 22 L16 30 Z" fill="#a78bfa"/>
+      <line x1="8" y1="0" x2="16" y2="30" stroke="#0e0e10" stroke-width="1.5"/>
+      <line x1="24" y1="0" x2="16" y2="30" stroke="#0e0e10" stroke-width="1.5"/>
+    </g>
+    <!-- pot -->
+    <g transform="translate(250,72)">
+      <ellipse cx="14" cy="22" rx="14" ry="6" fill="#0ea5a4"/>
+      <path d="M0 22 Q0 4 14 4 Q28 4 28 22 Z" fill="#0ea5a4"/>
+      <ellipse cx="14" cy="4" rx="14" ry="4" fill="#fff"/>
+    </g>
+  </g>
+  <!-- SQL clue card -->
+  <g transform="translate(38,128)">
+    <rect width="120" height="36" rx="4" fill="#fff" stroke="#0e0e10" stroke-width="2.5"/>
+    <text x="8" y="14" font-family="ui-monospace, Menlo, monospace" font-size="10" font-weight="700" fill="#0e0e10">SELECT shiny</text>
+    <text x="8" y="26" font-family="ui-monospace, Menlo, monospace" font-size="10" font-weight="700" fill="#0e0e10">FROM shelf</text>
+  </g>
+  <!-- magnifying glass over chest -->
+  <g transform="translate(112,82)">
+    <circle r="28" fill="#fff" fill-opacity=".4" stroke="#0e0e10" stroke-width="4"/>
+    <circle r="24" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <line x1="20" y1="20" x2="42" y2="42" stroke="#0e0e10" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
