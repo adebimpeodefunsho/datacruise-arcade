@@ -26,6 +26,7 @@
   <meta name="twitter:image" content="/shared/previews/og-card.svg" />
 
   <link rel="stylesheet" href="shared/hub.css" />
+  <script src="/shared/unlock.js" defer></script>
 </head>
 <body>
   <header class="hero">
@@ -43,6 +44,13 @@
         <a href="#chart-games" class="btn btn-primary">Play a Chart Game</a>
         <a href="#word-games" class="btn btn-ghost">Play a Word Game</a>
       </div>
+      <div class="hero-meta" data-unlock-status>
+        <span class="hero-meta-line">
+          <span class="hero-meta-icon">🔓</span>
+          <span class="hero-meta-text">4 games free · 6 unlocked with the full pack</span>
+        </span>
+        <button type="button" class="hero-meta-action" data-unlock-open>Unlock the full pack</button>
+      </div>
     </div>
   </header>
 
@@ -56,7 +64,7 @@
       </div>
 
       <div class="card-grid">
-        <a class="game-card chart" href="games/mountain-climb/index.html">
+        <a class="game-card chart" href="games/mountain-climb/index.html" data-slug="mountain-climb">
           <img class="card-preview" src="shared/previews/mountain-climb.svg" alt="" />
           <div class="card-body">
             <h3>Bug-Bug's Mountain Climb</h3>
@@ -65,7 +73,7 @@
           </div>
         </a>
 
-        <a class="game-card chart" href="games/block-city/index.html">
+        <a class="game-card chart" href="games/block-city/index.html" data-slug="block-city">
           <img class="card-preview" src="shared/previews/block-city.svg" alt="" />
           <div class="card-body">
             <h3>Bug-Bug's Block City</h3>
@@ -74,7 +82,7 @@
           </div>
         </a>
 
-        <a class="game-card chart" href="games/pie-spinner/index.html">
+        <a class="game-card chart" href="games/pie-spinner/index.html" data-slug="pie-spinner">
           <img class="card-preview" src="shared/previews/pie-spinner.svg" alt="" />
           <div class="card-body">
             <h3>Bug-Bug's Pie Spinner</h3>
@@ -83,7 +91,7 @@
           </div>
         </a>
 
-        <a class="game-card chart" href="games/bubble-catcher/index.html">
+        <a class="game-card chart" href="games/bubble-catcher/index.html" data-slug="bubble-catcher">
           <img class="card-preview" src="shared/previews/bubble-catcher.svg" alt="" />
           <div class="card-body">
             <h3>Bug-Bug's Bubble Catcher</h3>
@@ -92,7 +100,7 @@
           </div>
         </a>
 
-        <a class="game-card chart" href="games/dashboard-drop/index.html">
+        <a class="game-card chart" href="games/dashboard-drop/index.html" data-slug="dashboard-drop">
           <img class="card-preview" src="shared/previews/dashboard-drop.svg" alt="" />
           <div class="card-body">
             <h3>Bug-Bug's Dashboard Drop</h3>
@@ -112,7 +120,7 @@
       </div>
 
       <div class="card-grid">
-        <a class="game-card word" href="games/derive-jargon/index.html">
+        <a class="game-card word" href="games/derive-jargon/index.html" data-slug="derive-jargon">
           <img class="card-preview" src="shared/previews/derive-jargon.svg" alt="" />
           <div class="card-body">
             <h3>Derive the Data Jargon</h3>
@@ -121,7 +129,7 @@
           </div>
         </a>
 
-        <a class="game-card word" href="games/data-crossword/index.html">
+        <a class="game-card word" href="games/data-crossword/index.html" data-slug="data-crossword">
           <img class="card-preview" src="shared/previews/data-crossword.svg" alt="" />
           <div class="card-body">
             <h3>Crack the Data Crossword</h3>
@@ -130,7 +138,7 @@
           </div>
         </a>
 
-        <a class="game-card word" href="games/sentence-builder/index.html">
+        <a class="game-card word" href="games/sentence-builder/index.html" data-slug="sentence-builder">
           <img class="card-preview" src="shared/previews/sentence-builder.svg" alt="" />
           <div class="card-body">
             <h3>Bridge the Data Sentence</h3>
@@ -139,7 +147,7 @@
           </div>
         </a>
 
-        <a class="game-card word" href="games/scrub-mess/index.html">
+        <a class="game-card word" href="games/scrub-mess/index.html" data-slug="scrub-mess">
           <img class="card-preview" src="shared/previews/scrub-mess.svg" alt="" />
           <div class="card-body">
             <h3>Scrub the Data Mess</h3>
@@ -148,7 +156,7 @@
           </div>
         </a>
 
-        <a class="game-card word" href="games/data-hunt/index.html">
+        <a class="game-card word" href="games/data-hunt/index.html" data-slug="data-hunt">
           <img class="card-preview" src="shared/previews/data-hunt.svg" alt="" />
           <div class="card-body">
             <h3>Hunt the Data Treasure</h3>
@@ -182,7 +190,64 @@
       <a href="#chart-games">Chart Games</a>
       <span class="dot">·</span>
       <a href="#word-games">Word Games</a>
+      <span class="dot">·</span>
+      <a href="#" data-unlock-open>Have a key?</a>
     </div>
   </footer>
+
+  <!-- ============ UNLOCK MODAL ============ -->
+  <dialog class="unlock-modal" data-unlock-modal aria-labelledby="unlock-title">
+    <button type="button" class="unlock-close" data-unlock-close aria-label="Close">×</button>
+
+    <div data-unlock-view="locked">
+      <h2 id="unlock-title">Unlock the full pack</h2>
+      <p class="unlock-blurb">
+        4 games are free forever. The other 6 unlock with a one-time key.
+      </p>
+
+      <div class="unlock-section">
+        <h3>Got a key?</h3>
+        <form data-unlock-form>
+          <input
+            type="text"
+            name="key"
+            data-unlock-input
+            placeholder="DC-XXXX-XXXX-XXXX"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          />
+          <button type="submit" class="btn btn-primary" data-unlock-submit>Unlock</button>
+        </form>
+        <p class="unlock-error" data-unlock-error hidden></p>
+      </div>
+
+      <div class="unlock-divider"><span>or</span></div>
+
+      <div class="unlock-section">
+        <h3>Need a key?</h3>
+        <p class="unlock-price">
+          <strong>£8</strong> · one-time · all 10 games forever
+        </p>
+        <a
+          class="btn btn-primary unlock-buy"
+          data-unlock-buy
+          href="https://datacruise.lemonsqueezy.com/buy/PRODUCT_ID_PLACEHOLDER"
+          target="_blank"
+          rel="noopener"
+        >Buy the full pack →</a>
+        <p class="unlock-small">
+          A unique key will be emailed to you within seconds.
+        </p>
+      </div>
+    </div>
+
+    <div data-unlock-view="success" hidden>
+      <div class="unlock-success-icon">🎉</div>
+      <h2>You're in.</h2>
+      <p>All 10 games are now unlocked on this device.</p>
+      <button type="button" class="btn btn-primary" data-unlock-close>Start playing</button>
+    </div>
+  </dialog>
 </body>
 </html>

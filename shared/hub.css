@@ -318,6 +318,254 @@ footer {
 .footer-inner a:hover { color: var(--orange-dk); }
 .footer-inner .dot { margin: 0 6px; color: var(--muted); }
 
+/* ===================== HERO META STRIP ===================== */
+
+.hero-meta {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 8px 8px 18px;
+  box-shadow: var(--shadow);
+  font-size: 14px;
+}
+.hero-meta.is-unlocked { background: #e7f7e8; }
+.hero-meta-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.hero-meta-icon { font-size: 16px; }
+.hero-meta-action {
+  background: var(--orange);
+  color: white;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 0 var(--line);
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.hero-meta-action:hover { transform: translateY(-1px); box-shadow: 0 4px 0 0 var(--line); }
+.hero-meta-action:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--line); }
+.hero-meta-action.is-unlocked { background: #0ea5a4; }
+
+/* ===================== LOCKED / FREE CARD STATES ===================== */
+
+.game-card { position: relative; }
+
+.card-free-chip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #0ea5a4;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  box-shadow: 0 2px 0 0 var(--line);
+  z-index: 2;
+}
+
+.card-lock-badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(14, 14, 16, 0.62);
+  color: white;
+  z-index: 3;
+  pointer-events: none;
+}
+.card-lock-icon { font-size: 28px; line-height: 1; }
+.card-lock-text {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--orange);
+  border: 2px solid var(--line);
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: 0 2px 0 0 var(--line);
+}
+
+.game-card.is-locked .card-preview { filter: saturate(0.6) brightness(0.9); }
+.game-card.is-locked h3 { color: var(--muted); }
+
+/* ===================== UNLOCK MODAL ===================== */
+
+.unlock-modal {
+  width: min(440px, calc(100% - 32px));
+  max-width: 440px;
+  padding: 28px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 12px 0 0 var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+}
+.unlock-modal::backdrop {
+  background: rgba(14, 14, 16, 0.6);
+}
+
+.unlock-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: white;
+  font-size: 18px;
+  font-weight: 900;
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 0 0 var(--line);
+}
+.unlock-close:hover { transform: translateY(-1px); }
+
+.unlock-modal h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+.unlock-blurb {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.unlock-section {
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.unlock-section h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 800;
+}
+.unlock-section form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.unlock-section input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 11px 12px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+}
+.unlock-section input[type="text"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--yellow);
+}
+.unlock-section input[type="text"]:disabled {
+  opacity: 0.6;
+}
+.unlock-section .btn {
+  padding: 10px 18px;
+  font-size: 14px;
+  box-shadow: 0 3px 0 0 var(--line);
+}
+
+.unlock-error {
+  margin: 10px 0 0;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.unlock-divider {
+  position: relative;
+  text-align: center;
+  margin: 6px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.unlock-divider span {
+  background: var(--bg);
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+.unlock-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--line);
+  opacity: 0.2;
+}
+
+.unlock-price {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+.unlock-price strong {
+  font-size: 26px;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.unlock-buy {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.unlock-small {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+[data-unlock-view="success"] {
+  text-align: center;
+}
+.unlock-success-icon {
+  font-size: 48px;
+  margin-bottom: 4px;
+}
+
 /* ===================== RESPONSIVE ===================== */
 
 @media (max-width: 480px) {
