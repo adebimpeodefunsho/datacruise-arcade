@@ -226,31 +226,39 @@ function chartSVG(state) {
   });
 
   // Victory trophy — appears at Bug-Bug's final landing dot on a win,
-  // not at a fixed spot on the chart.
+  // with the total altitude reached labelled underneath. Higher
+  // landings carry the trophy + label higher up the chart.
   let victoryTrophy = "";
   if (state.phase === "ended" && state.outcome === "win" && state.history.length > 0) {
     const last = state.history[state.history.length - 1];
     const x = xFor(last.day);
     const y = yFor(last.altitudeAfter);
     victoryTrophy = `
-      <g class="victory-trophy" transform="translate(${x} ${y - 44})">
+      <g class="victory-trophy" transform="translate(${x} ${y - 50})">
         ${trophy(1.0)}
+        <g class="victory-altitude-badge" transform="translate(0 32)">
+          <rect x="-44" y="-14" width="88" height="26" rx="13" class="badge-bg"/>
+          <text x="0" y="5" text-anchor="middle" class="badge-text">▲ ${state.altitude}m</text>
+        </g>
       </g>`;
   }
 
-  // Slide-back animation on loss.
-  let slideBack = "";
+  // On loss (stamina exhausted), Bug-Bug stays where they ran out.
+  // A callout near the top of the chart says "No more stamina to continue".
+  let staminaOut = "";
   if (state.phase === "ended" && state.outcome === "lose" && state.history.length > 0) {
     const last = state.history[state.history.length - 1];
-    const fromX = xFor(last.day);
-    const fromY = yFor(last.altitudeAfter);
-    const toX = xFor(1);
-    const toY = yFor(0);
-    slideBack = `
-      <path d="M ${fromX} ${fromY} L ${toX} ${toY}" class="slide-back-line"/>
-      <g class="slide-back-bug" transform="translate(${toX} ${toY - 26})">
+    const bugX = xFor(last.day);
+    const bugY = yFor(last.altitudeAfter);
+    const calloutX = (X0 + X1) / 2;
+    const calloutY = Y0 + 36;
+    staminaOut = `
+      <g class="stuck-bug" transform="translate(${bugX} ${bugY - 28})">
         ${bug(0.85)}
-        <text x="0" y="38" text-anchor="middle" class="slide-back-label">💤 slid back to start</text>
+      </g>
+      <g class="stamina-out-callout" transform="translate(${calloutX} ${calloutY})">
+        <rect x="-176" y="-22" width="352" height="44" rx="22" class="callout-bg"/>
+        <text x="0" y="6" text-anchor="middle" class="callout-text">💔 No more stamina to continue</text>
       </g>`;
   }
 
@@ -288,7 +296,7 @@ function chartSVG(state) {
         ${path ? `<path d="${path.trim()}" class="climb-line"/>` : ""}
         ${futureDots}
         ${dots}
-        ${slideBack}
+        ${staminaOut}
         ${victoryTrophy}
         ${currentMarker}
         ${dayLabels}
@@ -404,15 +412,15 @@ export function renderEnd(state) {
   const won = state.outcome === "win";
   const headline = won
     ? (state.stars === 3 ? "🏆 PERFECT CLIMB — 3 STARS" : state.stars === 2 ? "✨ SUMMIT REACHED — 2 STARS" : "🚩 SUMMIT (BARELY)")
-    : "💤 SLID BACK TO START";
+    : "💔 OUT OF STAMINA";
   const sub = won
-    ? `You survived all ${TOTAL_DAYS} days and reached <strong>${SUMMIT}m</strong> with <strong>${state.stamina} stamina</strong> left.`
-    : `You ran out of stamina on day ${state.day - 1}. The line chart slid all the way back to zero — the climb wasn't hooked at both ends.`;
+    ? `You survived all ${TOTAL_DAYS} days and finished at <strong>${state.altitude}m</strong> with <strong>${state.stamina} stamina</strong> left.`
+    : `Bug-Bug ran out of stamina on day ${state.day - 1} at <strong>${state.altitude}m</strong>. The climb ends here.`;
   const stars = won ? "⭐".repeat(state.stars) + "☆".repeat(3 - state.stars) : "";
   const counts = countOutcomes(state.history);
   const successMessage = won
     ? `<p class="end-success">🎉 You hooked the line chart at both ends. Stars: ${state.stars} of 3.</p>`
-    : `<p class="end-success">Bad luck this run — try again, the weather and hazards shuffle every game.</p>`;
+    : `<p class="end-success">Try again — the cards and weather shuffle every game.</p>`;
   return `
     <div class="screen end-screen">
       <svg class="defs-only" aria-hidden="true">${gradientDefs()}</svg>
