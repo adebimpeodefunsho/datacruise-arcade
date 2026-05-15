@@ -76,7 +76,7 @@ function headerBar(state) {
         <svg viewBox="-32 -24 64 48" class="brand-bug">${bug(0.7)}</svg>
         <div>
           <h1>BUG-BUG'S MOUNTAIN CLIMB</h1>
-          <p>DataCruise Arcade · seed <code>${state.seed}</code></p>
+          <p>DataCruise Arcade · Series 1</p>
         </div>
       </div>
       <div class="day-pill">
@@ -348,8 +348,7 @@ export function renderEnd(state) {
         </ul>
         <div class="end-actions">
           <button class="primary-btn" data-action="new-game">🆕 NEW CLIMB</button>
-          <button class="ghost-btn" data-action="replay-seed">↻ REPLAY SEED <code>${state.seed}</code></button>
-          <button class="ghost-btn" data-action="share-seed">🔗 SHARE SEED</button>
+          <button class="ghost-btn" data-action="replay-seed">↻ REPLAY GAME</button>
         </div>
       </div>
     </div>`;
