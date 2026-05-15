@@ -35,9 +35,13 @@ A pack of 10 browser games that teach the **feel** of data — chart-building an
 ├── apple-touch-icon.svg
 ├── robots.txt
 ├── sitemap.xml
+├── wrangler.jsonc          ← Cloudflare Worker config
+├── src/
+│   └── worker.js           ← Worker: handles POST /api/validate-license, delegates the rest to ASSETS
 ├── shared/
 │   ├── hub.css             ← landing-page styles
 │   ├── arcade-nav.js       ← injects the "← Arcade" back button into each game
+│   ├── unlock.js           ← freemium gate: locks 6 paid cards, runs the unlock modal
 │   └── previews/           ← SVG card illustrations + OG image
 └── games/
     ├── mountain-climb/
@@ -51,6 +55,23 @@ A pack of 10 browser games that teach the **feel** of data — chart-building an
     ├── scrub-mess/
     └── data-hunt/
 ```
+
+## Cloudflare deployment
+
+Hosted on **Cloudflare Workers Static Assets**. On push to `main`, Cloudflare rebuilds and serves:
+- Static files from the repo root (via the `ASSETS` binding)
+- `POST /api/validate-license` via the Worker at `src/worker.js`, which proxies to Lemon Squeezy's license API
+
+The Worker needs three environment variables set in the Cloudflare dashboard
+(**Workers & Pages → datacruise-arcade → Settings → Variables and Secrets**):
+
+| Variable | Type | Value |
+|---|---|---|
+| `LEMONSQUEEZY_API_KEY` | **Secret** | The API key from LS → Settings → API |
+| `LEMONSQUEEZY_STORE_ID` | Plain text | `375568` (also baked into `wrangler.jsonc`) |
+| `LEMONSQUEEZY_PRODUCT_ID` | Plain text | `1058410` (also baked into `wrangler.jsonc`) |
+
+The two plain-text variables are also declared in `wrangler.jsonc` so they're committed to source. Only the API key needs to be added in the dashboard as a secret.
 
 Each `games/<slug>/` folder is a self-contained game (`index.html` plus its own assets). The only addition to each game's `index.html` is one line that loads `/shared/arcade-nav.js`, which injects a floating "← Arcade" pill linking back to the hub.
 

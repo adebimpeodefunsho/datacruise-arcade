@@ -2,13 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "datacruise-arcade",
   "compatibility_date": "2026-05-14",
+  "main": "src/worker.js",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ]
+  ],
+  "vars": {
+    "LEMONSQUEEZY_STORE_ID": "375568",
+    "LEMONSQUEEZY_PRODUCT_ID": "1058410"
+  }
 }
