@@ -999,3 +999,15 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 800;
   font-size: 16px;
 }
+
+/* Victory trophy — pops in over Bug-Bug's final landing dot on a win */
+.victory-trophy {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trophy-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+@keyframes trophy-pop {
+  0%   { opacity: 0; }
+  60%  { opacity: 1; }
+  100% { opacity: 1; }
+}

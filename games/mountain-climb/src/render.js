@@ -203,8 +203,7 @@ function chartSVG(state) {
   const summitY = yFor(SUMMIT);
   const summitLine = `
     <line x1="${X0}" y1="${summitY}" x2="${X1}" y2="${summitY}" class="summit-line"/>
-    <g transform="translate(${X1 + 24} ${summitY})">${trophy(0.85)}</g>
-    <text x="${X1 + 24}" y="${summitY + 56}" text-anchor="middle" class="summit-label">SUMMIT</text>`;
+    <text x="${X1 + 24}" y="${summitY + 5}" text-anchor="start" class="summit-label">🏔 SUMMIT</text>`;
 
   let path = "";
   let dots = "";
@@ -225,6 +224,19 @@ function chartSVG(state) {
         <text x="${x}" y="${y - 22}" text-anchor="middle" class="dot-gain ${dotCls}">${deltaLabel}</text>
       </g>`;
   });
+
+  // Victory trophy — appears at Bug-Bug's final landing dot on a win,
+  // not at a fixed spot on the chart.
+  let victoryTrophy = "";
+  if (state.phase === "ended" && state.outcome === "win" && state.history.length > 0) {
+    const last = state.history[state.history.length - 1];
+    const x = xFor(last.day);
+    const y = yFor(last.altitudeAfter);
+    victoryTrophy = `
+      <g class="victory-trophy" transform="translate(${x} ${y - 44})">
+        ${trophy(1.0)}
+      </g>`;
+  }
 
   // Slide-back animation on loss.
   let slideBack = "";
@@ -277,6 +289,7 @@ function chartSVG(state) {
         ${futureDots}
         ${dots}
         ${slideBack}
+        ${victoryTrophy}
         ${currentMarker}
         ${dayLabels}
         <text x="${(X0 + X1) / 2}" y="${Y1 + 56}" text-anchor="middle" class="x-axis-title">Day</text>
