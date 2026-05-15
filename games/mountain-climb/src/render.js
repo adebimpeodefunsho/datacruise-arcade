@@ -49,7 +49,7 @@ export function renderTitle(bestStars) {
               <li>⚠️ <strong>Hazard card</strong> — Bug-Bug <strong>slips and dips</strong> down the mountain, and loses 1 stamina.</li>
             </ul>
 
-            <p>Bug-Bug has <strong>${STARTING_STAMINA} stamina</strong>. Three wrong picks and the climb is over.</p>
+            <p>Bug-Bug has <strong>${STARTING_STAMINA} stamina</strong>. Run out of stamina and the climb is over.</p>
 
             <h4>Each weather brings its own hazards</h4>
             <ul class="howto-weather">
@@ -129,7 +129,7 @@ function renderStaminaHearts(stamina) {
   </div>`;
 }
 
-const MAX_STAMINA_VISUAL = 3;
+const MAX_STAMINA_VISUAL = STARTING_STAMINA;
 
 function forecastStrip(state) {
   let tiles = "";
@@ -327,7 +327,7 @@ function cardsArea(state) {
       <div class="card-row revealed-row">
         ${cards.map((c, i) => revealedCard(c, i === revealed.pickedIndex)).join("")}
       </div>
-      <button class="primary-btn continue-btn" data-action="continue">Continue →</button>
+      <button class="primary-btn continue-btn" data-action="continue">Continue Climbing →</button>
     </section>`;
 }
 

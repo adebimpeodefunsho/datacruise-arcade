@@ -21,7 +21,7 @@ import { seedFromString, mulberry32 } from "./rng.js";
 
 export const SUMMIT = 350;            // 7 perfect-safe days × 50m
 export const TOTAL_DAYS = 7;
-export const STARTING_STAMINA = 3;
+export const STARTING_STAMINA = 4;
 export const MAX_STAMINA = STARTING_STAMINA;
 export const SAFE_GAIN = 50;          // altitude gain on a safe pick
 export const HAZARD_DIP = 20;         // altitude lost on a hazard pick (clamped at 0)
@@ -252,8 +252,10 @@ export function finishGame(state) {
   if (state.outcome === "lose") return state;
   const survived = state.day > TOTAL_DAYS && state.stamina > 0;
   if (!survived) return { ...state, phase: "ended", outcome: "lose", stars: 0 };
+  // Stars by how many hazards were taken (0 = perfect, 1 = solid, 2+ = barely).
+  const hazardsHit = STARTING_STAMINA - state.stamina;
   let stars = 1;
-  if (state.stamina === 3) stars = 3;
-  else if (state.stamina === 2) stars = 2;
+  if (hazardsHit === 0) stars = 3;
+  else if (hazardsHit === 1) stars = 2;
   return { ...state, phase: "ended", outcome: "win", stars };
 }
