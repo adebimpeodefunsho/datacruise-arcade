@@ -20,10 +20,6 @@
   // ---------- config -----------------------------------------
   const STORAGE_KEY = 'datacruise.unlock.v1';
   const VALIDATE_ENDPOINT = '/api/validate-license';
-  // While the Cloudflare Worker isn't deployed yet, this key
-  // unlocks the pack locally so the flow can be tested end-to-end.
-  // Strip this constant once the Worker is wired to Lemon Squeezy.
-  const DEV_TEST_KEY = 'DC-ARCADE-DEV-2026';
 
   // ---------- state ------------------------------------------
   function getUnlocked() {
@@ -188,12 +184,6 @@
       return { ok: false, error: 'Please enter your unlock key.' };
     }
 
-    // Dev/test key — works offline so the flow can be exercised
-    // before the Worker + Lemon Squeezy are wired together.
-    if (key === DEV_TEST_KEY) {
-      return { ok: true, licenseKey: key, dev: true };
-    }
-
     try {
       const res = await fetch(VALIDATE_ENDPOINT, {
         method: 'POST',
@@ -201,14 +191,14 @@
         body: JSON.stringify({ license_key: key }),
       });
 
-      // Endpoint not deployed yet (404 = no such route on Cloudflare,
-      // 405/501 = the local python http.server doesn't speak POST) →
-      // return a clear message so the user knows to use the dev key.
+      // Endpoint not deployed yet or routing misconfigured.
+      // (404 = no route on Cloudflare; 405/501 = local python
+      // http.server doesn't speak POST when running offline.)
       if (res.status === 404 || res.status === 405 || res.status === 501) {
         return {
           ok: false,
           error:
-            'The unlock service isn’t live yet. Try the test key DC-ARCADE-DEV-2026 for now.',
+            'The unlock service is temporarily unavailable. Please try again in a moment or contact support.',
         };
       }
 

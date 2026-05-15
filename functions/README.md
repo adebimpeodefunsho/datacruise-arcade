@@ -12,13 +12,13 @@ Files in `functions/` are deployed as Cloudflare Pages Functions on every push t
 
 Go to **Workers & Pages → `datacruise-arcade` → Settings → Variables and Secrets** and add:
 
-| Variable | Type | Required | Notes |
-|---|---|---|---|
-| `LEMONSQUEEZY_API_KEY` | **Secret** | ✅ Yes | Create in https://app.lemonsqueezy.com/settings/api → "Create API Key". Encrypted; never logged. |
-| `LEMONSQUEEZY_STORE_ID` | Variable | Recommended | Restricts validation to keys from your store. Find it in your LS dashboard URL, e.g. `app.lemonsqueezy.com/stores/12345/…` → `12345`. |
-| `LEMONSQUEEZY_PRODUCT_ID` | Variable | Recommended | Restricts validation to one product so non-arcade keys (if you sell other things in the same store) don't unlock the arcade. Visible on the product's edit page URL. |
+| Variable | Type | Value to enter |
+|---|---|---|
+| `LEMONSQUEEZY_API_KEY` | **Secret** (encrypted) | The API key generated in LS → Settings → API → "arcade-validator" |
+| `LEMONSQUEEZY_STORE_ID` | Plaintext variable | `375568` |
+| `LEMONSQUEEZY_PRODUCT_ID` | Plaintext variable | `1058410` |
 
-After adding the variables, click **Save** and **Redeploy** the project for them to take effect.
+After adding the variables, click **Save** and **Retry deployment** so the running Function picks them up.
 
 ## Testing locally
 
