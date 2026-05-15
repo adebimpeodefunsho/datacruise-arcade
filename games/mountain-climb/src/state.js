@@ -19,11 +19,12 @@ import { seedFromString, mulberry32 } from "./rng.js";
 
 // ---------- Game balance ----------
 
-export const SUMMIT = 350;            // 7 days × 50m
+export const SUMMIT = 350;            // 7 perfect-safe days × 50m
 export const TOTAL_DAYS = 7;
 export const STARTING_STAMINA = 3;
 export const MAX_STAMINA = STARTING_STAMINA;
-export const STEP_ALTITUDE = 50;      // gained each day regardless of pick
+export const SAFE_GAIN = 50;          // altitude gain on a safe pick
+export const HAZARD_DIP = 20;         // altitude lost on a hazard pick (clamped at 0)
 
 // ---------- Choice pool ----------
 // For each weather, a pool of safe and hazard cards. Each day picks
@@ -98,19 +99,19 @@ export function createGame(seedCode) {
   const sequenceIndex = Math.floor(rng() * WEATHER_POOL.length);
   const weather = WEATHER_POOL[sequenceIndex].slice();
 
-  // Pre-roll 7 days of choices. Each day: 2 safe + 1 hazard from the
-  // pool for that weather, then shuffle order so the hazard isn't
-  // always in the same slot.
+  // Pre-roll 7 days of choices. Each day: 1 safe + 2 hazards from the
+  // pool for that weather, then shuffle so the safe card isn't always
+  // in the same slot.
   const dailyChoices = weather.map((w) => {
     const safePool = CHOICES[w].safe.slice();
     const hazardPool = CHOICES[w].hazard.slice();
-    const safe1 = pickAndRemove(safePool, rng);
-    const safe2 = pickAndRemove(safePool, rng);
-    const hazard = pickAndRemove(hazardPool, rng);
+    const safe = pickAndRemove(safePool, rng);
+    const hazard1 = pickAndRemove(hazardPool, rng);
+    const hazard2 = pickAndRemove(hazardPool, rng);
     const cards = [
-      { ...safe1, type: "safe" },
-      { ...safe2, type: "safe" },
-      { ...hazard, type: "hazard" },
+      { ...safe, type: "safe" },
+      { ...hazard1, type: "hazard" },
+      { ...hazard2, type: "hazard" },
     ];
     shuffleInPlace(cards, rng);
     return cards;
@@ -206,7 +207,8 @@ export function advanceDay(state) {
 
   const staminaDelta = wasHazard ? -1 : 0;
   const newStamina = Math.max(0, state.stamina + staminaDelta);
-  const newAltitude = state.altitude + STEP_ALTITUDE;
+  const altDelta = wasHazard ? -HAZARD_DIP : SAFE_GAIN;
+  const newAltitude = Math.max(0, state.altitude + altDelta);
   const newDay = state.day + 1;
 
   const dayResult = {

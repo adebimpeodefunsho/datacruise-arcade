@@ -39,26 +39,26 @@ export function renderTitle(bestStars) {
         <details class="title-howto" open>
           <summary>How to play (click to expand)</summary>
           <div class="howto-body">
-            <p class="howto-goal"><strong>🏔 Goal:</strong> Survive <strong>${TOTAL_DAYS} days</strong> on the mountain. Reach the summit with stamina still in the tank.</p>
+            <p class="howto-goal"><strong>🏔 Goal:</strong> Survive <strong>${TOTAL_DAYS} days</strong> on the mountain with stamina still in the tank.</p>
 
-            <p class="howto-hook"><strong>The Twist:</strong> Each day the weather brings hazards. You'll see <strong>3 face-down cards</strong> — one is a hazard, two are safe. Pick one. The card flips.</p>
+            <p class="howto-hook"><strong>The Twist:</strong> Each day you'll see <strong>3 face-down cards</strong>. <strong>Two are hazards</strong>, only <strong>one is safe</strong>. Pick one. All three flip.</p>
 
-            <h4>Daily picks</h4>
+            <h4>What each pick does</h4>
             <ul class="howto-actions">
-              <li>✅ <strong>Safe card</strong> — nothing bad. Bug-Bug climbs on.</li>
-              <li>⚠️ <strong>Hazard card</strong> — Bug-Bug loses 1 stamina (and you find out what hurt them).</li>
+              <li>✅ <strong>Safe card</strong> — Bug-Bug climbs <strong>up</strong>.</li>
+              <li>⚠️ <strong>Hazard card</strong> — Bug-Bug <strong>slips and dips</strong> down the mountain, and loses 1 stamina.</li>
             </ul>
 
-            <p>Bug-Bug has <strong>${STARTING_STAMINA} stamina</strong>. That's <strong>${STARTING_STAMINA} hazards</strong> before things go badly.</p>
+            <p>Bug-Bug has <strong>${STARTING_STAMINA} stamina</strong>. Three wrong picks and the climb is over.</p>
 
-            <h4>Each weather has its own hazards</h4>
+            <h4>Each weather brings its own hazards</h4>
             <ul class="howto-weather">
               <li><span class="howto-icon">☀️</span> <strong>Sunny</strong> — heatstroke, dehydration, sunburn.</li>
               <li><span class="howto-icon">☁️</span> <strong>Cloudy</strong> — fog, wrong turns, distractions.</li>
               <li><span class="howto-icon">⛈️</span> <strong>Stormy</strong> — lightning, rivers, mysterious doors.</li>
             </ul>
 
-            <p class="howto-tip"><strong>💡 Why it matters:</strong> If stamina hits zero, the chart slides back to the start — all that climbing wasted. A line chart only counts if it's "hooked" at both ends. Trust your luck.</p>
+            <p class="howto-tip"><strong>💡 Why it matters:</strong> Hazards dip the line chart down. Stamina hitting zero slides the whole line back to the start — all climbing wasted. A line chart only counts if it's "hooked" at both ends. Trust your luck.</p>
           </div>
         </details>
       </div>
@@ -181,7 +181,7 @@ function chartCard(state) {
 
 function chartSVG(state) {
   const VB_W = 960, VB_H = 500;
-  const X0 = 110, X1 = 910;
+  const X0 = 140, X1 = 910;     // X0 widened to make room for the Y-axis title
   const Y0 = 60, Y1 = 460;
   const Y_PER_M = (Y1 - Y0) / 400; // 400m mapped to plot height (room above summit)
 
@@ -190,9 +190,15 @@ function chartSVG(state) {
 
   let yTicks = "";
   for (let m = 0; m <= 400; m += 50) {
-    yTicks += `<text x="${X0 - 12}" y="${yFor(m) + 4}" text-anchor="end" class="y-tick">${m}m</text>`;
+    yTicks += `<text x="${X0 - 12}" y="${yFor(m) + 4}" text-anchor="end" class="y-tick">${m}</text>`;
     yTicks += `<line x1="${X0}" y1="${yFor(m)}" x2="${X1}" y2="${yFor(m)}" class="grid-line"/>`;
   }
+
+  // Y-axis title (rotated 90°)
+  const yAxisTitle = `
+    <text x="${X0 - 70}" y="${(Y0 + Y1) / 2}" text-anchor="middle"
+          transform="rotate(-90 ${X0 - 70} ${(Y0 + Y1) / 2})"
+          class="y-axis-title">Altitude (m)</text>`;
 
   const summitY = yFor(SUMMIT);
   const summitLine = `
@@ -208,11 +214,15 @@ function chartSVG(state) {
     path += (i === 0 ? `M${xFor(1)} ${yFor(0)} L` : "L") + ` ${x} ${y} `;
     const icon = d.pickedCard.icon;
     const dotCls = d.wasHazard ? "hazard" : "safe";
+    const altDelta = d.altitudeAfter - d.altitudeBefore;
+    const deltaLabel = d.wasHazard
+      ? `${altDelta < 0 ? "" : "+"}${altDelta}m · −1❤️`
+      : `+${altDelta}m`;
     dots += `
       <g class="day-marker done ${dotCls}">
         <circle cx="${x}" cy="${y}" r="13"/>
         <text x="${x}" y="${y + 5}" text-anchor="middle" class="dot-icon">${icon}</text>
-        ${d.wasHazard ? `<text x="${x}" y="${y - 22}" text-anchor="middle" class="dot-gain hazard">−1 ❤️</text>` : ""}
+        <text x="${x}" y="${y - 22}" text-anchor="middle" class="dot-gain ${dotCls}">${deltaLabel}</text>
       </g>`;
   });
 
@@ -261,6 +271,7 @@ function chartSVG(state) {
       <svg viewBox="0 0 ${VB_W} ${VB_H}" class="chart" role="img" aria-label="Mountain climb chart">
         <rect x="${X0 - 20}" y="${Y0 - 20}" width="${X1 - X0 + 40}" height="${Y1 - Y0 + 40}" rx="14" class="plot-bg"/>
         ${yTicks}
+        ${yAxisTitle}
         ${summitLine}
         ${path ? `<path d="${path.trim()}" class="climb-line"/>` : ""}
         ${futureDots}
@@ -295,7 +306,7 @@ function cardsArea(state) {
     return `
       <section class="cards-card card">
         <h3>PICK A CARD</h3>
-        <p class="cards-prompt">One is a hazard. Two are safe. Trust your luck.</p>
+        <p class="cards-prompt">Two are hazards. Only one is safe. Trust your luck.</p>
         <div class="card-row">
           ${cards.map((_, i) => faceDownCard(i)).join("")}
         </div>
@@ -306,8 +317,8 @@ function cardsArea(state) {
   const pickedCard = revealed.pickedCard;
   const wasHazard = revealed.wasHazard;
   const headline = wasHazard
-    ? `<span class="reveal-headline hazard">⚠️ HAZARD — Stamina ${state.stamina} → ${state.stamina - 1}</span>`
-    : `<span class="reveal-headline safe">✅ SAFE — Stamina unchanged</span>`;
+    ? `<span class="reveal-headline hazard">⚠️ HAZARD — altitude −20m, stamina ${state.stamina} → ${state.stamina - 1}</span>`
+    : `<span class="reveal-headline safe">✅ SAFE — altitude +50m</span>`;
   return `
     <section class="cards-card card">
       <h3>${wasHazard ? "OUCH" : "PHEW"}</h3>
