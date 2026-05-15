@@ -248,6 +248,33 @@
       <p>All 10 games are now unlocked on this device.</p>
       <button type="button" class="btn btn-primary" data-unlock-close>Start playing</button>
     </div>
+
+    <div data-unlock-view="manage" hidden>
+      <div class="unlock-success-icon">✓</div>
+      <h2>Full pack unlocked</h2>
+      <p class="unlock-blurb">
+        Unlocked on <span data-unlock-date>—</span> on this device.
+      </p>
+
+      <div class="unlock-section">
+        <h3>Your unlock key</h3>
+        <div class="unlock-key-row">
+          <code data-unlock-key-display>—</code>
+          <button type="button" class="unlock-key-toggle" data-unlock-key-toggle>Show</button>
+        </div>
+        <p class="unlock-small">Keep this safe — it works on any device you log into.</p>
+      </div>
+
+      <div class="unlock-section unlock-danger">
+        <h3>Sign out of this device</h3>
+        <p class="unlock-small">
+          Removes the unlock from this browser only. Paste your key in again any time to re-unlock.
+        </p>
+        <button type="button" class="btn btn-ghost unlock-signout" data-unlock-signout>Sign out</button>
+      </div>
+
+      <button type="button" class="btn btn-primary unlock-done" data-unlock-close>Done</button>
+    </div>
   </dialog>
 </body>
 </html>

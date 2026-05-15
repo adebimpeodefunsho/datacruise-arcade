@@ -122,17 +122,57 @@
   // ---------- modal -------------------------------------------
   const modal = () => document.querySelector('[data-unlock-modal]');
 
+  function maskKey(key) {
+    if (!key) return '—';
+    const parts = String(key).split('-');
+    if (parts.length < 2) return key.slice(0, 2) + '••••••';
+    const head = parts[0];
+    const tail = parts[parts.length - 1];
+    const middle = parts.slice(1, -1).map(() => '••••').join('-');
+    return middle ? `${head}-${middle}-${tail}` : `${head}-${tail}`;
+  }
+
+  function populateManageView() {
+    const state = getUnlocked();
+    if (!state) return;
+    const keyEl = document.querySelector('[data-unlock-key-display]');
+    const dateEl = document.querySelector('[data-unlock-date]');
+    const toggle = document.querySelector('[data-unlock-key-toggle]');
+    if (keyEl) {
+      keyEl.dataset.fullKey = state.licenseKey || '';
+      keyEl.dataset.revealed = 'false';
+      keyEl.textContent = maskKey(state.licenseKey);
+    }
+    if (toggle) toggle.textContent = 'Show';
+    if (dateEl && state.unlockedAt) {
+      try {
+        const d = new Date(state.unlockedAt);
+        dateEl.textContent = d.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        });
+      } catch (_) {
+        dateEl.textContent = state.unlockedAt;
+      }
+    }
+  }
+
   function openModal() {
     const m = modal();
     if (!m) return;
-    showView('locked');
+    const view = getUnlocked() ? 'manage' : 'locked';
+    showView(view);
+    if (view === 'manage') populateManageView();
     if (typeof m.showModal === 'function') {
       m.showModal();
     } else {
       m.setAttribute('open', '');
     }
-    const input = m.querySelector('[data-unlock-input]');
-    setTimeout(() => input && input.focus(), 50);
+    if (view === 'locked') {
+      const input = m.querySelector('[data-unlock-input]');
+      setTimeout(() => input && input.focus(), 50);
+    }
   }
 
   function closeModal() {
@@ -231,6 +271,41 @@
         closeModal();
       });
     });
+
+    // Show/Hide the full unlock key in the Manage view
+    const keyToggle = document.querySelector('[data-unlock-key-toggle]');
+    if (keyToggle) {
+      keyToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const keyEl = document.querySelector('[data-unlock-key-display]');
+        if (!keyEl) return;
+        const revealed = keyEl.dataset.revealed === 'true';
+        if (revealed) {
+          keyEl.textContent = maskKey(keyEl.dataset.fullKey);
+          keyEl.dataset.revealed = 'false';
+          keyToggle.textContent = 'Show';
+        } else {
+          keyEl.textContent = keyEl.dataset.fullKey || '—';
+          keyEl.dataset.revealed = 'true';
+          keyToggle.textContent = 'Hide';
+        }
+      });
+    }
+
+    // Sign out of this device
+    const signoutBtn = document.querySelector('[data-unlock-signout]');
+    if (signoutBtn) {
+      signoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const confirmed = window.confirm(
+          "Sign out of the full pack on this device?\n\nYou'll need to paste your unlock key again to re-unlock. Your key still works — this only clears it from this browser."
+        );
+        if (!confirmed) return;
+        localStorage.removeItem(STORAGE_KEY);
+        closeModal();
+        decorateCards();
+      });
+    }
 
     const m = modal();
     if (m) {

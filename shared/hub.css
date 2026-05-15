@@ -558,13 +558,62 @@ footer {
   text-align: center;
 }
 
-[data-unlock-view="success"] {
+[data-unlock-view="success"],
+[data-unlock-view="manage"] {
   text-align: center;
 }
 .unlock-success-icon {
   font-size: 48px;
   margin-bottom: 4px;
 }
+[data-unlock-view="manage"] .unlock-section { text-align: left; }
+[data-unlock-view="manage"] .unlock-blurb { margin-bottom: 14px; }
+
+.unlock-key-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.unlock-key-row code {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.unlock-key-toggle {
+  background: white;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 14px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 0 var(--line);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.unlock-key-toggle:hover { transform: translateY(-1px); box-shadow: 0 4px 0 0 var(--line); }
+.unlock-key-toggle:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--line); }
+
+.unlock-danger { border-color: #c2410c33; }
+.unlock-danger h3 { color: #b91c1c; }
+.unlock-signout {
+  background: white;
+  color: #b91c1c;
+  margin-top: 6px;
+}
+
+.unlock-done { margin-top: 6px; width: 100%; }
 
 /* ===================== RESPONSIVE ===================== */
 
