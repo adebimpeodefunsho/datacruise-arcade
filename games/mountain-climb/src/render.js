@@ -58,7 +58,7 @@ export function renderTitle(bestStars) {
               <li><span class="howto-icon">⛈️</span> <strong>Stormy</strong> — lightning, rivers, mysterious doors.</li>
             </ul>
 
-            <p class="howto-tip"><strong>💡 Why it matters:</strong> Hazards dip the line chart down. Stamina hitting zero slides the whole line back to the start — all climbing wasted. A line chart only counts if it's "hooked" at both ends. Trust your luck.</p>
+            <p class="howto-tip"><strong>💡 Why it matters:</strong> Hazards dip the line chart down. Run out of stamina early and the climb stops right where Bug-Bug stands — no slide back, but no trophy either. Survive all 7 days to plant the trophy at your final altitude. Make it to day 7 even on empty stamina and you still earn a half-star "exhausted finish".</p>
           </div>
         </details>
       </div>
