@@ -1,82 +1,91 @@
 // State machine for Bug-Bug's Mountain Climb.
 // Pure functions only — no DOM, no side effects.
 //
-// Mechanic (Series 1, v2):
-//   - 10 days total, 400m summit.
-//   - Each game uses one of 10 handcrafted weather sequences,
-//     all containing EXACTLY 5 sunny / 3 cloudy / 2 storm.
-//   - Sunny days are the ONLY active days — pick CLIMB or SPRINT.
-//   - Cloudy and storm days are forced sleep days. Bug-Bug rests,
-//     stamina and altitude unchanged.
-//   - Stamina is a fixed budget of 7. No regeneration.
-//   - 5 active days × 1 stamina min = 5 needed → 2 surplus → max
-//     2 sprint upgrades per game.
+// Mechanic (Series 1, v4 — "Pick a card" hazard guessing):
+//   - 7 days. Bug-Bug starts with 3 stamina.
+//   - Each day shows 3 face-down cards. One is a hazard; two are safe.
+//     Player taps one — it flips and reveals what was inside. The other
+//     two also reveal so the player can see what they missed.
+//   - Safe pick: nothing bad happens. Bug-Bug climbs +50m.
+//   - Hazard pick: -1 stamina. Bug-Bug still climbs +50m (the chart
+//     is uniform; the drama is in the cards).
+//   - If stamina drops to 0, the climb ends immediately and the line
+//     chart slides back to (day 1, 0m) — effort wasted.
+//   - If Bug-Bug completes day 7 with ≥1 stamina, the summit is reached.
 //
-// Lose condition: altitude < 400m at end of day 10.
-//   On loss the line chart slides back to the starting point —
-//   effort visualised as wasted because the line never reached
-//   the summit (it has to be "hooked" at both ends).
+// Stars: 1 (1 stamina left), 2 (2 left), 3 (3 left — no hazards picked).
 
-import { seedFromString, mulberry32, intBetween } from "./rng.js";
+import { seedFromString, mulberry32 } from "./rng.js";
 
 // ---------- Game balance ----------
 
-export const SUMMIT = 400;            // metres
-export const TOTAL_DAYS = 10;
-export const STARTING_STAMINA = 7;
+export const SUMMIT = 350;            // 7 days × 50m
+export const TOTAL_DAYS = 7;
+export const STARTING_STAMINA = 3;
 export const MAX_STAMINA = STARTING_STAMINA;
+export const STEP_ALTITUDE = 50;      // gained each day regardless of pick
 
-/** Action → altitude gain range and stamina cost. */
-export const ACTIONS = {
-  climb:  { altMin: 65, altMax: 75,   staminaDelta: -1, emoji: "🥾", label: "CLIMB"  },
-  sprint: { altMin: 130, altMax: 140, staminaDelta: -2, emoji: "⚡", label: "SPRINT" },
-  // 'rest' is only triggered automatically on cloudy/storm days.
-  rest:   { altMin: 0,   altMax: 0,   staminaDelta:  0, emoji: "💤", label: "SLEEP"  },
+// ---------- Choice pool ----------
+// For each weather, a pool of safe and hazard cards. Each day picks
+// 2 safe + 1 hazard at random and shuffles them.
+
+const CHOICES = {
+  sunny: {
+    safe: [
+      { icon: "💧", label: "Drink from the spring", description: "A cool sip — Bug-Bug feels refreshed." },
+      { icon: "🍃", label: "Walk through the shade", description: "Smart route. No sunburn." },
+      { icon: "🥾", label: "Steady pace on the rocks", description: "Even footing — energy preserved." },
+      { icon: "🌳", label: "Rest under a tree", description: "A quiet pause keeps the head clear." },
+    ],
+    hazard: [
+      { icon: "🔥", label: "Run uphill in the heat", description: "Heatstroke! Bug-Bug staggers." },
+      { icon: "🥵", label: "Skip the water break", description: "Dehydrated! Bug-Bug feels dizzy." },
+      { icon: "☀️", label: "Climb without shade", description: "Sunburn! Bug-Bug winces in pain." },
+    ],
+  },
+  cloudy: {
+    safe: [
+      { icon: "🗺️", label: "Check the map", description: "Stayed on the right path." },
+      { icon: "🌥️", label: "Follow the marked trail", description: "Trusted the markers. Solid choice." },
+      { icon: "🪨", label: "Stick to the cliff face", description: "Hugged the safe wall." },
+      { icon: "🧭", label: "Trust the compass", description: "Pointed true north — kept on track." },
+    ],
+    hazard: [
+      { icon: "🌫️", label: "Wander into the fog", description: "Lost! Bug-Bug wastes hours wandering." },
+      { icon: "🪵", label: "Take the unmarked shortcut", description: "Dead end! Backtracking is exhausting." },
+      { icon: "🦅", label: "Chase the strange bird", description: "Distracted! Bug-Bug strays from the path." },
+    ],
+  },
+  storm: {
+    safe: [
+      { icon: "🏚️", label: "Shelter in the cave", description: "Snug and safe from the storm." },
+      { icon: "⛺", label: "Pitch a tent", description: "Dry and warm. Riding it out." },
+      { icon: "🧗", label: "Crouch low and wait", description: "Smart — kept low, stayed safe." },
+      { icon: "🪨", label: "Hide behind a boulder", description: "Solid cover from the wind." },
+    ],
+    hazard: [
+      { icon: "🚪", label: "Open the mysterious door", description: "It was a trap! Bug-Bug tumbles." },
+      { icon: "⚡", label: "Brave the lightning", description: "Struck! Bug-Bug's fur stands on end." },
+      { icon: "🌊", label: "Cross the rising river", description: "Swept downstream! Bug-Bug barely escapes." },
+    ],
+  },
 };
 
-// ---------- Handcrafted weather pool ----------
-// 10 sequences. Each has 5 sunny (active), 3 cloudy (rest), 2 storm (rest).
+// ---------- Weather sequences ----------
+// 10 handcrafted 7-day sequences with mixed weather.
 
 const WEATHER_POOL = [
-  // 1. "Sunny opener" — early action, late rests
-  ["sunny", "sunny", "cloudy", "sunny", "cloudy", "storm", "sunny", "sunny", "storm", "cloudy"],
-  // 2. "Storm in the middle"
-  ["sunny", "sunny", "cloudy", "storm", "sunny", "cloudy", "sunny", "storm", "sunny", "cloudy"],
-  // 3. "Late sprinter" — sunny days arrive late
-  ["cloudy", "storm", "cloudy", "sunny", "cloudy", "sunny", "sunny", "storm", "sunny", "sunny"],
-  // 4. "Clustered sunny"
-  ["cloudy", "sunny", "sunny", "storm", "sunny", "cloudy", "sunny", "storm", "sunny", "cloudy"],
-  // 5. "Storm crisis" — two storms at the start
-  ["storm", "storm", "sunny", "sunny", "cloudy", "sunny", "cloudy", "sunny", "sunny", "cloudy"],
-  // 6. "Spread sunny"
-  ["sunny", "cloudy", "sunny", "storm", "sunny", "cloudy", "sunny", "storm", "sunny", "cloudy"],
-  // 7. "Drama" — storms back to back, sunny pair late
-  ["sunny", "cloudy", "storm", "storm", "sunny", "sunny", "cloudy", "sunny", "cloudy", "sunny"],
-  // 8. "Cloudy plod"
-  ["cloudy", "sunny", "cloudy", "storm", "sunny", "sunny", "cloudy", "sunny", "sunny", "storm"],
-  // 9. "Storm bookends"
-  ["storm", "sunny", "cloudy", "sunny", "sunny", "cloudy", "sunny", "cloudy", "sunny", "storm"],
-  // 10. "Stormy finish"
-  ["sunny", "cloudy", "sunny", "sunny", "cloudy", "sunny", "cloudy", "sunny", "storm", "storm"],
+  ["sunny",  "cloudy", "storm",  "sunny",  "cloudy", "sunny",  "storm" ],
+  ["cloudy", "sunny",  "sunny",  "storm",  "cloudy", "sunny",  "storm" ],
+  ["sunny",  "storm",  "cloudy", "sunny",  "storm",  "cloudy", "sunny" ],
+  ["storm",  "sunny",  "cloudy", "storm",  "sunny",  "cloudy", "sunny" ],
+  ["sunny",  "cloudy", "storm",  "cloudy", "sunny",  "storm",  "sunny" ],
+  ["cloudy", "sunny",  "sunny",  "storm",  "cloudy", "storm",  "sunny" ],
+  ["storm",  "cloudy", "sunny",  "cloudy", "storm",  "sunny",  "sunny" ],
+  ["sunny",  "sunny",  "storm",  "cloudy", "sunny",  "storm",  "cloudy"],
+  ["cloudy", "storm",  "sunny",  "cloudy", "sunny",  "storm",  "sunny" ],
+  ["sunny",  "cloudy", "storm",  "sunny",  "storm",  "cloudy", "sunny" ],
 ];
-
-// Sanity (executed once at module load): each sequence has the right counts.
-// Comment out in production if you want — leaves a console warning if a
-// future edit breaks the invariant.
-(function verifyPool() {
-  WEATHER_POOL.forEach((seq, i) => {
-    const counts = { sunny: 0, cloudy: 0, storm: 0 };
-    seq.forEach((w) => counts[w]++);
-    if (counts.sunny !== 5 || counts.cloudy !== 3 || counts.storm !== 2) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[state.js] Weather sequence ${i} has bad counts:`,
-        counts,
-        seq
-      );
-    }
-  });
-})();
 
 // ---------- State factory ----------
 
@@ -87,20 +96,55 @@ const WEATHER_POOL = [
 export function createGame(seedCode) {
   const rng = mulberry32(seedFromString(seedCode));
   const sequenceIndex = Math.floor(rng() * WEATHER_POOL.length);
+  const weather = WEATHER_POOL[sequenceIndex].slice();
+
+  // Pre-roll 7 days of choices. Each day: 2 safe + 1 hazard from the
+  // pool for that weather, then shuffle order so the hazard isn't
+  // always in the same slot.
+  const dailyChoices = weather.map((w) => {
+    const safePool = CHOICES[w].safe.slice();
+    const hazardPool = CHOICES[w].hazard.slice();
+    const safe1 = pickAndRemove(safePool, rng);
+    const safe2 = pickAndRemove(safePool, rng);
+    const hazard = pickAndRemove(hazardPool, rng);
+    const cards = [
+      { ...safe1, type: "safe" },
+      { ...safe2, type: "safe" },
+      { ...hazard, type: "hazard" },
+    ];
+    shuffleInPlace(cards, rng);
+    return cards;
+  });
+
   return {
     phase: "playing",
     seed: seedCode,
     sequenceIndex,
     day: 1,
     altitude: 0,
-    peakAltitude: 0,   // tracks highest altitude reached during the climb
+    peakAltitude: 0,
     stamina: STARTING_STAMINA,
-    weather: WEATHER_POOL[sequenceIndex].slice(),
+    weather,
+    dailyChoices,
+    revealedToday: null, // null | { pickedIndex }
     history: [],
     outcome: null,
     stars: 0,
     lastResult: null,
   };
+}
+
+function pickAndRemove(arr, rng) {
+  const i = Math.floor(rng() * arr.length);
+  return arr.splice(i, 1)[0];
+}
+
+function shuffleInPlace(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 // ---------- Queries ----------
@@ -109,120 +153,105 @@ export function todayWeather(state) {
   return state.weather[state.day - 1] || null;
 }
 
-export function tomorrowWeather(state) {
-  return state.weather[state.day] || null;
+export function todayCards(state) {
+  return state.dailyChoices[state.day - 1] || null;
 }
 
-/** Whether today is a rest day (cloudy or storm). */
-export function isRestDay(weather) {
-  return weather === "cloudy" || weather === "storm";
+/** Convenience: is the player allowed to pick a card right now? */
+export function canPick(state) {
+  return state.phase === "playing" && state.revealedToday === null;
 }
 
-/** Number of active (sunny) days remaining including today if it's sunny. */
-export function activeDaysRemaining(state) {
-  let n = 0;
-  for (let d = state.day - 1; d < TOTAL_DAYS; d++) {
-    if (state.weather[d] === "sunny") n++;
-  }
-  return n;
+/** Convenience: should the player click Continue to advance the day? */
+export function canContinue(state) {
+  return state.phase === "playing" && state.revealedToday !== null;
 }
 
-/**
- * How many sprints the player can still afford, given current stamina
- * and remaining active days.
- *
- * Math: stamina S, active days D.
- * Each active day costs ≥1 stamina (climb). Sprint costs 2 (i.e. +1
- * over a climb). Max sprints = clamp(S - D, 0, D).
- */
-export function sprintsRemaining(state) {
-  const D = activeDaysRemaining(state);
-  const surplus = state.stamina - D;
-  return Math.max(0, Math.min(D, surplus));
-}
-
-/** Whether the player can pick this action right now. */
-export function canDo(state, action) {
-  if (state.phase !== "playing") return { ok: false, reason: "Not playing" };
-  const today = todayWeather(state);
-  if (isRestDay(today)) {
-    if (action === "rest") return { ok: true };
-    return { ok: false, reason: "Bug-Bug is sleeping today" };
-  }
-  // Sunny day — climb / sprint only.
-  if (action === "rest") return { ok: false, reason: "It's sunny — no time for sleep" };
-  const meta = ACTIONS[action];
-  if (!meta) return { ok: false, reason: "Unknown action" };
-  if (state.stamina + meta.staminaDelta < 0) {
-    return { ok: false, reason: "Not enough stamina" };
-  }
-  return { ok: true };
-}
-
-/** 0..1 progress to summit (cap at 1). */
 export function summitFraction(state) {
   return Math.min(1, state.altitude / SUMMIT);
 }
 
-// ---------- Transition ----------
+// ---------- Transitions ----------
 
 /**
- * Apply one action and advance the day.
- * Deterministic per-day sub-RNG so the same seed + same day + same action
- * yields the same altitude roll.
+ * Player picks a card by index (0, 1, or 2). The pick is recorded but
+ * the day doesn't advance yet — the player needs to click Continue to
+ * see the next day's cards.
  */
-export function applyAction(state, action) {
-  const check = canDo(state, action);
-  if (!check.ok) return state;
+export function pickCard(state, index) {
+  if (!canPick(state)) return state;
+  if (index < 0 || index > 2) return state;
+  const cards = todayCards(state);
+  if (!cards) return state;
+  return {
+    ...state,
+    revealedToday: {
+      pickedIndex: index,
+      pickedCard: cards[index],
+      wasHazard: cards[index].type === "hazard",
+    },
+  };
+}
 
-  const meta = ACTIONS[action];
-  const weather = todayWeather(state);
-  const dayRng = mulberry32(seedFromString(state.seed + ":" + state.day + ":" + action));
-  const altGain = intBetween(dayRng, meta.altMin, meta.altMax);
-  const newAltitude = state.altitude + altGain;
-  const newStamina = Math.max(0, state.stamina + meta.staminaDelta);
+/**
+ * After the cards are revealed, the player clicks Continue. This applies
+ * the picked card's effect (stamina change, altitude gain) and advances
+ * the day. If stamina hits zero, the game ends in a loss.
+ */
+export function advanceDay(state) {
+  if (!canContinue(state)) return state;
+  const wasHazard = state.revealedToday.wasHazard;
+  const pickedCard = state.revealedToday.pickedCard;
+  const pickedIndex = state.revealedToday.pickedIndex;
+
+  const staminaDelta = wasHazard ? -1 : 0;
+  const newStamina = Math.max(0, state.stamina + staminaDelta);
+  const newAltitude = state.altitude + STEP_ALTITUDE;
+  const newDay = state.day + 1;
 
   const dayResult = {
     day: state.day,
-    weather,
-    action,
-    altitudeGain: altGain,
-    altitudeBefore: state.altitude,
-    altitudeAfter: newAltitude,
+    weather: todayWeather(state),
+    cards: todayCards(state),
+    pickedIndex,
+    pickedCard,
+    wasHazard,
     staminaBefore: state.stamina,
     staminaAfter: newStamina,
+    altitudeBefore: state.altitude,
+    altitudeAfter: newAltitude,
   };
 
-  const newDay = state.day + 1;
   const next = {
     ...state,
     day: newDay,
     altitude: newAltitude,
     peakAltitude: Math.max(state.peakAltitude, newAltitude),
     stamina: newStamina,
+    revealedToday: null,
     history: state.history.concat([dayResult]),
     lastResult: dayResult,
   };
 
-  if (newDay > TOTAL_DAYS) return finishGame(next);
+  // Stamina exhausted → game ends immediately, slide back.
+  if (newStamina <= 0) {
+    return finishGame({ ...next, phase: "ended", outcome: "lose", stars: 0 });
+  }
+  // Completed day 7 with stamina remaining → win.
+  if (newDay > TOTAL_DAYS) {
+    return finishGame(next);
+  }
   return next;
 }
 
-/** Once day > TOTAL_DAYS: decide outcome and star tier. */
+/** Resolve win/lose and star count. */
 export function finishGame(state) {
-  const won = state.altitude >= SUMMIT;
-  if (!won) {
-    // On loss, the line "slides back" — render layer draws this; we just
-    // record the peak so the end recap can show how close they got.
-    return {
-      ...state,
-      phase: "ended",
-      outcome: "lose",
-      stars: 0,
-    };
-  }
+  // Loss path is already set by advanceDay when stamina hits 0.
+  if (state.outcome === "lose") return state;
+  const survived = state.day > TOTAL_DAYS && state.stamina > 0;
+  if (!survived) return { ...state, phase: "ended", outcome: "lose", stars: 0 };
   let stars = 1;
-  if (state.altitude >= 460) stars = 3;
-  else if (state.altitude >= 430) stars = 2;
+  if (state.stamina === 3) stars = 3;
+  else if (state.stamina === 2) stars = 2;
   return { ...state, phase: "ended", outcome: "win", stars };
 }

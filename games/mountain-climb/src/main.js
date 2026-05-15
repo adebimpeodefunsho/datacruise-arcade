@@ -1,6 +1,6 @@
 // Bootstrap. Holds the single game state, handles clicks, renders.
 
-import { createGame, applyAction, MAX_STAMINA } from "./state.js";
+import { createGame, pickCard, advanceDay } from "./state.js";
 import { generateSeedCode } from "./rng.js";
 import { renderTitle, renderGame, renderEnd } from "./render.js";
 import * as audio from "./audio.js";
@@ -48,51 +48,45 @@ function onClick(e) {
     }
     return;
   }
-  if (action === "share-seed") {
-    if (state && state.seed) {
-      const url = window.location.origin + window.location.pathname + "?seed=" + state.seed;
-      copy(url).then(() => flash(target, "Copied!"));
-    }
-    return;
-  }
   if (action === "toggle-mute") {
     const next = !audio.isMuted();
     audio.setMuted(next);
     writeMuted(next);
-    // Re-render the current screen so the icon updates everywhere.
     render();
     return;
   }
-  if (action.startsWith("play:")) {
-    const move = action.slice("play:".length);
+  if (action.startsWith("pick:")) {
+    const index = Number.parseInt(action.slice("pick:".length), 10);
+    if (!Number.isInteger(index)) return;
     const prevState = state;
-    state = applyAction(state, move);
-    if (state.lastResult && state !== prevState) {
-      playActionSounds(state.lastResult);
+    state = pickCard(state, index);
+    if (state !== prevState && state.revealedToday) {
+      // Play sound based on pick outcome
+      if (state.revealedToday.wasHazard) audio.playStaminaDrain();
+      else audio.playStaminaGain();
     }
-    if (state.phase === "ended") {
-      // Slight delay so the action sound doesn't collide with the win/lose tone.
-      setTimeout(() => {
-        if (state.outcome === "win") audio.playWin();
-        else audio.playLose();
-      }, 320);
-      if (state.outcome === "win" && state.stars > bestStars) {
-        bestStars = state.stars;
-        writeBestStars(bestStars);
+    render();
+    return;
+  }
+  if (action === "continue") {
+    const prevState = state;
+    state = advanceDay(state);
+    if (state !== prevState) {
+      audio.playClimb();
+      if (state.phase === "ended") {
+        setTimeout(() => {
+          if (state.outcome === "win") audio.playWin();
+          else audio.playLose();
+        }, 320);
+        if (state.outcome === "win" && state.stars > bestStars) {
+          bestStars = state.stars;
+          writeBestStars(bestStars);
+        }
       }
     }
     render();
     return;
   }
-}
-
-function playActionSounds(result) {
-  if (result.action === "rest") audio.playRest();
-  else if (result.action === "climb") audio.playClimb();
-  else if (result.action === "sprint") audio.playSprint();
-  const delta = result.staminaAfter - result.staminaBefore;
-  if (delta > 0) audio.playStaminaGain();
-  else if (delta < 0) audio.playStaminaDrain();
 }
 
 // ---------- render ----------
@@ -147,29 +141,6 @@ function writeMuted(m) {
   } catch {
     // ignore
   }
-}
-
-// ---------- utilities ----------
-
-function copy(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-  return new Promise((resolve) => {
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-    resolve();
-  });
-}
-
-function flash(el, msg) {
-  const original = el.textContent;
-  el.textContent = msg;
-  setTimeout(() => { el.textContent = original; }, 1200);
 }
 
 // ---------- URL seed support ----------

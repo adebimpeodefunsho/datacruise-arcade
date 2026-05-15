@@ -1,8 +1,8 @@
 // Render functions per screen. Each returns an HTML string for #app.
 
 import {
-  ACTIONS, SUMMIT, TOTAL_DAYS, STARTING_STAMINA, canDo,
-  todayWeather, summitFraction, isRestDay,
+  SUMMIT, TOTAL_DAYS, STARTING_STAMINA,
+  todayWeather, todayCards, canPick, canContinue, summitFraction,
 } from "./state.js";
 import {
   bug, trophy, sun, cloud, storm, gradientDefs,
@@ -14,11 +14,10 @@ function muteButton(extraClass = "") {
   return `<button class="mute-toggle ${extraClass}" data-action="toggle-mute" aria-label="${m ? "Unmute" : "Mute"} sound" title="${m ? "Sound off — click to enable" : "Sound on — click to mute"}">${m ? "🔇" : "🔊"}</button>`;
 }
 
-// Weather config. Cloudy and storm are both "sleep" days mechanically.
 const WEATHER_GLYPH = {
-  sunny:  { fn: sun,   label: "SUNNY",   hint: "great day to climb or sprint",       icon: "☀️" },
-  cloudy: { fn: cloud, label: "CLOUDY",  hint: "Bug-Bug naps in the shade",          icon: "💤" },
-  storm:  { fn: storm, label: "STORMY",  hint: "Bug-Bug shelters from the storm",    icon: "💤" },
+  sunny:  { fn: sun,   label: "SUNNY",  hint: "watch out for heat", icon: "☀️" },
+  cloudy: { fn: cloud, label: "CLOUDY", hint: "easy to get lost",   icon: "☁️" },
+  storm:  { fn: storm, label: "STORMY", hint: "danger in the rain", icon: "⛈️" },
 };
 
 // ---------- Title screen ----------
@@ -34,31 +33,32 @@ export function renderTitle(bestStars) {
           ${bug(1.4)}
         </svg>
         <h1 class="title-heading">BUG-BUG'S<br/>MOUNTAIN CLIMB</h1>
-        <p class="title-subtitle">A line-chart strategy game · DataCruise Arcade</p>
+        <p class="title-subtitle">A hazard-guessing climb game · DataCruise Arcade</p>
         <button class="primary-btn" data-action="start">▶ PLAY</button>
         <p class="title-best">Best: <strong>${stars}</strong></p>
         <details class="title-howto" open>
           <summary>How to play (click to expand)</summary>
           <div class="howto-body">
-            <p class="howto-goal"><strong>🏔 Goal:</strong> Climb to <strong>${SUMMIT}m</strong> by day ${TOTAL_DAYS}. Reach the summit and your line chart wins!</p>
+            <p class="howto-goal"><strong>🏔 Goal:</strong> Survive <strong>${TOTAL_DAYS} days</strong> on the mountain. Reach the summit with stamina still in the tank.</p>
 
-            <p class="howto-hook"><strong>The Twist:</strong> Only <strong>☀️ sunny days</strong> are climb days. On <strong>☁️ cloudy</strong> and <strong>⛈️ stormy</strong> days, Bug-Bug sleeps — no movement at all.</p>
+            <p class="howto-hook"><strong>The Twist:</strong> Each day the weather brings hazards. You'll see <strong>3 face-down cards</strong> — one is a hazard, two are safe. Pick one. The card flips.</p>
 
-            <h4>The weather</h4>
-            <ul class="howto-weather">
-              <li><span class="howto-icon">☀️</span> <strong>Sunny</strong> — climb or sprint.</li>
-              <li><span class="howto-icon">💤</span> <strong>Cloudy or stormy</strong> — Bug-Bug sleeps. The day passes with no progress.</li>
-            </ul>
-
-            <h4>Your two actions on sunny days</h4>
+            <h4>Daily picks</h4>
             <ul class="howto-actions">
-              <li>🥾 <strong>CLIMB</strong> — costs 1 stamina, steady altitude gain.</li>
-              <li>⚡ <strong>SPRINT</strong> — costs 2 stamina, bigger altitude gain.</li>
+              <li>✅ <strong>Safe card</strong> — nothing bad. Bug-Bug climbs on.</li>
+              <li>⚠️ <strong>Hazard card</strong> — Bug-Bug loses 1 stamina (and you find out what hurt them).</li>
             </ul>
 
-            <p>You start with <strong>${STARTING_STAMINA} stamina</strong>. Stamina <em>does not refill</em>. Spend it wisely.</p>
+            <p>Bug-Bug has <strong>${STARTING_STAMINA} stamina</strong>. That's <strong>${STARTING_STAMINA} hazards</strong> before things go badly.</p>
 
-            <p class="howto-tip"><strong>💡 Why it matters:</strong> If you don't reach the summit, the line chart slides back to zero — all your effort wasted. A line chart only counts if it's "hooked" at both ends. Figure out the right mix of climbs and sprints to make it.</p>
+            <h4>Each weather has its own hazards</h4>
+            <ul class="howto-weather">
+              <li><span class="howto-icon">☀️</span> <strong>Sunny</strong> — heatstroke, dehydration, sunburn.</li>
+              <li><span class="howto-icon">☁️</span> <strong>Cloudy</strong> — fog, wrong turns, distractions.</li>
+              <li><span class="howto-icon">⛈️</span> <strong>Stormy</strong> — lightning, rivers, mysterious doors.</li>
+            </ul>
+
+            <p class="howto-tip"><strong>💡 Why it matters:</strong> If stamina hits zero, the chart slides back to the start — all that climbing wasted. A line chart only counts if it's "hooked" at both ends. Trust your luck.</p>
           </div>
         </details>
       </div>
@@ -77,7 +77,7 @@ export function renderGame(state) {
         ${chartCard(state)}
         <aside class="side">
           ${todayCard(state)}
-          ${actionCard(state)}
+          ${cardsArea(state)}
         </aside>
       </main>
       ${tipFooter(state)}
@@ -101,7 +101,7 @@ function headerBar(state) {
       </div>
       <div class="stat stat-stamina">
         <span class="label">STAMINA</span>
-        ${renderStaminaBar(state.stamina)}
+        ${renderStaminaHearts(state.stamina)}
       </div>
       <div class="stat stat-altitude">
         <span class="label">ALTITUDE</span>
@@ -116,18 +116,20 @@ function headerBar(state) {
     </header>`;
 }
 
-function renderStaminaBar(stamina) {
-  let pips = "";
-  for (let i = 0; i < STARTING_STAMINA; i++) {
-    const filled = i < stamina;
-    pips += `<span class="stamina-pip ${filled ? "filled" : "spent"}"></span>`;
+function renderStaminaHearts(stamina) {
+  let hearts = "";
+  for (let i = 0; i < MAX_STAMINA_VISUAL; i++) {
+    const active = i < stamina;
+    hearts += `<span class="stamina-heart ${active ? "alive" : "lost"}">${active ? "❤️" : "🖤"}</span>`;
   }
   return `<div class="stamina-display">
     <strong class="stamina-num">${stamina}</strong>
     <span class="stamina-of">/ ${STARTING_STAMINA}</span>
-    <div class="stamina-pips">${pips}</div>
+    <div class="stamina-hearts">${hearts}</div>
   </div>`;
 }
+
+const MAX_STAMINA_VISUAL = 3;
 
 function forecastStrip(state) {
   let tiles = "";
@@ -138,19 +140,27 @@ function forecastStrip(state) {
       d === state.day && state.phase === "playing" ? "current"
       : d < state.day ? "past"
       : "future";
+    // If the day is past, indicate whether it was a hazard pick.
+    let extra = "";
+    if (cls === "past") {
+      const h = state.history[d - 1];
+      if (h && h.wasHazard) extra = `<span class="forecast-pick hazard">⚠️</span>`;
+      else if (h) extra = `<span class="forecast-pick safe">✓</span>`;
+    }
     tiles += `
       <div class="forecast-day forecast-${w} ${cls}" title="Day ${d} — ${cfg.label} (${cfg.hint})">
         <span class="forecast-num">${d}</span>
         <span class="forecast-icon">${cfg.icon}</span>
+        ${extra}
       </div>`;
   }
   return `
     <section class="forecast-strip card">
-      <span class="forecast-label">10-DAY FORECAST</span>
+      <span class="forecast-label">${TOTAL_DAYS}-DAY FORECAST</span>
       <div class="forecast-days">${tiles}</div>
       <span class="forecast-legend">
-        <span class="legend-item"><span class="legend-icon">☀️</span>climb day</span>
-        <span class="legend-item"><span class="legend-icon">💤</span>sleep day</span>
+        <span class="legend-item"><span class="legend-icon">✓</span>safe</span>
+        <span class="legend-item"><span class="legend-icon">⚠️</span>hazard</span>
       </span>
     </section>`;
 }
@@ -161,7 +171,7 @@ function chartCard(state) {
       <header class="chart-head">
         <div>
           <h2>The climb so far</h2>
-          <p>Every action you pick draws the next point.</p>
+          <p>Every survived day plots the next point.</p>
         </div>
         <span class="avg-pill">Summit: <strong>${SUMMIT}m</strong></span>
       </header>
@@ -169,20 +179,17 @@ function chartCard(state) {
     </section>`;
 }
 
-/**
- * The chart itself. ViewBox is 960 × 500, CSS scales it to fit the card.
- */
 function chartSVG(state) {
   const VB_W = 960, VB_H = 500;
   const X0 = 110, X1 = 910;
   const Y0 = 60, Y1 = 460;
-  const Y_PER_M = (Y1 - Y0) / 500;
+  const Y_PER_M = (Y1 - Y0) / 400; // 400m mapped to plot height (room above summit)
 
   const xFor = (day) => X0 + ((day - 1) / (TOTAL_DAYS - 1)) * (X1 - X0);
   const yFor = (m) => Y1 - m * Y_PER_M;
 
   let yTicks = "";
-  for (let m = 0; m <= 500; m += 100) {
+  for (let m = 0; m <= 400; m += 50) {
     yTicks += `<text x="${X0 - 12}" y="${yFor(m) + 4}" text-anchor="end" class="y-tick">${m}m</text>`;
     yTicks += `<line x1="${X0}" y1="${yFor(m)}" x2="${X1}" y2="${yFor(m)}" class="grid-line"/>`;
   }
@@ -193,30 +200,23 @@ function chartSVG(state) {
     <g transform="translate(${X1 + 24} ${summitY})">${trophy(0.85)}</g>
     <text x="${X1 + 24}" y="${summitY + 56}" text-anchor="middle" class="summit-label">SUMMIT</text>`;
 
-  // Draw the actual climb. The path traces every day so the line stays
-  // continuous, but we only place a marker / "+Xm" label on days where
-  // Bug-Bug actually moved (climbs and sprints). Sleep days hold the
-  // altitude flat and aren't data points worth highlighting.
   let path = "";
   let dots = "";
   state.history.forEach((d, i) => {
     const x = xFor(d.day);
     const y = yFor(d.altitudeAfter);
     path += (i === 0 ? `M${xFor(1)} ${yFor(0)} L` : "L") + ` ${x} ${y} `;
-    if (d.action !== "rest") {
-      const emoji = ACTIONS[d.action].emoji;
-      dots += `
-        <g class="day-marker done">
-          <circle cx="${x}" cy="${y}" r="11"/>
-          <text x="${x}" y="${y - 22}" text-anchor="middle" class="dot-gain">+${d.altitudeGain}</text>
-          <text x="${x}" y="${y + 30}" text-anchor="middle" class="dot-action">${emoji}</text>
-        </g>`;
-    }
+    const icon = d.pickedCard.icon;
+    const dotCls = d.wasHazard ? "hazard" : "safe";
+    dots += `
+      <g class="day-marker done ${dotCls}">
+        <circle cx="${x}" cy="${y}" r="13"/>
+        <text x="${x}" y="${y + 5}" text-anchor="middle" class="dot-icon">${icon}</text>
+        ${d.wasHazard ? `<text x="${x}" y="${y - 22}" text-anchor="middle" class="dot-gain hazard">−1 ❤️</text>` : ""}
+      </g>`;
   });
 
-  // Slide-back animation on loss — the line trails from the final position
-  // back down to the starting point (day 1, altitude 0) to dramatise the
-  // "line not hooked at both ends" idea.
+  // Slide-back animation on loss.
   let slideBack = "";
   if (state.phase === "ended" && state.outcome === "lose" && state.history.length > 0) {
     const last = state.history[state.history.length - 1];
@@ -232,7 +232,6 @@ function chartSVG(state) {
       </g>`;
   }
 
-  // Current day marker (during play only).
   let currentMarker = "";
   if (state.phase === "playing") {
     const x = xFor(state.day);
@@ -244,7 +243,6 @@ function chartSVG(state) {
       </g>`;
   }
 
-  // Future-day placeholder dots on the x-axis.
   let futureDots = "";
   for (let d = state.day + (state.phase === "playing" ? 1 : 0); d <= TOTAL_DAYS; d++) {
     const x = xFor(d);
@@ -279,103 +277,98 @@ function todayCard(state) {
   const w = todayWeather(state);
   if (!w) return "";
   const cfg = WEATHER_GLYPH[w];
-  const sleeping = isRestDay(w);
-  const headline = sleeping ? `💤 ${cfg.label}` : cfg.label;
   return `
-    <section class="today-card card weather-${w} ${sleeping ? "sleeping" : "active"}">
+    <section class="today-card card weather-${w}">
       <span class="today-label">TODAY · DAY ${state.day}</span>
-      ${sleeping
-        ? `<div class="today-sleep-icon">💤</div>`
-        : `<svg viewBox="-40 -40 80 80" aria-hidden="true">${cfg.fn(1)}</svg>`}
-      <strong class="today-name">${headline}</strong>
+      <svg viewBox="-40 -40 80 80" aria-hidden="true">${cfg.fn(1)}</svg>
+      <strong class="today-name">${cfg.label}</strong>
       <p class="today-hint">${cfg.hint}</p>
     </section>`;
 }
 
-function actionCard(state) {
-  const today = todayWeather(state);
+function cardsArea(state) {
+  const cards = todayCards(state);
+  const revealed = state.revealedToday;
 
-  if (isRestDay(today)) {
-    const msg = today === "cloudy"
-      ? "Bug-Bug yawns, snuggles deeper into the shade, and keeps sleeping. The day passes."
-      : "The storm howls. Bug-Bug refuses to come out of shelter. The day passes.";
+  if (!revealed) {
+    // Three face-down cards, click to pick.
     return `
-      <section class="action-card card sleep-action">
-        <h3>YOUR MOVE</h3>
-        <p class="action-prompt">💤 ${today === "cloudy" ? "Cloudy" : "Stormy"} — Bug-Bug is fast asleep.</p>
-        <button class="action-btn action-rest" data-action="play:rest">
-          <span class="emoji">💤</span>
-          <span class="label">WAKE BUG-BUG UP →</span>
-          <span class="meta">try anyway — see what happens</span>
-        </button>
-        <p class="action-hint">${msg}</p>
+      <section class="cards-card card">
+        <h3>PICK A CARD</h3>
+        <p class="cards-prompt">One is a hazard. Two are safe. Trust your luck.</p>
+        <div class="card-row">
+          ${cards.map((_, i) => faceDownCard(i)).join("")}
+        </div>
       </section>`;
   }
 
-  // Sunny day → climb / sprint
+  // Cards revealed — show all three, picked one highlighted.
+  const pickedCard = revealed.pickedCard;
+  const wasHazard = revealed.wasHazard;
+  const headline = wasHazard
+    ? `<span class="reveal-headline hazard">⚠️ HAZARD — Stamina ${state.stamina} → ${state.stamina - 1}</span>`
+    : `<span class="reveal-headline safe">✅ SAFE — Stamina unchanged</span>`;
   return `
-    <section class="action-card card">
-      <h3>YOUR MOVE</h3>
-      <p class="action-prompt">☀️ Sunny — make it count.</p>
-      ${actionButton(state, "climb")}
-      ${actionButton(state, "sprint")}
-      <p class="action-hint">Steady climbs cost less. Sprints cost more but get you further.</p>
+    <section class="cards-card card">
+      <h3>${wasHazard ? "OUCH" : "PHEW"}</h3>
+      ${headline}
+      <p class="cards-description">${pickedCard.icon} <strong>${pickedCard.label}</strong> — ${pickedCard.description}</p>
+      <div class="card-row revealed-row">
+        ${cards.map((c, i) => revealedCard(c, i === revealed.pickedIndex)).join("")}
+      </div>
+      <button class="primary-btn continue-btn" data-action="continue">Continue →</button>
     </section>`;
 }
 
-function actionButton(state, action) {
-  const meta = ACTIONS[action];
-  const ok = canDo(state, action);
-  const disabled = ok.ok ? "" : "disabled";
-  const reason = ok.ok ? "" : `data-reason="${escapeAttr(ok.reason)}"`;
-  const altRange = `+${meta.altMin}–${meta.altMax}m`;
-  const stamCost = meta.staminaDelta === -1 ? "−1 stamina" : "−2 stamina";
+function faceDownCard(index) {
   return `
-    <button class="action-btn action-${action}" data-action="play:${action}" ${disabled} ${reason}>
-      <span class="emoji">${meta.emoji}</span>
-      <span class="label">${meta.label}</span>
-      <span class="meta">${altRange}  ·  ${stamCost}</span>
+    <button class="pick-card face-down" data-action="pick:${index}" aria-label="Pick card ${index + 1}">
+      <div class="card-back">
+        <span class="card-back-q">?</span>
+      </div>
     </button>`;
+}
+
+function revealedCard(card, isPicked) {
+  const isHazard = card.type === "hazard";
+  return `
+    <div class="pick-card revealed ${isHazard ? "is-hazard" : "is-safe"} ${isPicked ? "is-picked" : "is-other"}">
+      <div class="card-front">
+        <span class="card-icon">${card.icon}</span>
+        <span class="card-label">${card.label}</span>
+        <span class="card-badge">${isHazard ? "⚠️ HAZARD" : "✓ SAFE"}</span>
+      </div>
+    </div>`;
 }
 
 function tipFooter(state) {
   const recent = state.history.slice(-5).map((d) => {
-    const emoji = ACTIONS[d.action].emoji;
-    const gainText = d.action === "rest" ? "—" : `${d.altitudeGain}m`;
-    return `<span class="chip">${emoji} ${gainText}</span>`;
+    const safe = d.wasHazard ? "⚠️" : "✓";
+    return `<span class="chip ${d.wasHazard ? "chip-hazard" : "chip-safe"}">${safe} ${d.pickedCard.icon}</span>`;
   }).join("");
 
-  const stillNeed = Math.max(0, SUMMIT - state.altitude);
-  const lastResult = state.lastResult;
-
   let tipText;
-  if (stillNeed === 0) {
-    tipText = "Summit reached! Keep going if you want a higher star tier.";
-  } else if (lastResult && lastResult.action === "rest") {
-    tipText = "A day passed with Bug-Bug asleep. Sunny days are precious.";
-  } else if (lastResult && lastResult.action === "sprint") {
-    tipText = "Good push. That sprint cost real stamina though.";
-  } else if (lastResult && lastResult.action === "climb") {
-    tipText = "Steady climb. Keep your stamina in mind.";
+  if (state.stamina === 1) {
+    tipText = "⚠️ One stamina left! The next hazard ends the climb.";
+  } else if (state.day > TOTAL_DAYS) {
+    tipText = "Summit reached!";
+  } else if (state.lastResult && state.lastResult.wasHazard) {
+    tipText = "That stung. Trust your luck and keep climbing.";
+  } else if (state.lastResult) {
+    tipText = "Safe pick! Keep going.";
   } else {
-    tipText = "Read the forecast. Pick your moves carefully.";
+    tipText = "Pick a card to start the climb.";
   }
-
-  const lastResultText = lastResult
-    ? lastResult.action === "rest"
-      ? `Day ${lastResult.day} — Bug-Bug slept.`
-      : `Day ${lastResult.day} — ${ACTIONS[lastResult.action].label.toLowerCase()} +${lastResult.altitudeGain}m.`
-    : "";
 
   return `
     <footer class="tip-card card">
       <div class="tip">
         <span class="label">STRATEGY TIP</span>
         <p class="tip-text">${tipText}</p>
-        <p class="tip-sub">${stillNeed}m to summit. ${lastResultText}</p>
+        <p class="tip-sub">Each day brings new hazards. Stamina lost is gone for good.</p>
       </div>
       <div class="recent">
-        <span class="label">CLIMB SO FAR</span>
+        <span class="label">DAYS SO FAR</span>
         <div class="chips">${recent || `<span class="chip dim">—</span>`}</div>
       </div>
     </footer>`;
@@ -386,16 +379,16 @@ function tipFooter(state) {
 export function renderEnd(state) {
   const won = state.outcome === "win";
   const headline = won
-    ? (state.stars === 3 ? "🏆 SUMMIT! 3 STARS" : state.stars === 2 ? "✨ SUMMIT REACHED" : "🚩 SUMMIT (BARELY)")
+    ? (state.stars === 3 ? "🏆 PERFECT CLIMB — 3 STARS" : state.stars === 2 ? "✨ SUMMIT REACHED — 2 STARS" : "🚩 SUMMIT (BARELY)")
     : "💤 SLID BACK TO START";
   const sub = won
-    ? `You reached <strong>${state.altitude}m</strong> in ${TOTAL_DAYS} days.`
-    : `You climbed to <strong>${state.peakAltitude}m</strong>, but didn't reach the ${SUMMIT}m summit. The line slid all the way back to zero — effort wasted!`;
+    ? `You survived all ${TOTAL_DAYS} days and reached <strong>${SUMMIT}m</strong> with <strong>${state.stamina} stamina</strong> left.`
+    : `You ran out of stamina on day ${state.day - 1}. The line chart slid all the way back to zero — the climb wasn't hooked at both ends.`;
   const stars = won ? "⭐".repeat(state.stars) + "☆".repeat(3 - state.stars) : "";
-  const counts = countActions(state.history);
+  const counts = countOutcomes(state.history);
   const successMessage = won
-    ? `<p class="end-success">🎉 You completed a winning line chart! Both ends hooked.</p>`
-    : `<p class="end-success">A line chart only counts if it's hooked at both ends. Try again — spend sprints to bridge to the summit.</p>`;
+    ? `<p class="end-success">🎉 You hooked the line chart at both ends. Stars: ${state.stars} of 3.</p>`
+    : `<p class="end-success">Bad luck this run — try again, the weather and hazards shuffle every game.</p>`;
   return `
     <div class="screen end-screen">
       <svg class="defs-only" aria-hidden="true">${gradientDefs()}</svg>
@@ -407,9 +400,9 @@ export function renderEnd(state) {
         <p class="end-sub">${sub}</p>
         ${chartSVG(state)}
         <ul class="end-recap">
-          <li>🥾 Climbed <strong>${counts.climb}</strong> ×</li>
-          <li>⚡ Sprinted <strong>${counts.sprint}</strong> ×</li>
-          <li>💤 Slept <strong>${counts.rest}</strong> days</li>
+          <li>✓ Safe picks: <strong>${counts.safe}</strong></li>
+          <li>⚠️ Hazards triggered: <strong>${counts.hazard}</strong></li>
+          <li>❤️ Stamina remaining: <strong>${state.stamina} / ${STARTING_STAMINA}</strong></li>
         </ul>
         <div class="end-actions">
           <button class="primary-btn" data-action="new-game">🆕 NEW CLIMB</button>
@@ -419,12 +412,10 @@ export function renderEnd(state) {
     </div>`;
 }
 
-function countActions(history) {
-  return history.reduce((acc, d) => ((acc[d.action]++, acc)), { rest: 0, climb: 0, sprint: 0 });
-}
-
-// ---------- util ----------
-
-function escapeAttr(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+function countOutcomes(history) {
+  return history.reduce((acc, d) => {
+    if (d.wasHazard) acc.hazard++;
+    else acc.safe++;
+    return acc;
+  }, { safe: 0, hazard: 0 });
 }
