@@ -716,10 +716,76 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ========================================================
-   Storm action button — visually different
+   Sleep day action button — visually different
 ======================================================== */
-.storm-action .action-rest {
-  background: linear-gradient(180deg, #4a4f6b, #2e3147);
+.sleep-action .action-rest {
+  background: linear-gradient(180deg, #3a3f5a, #1f223a);
   color: #fff;
+  border-color: #0e0e10;
 }
-.storm-action .action-rest .meta { color: #c8ccdc; }
+.sleep-action .action-rest .emoji { font-size: 32px; }
+.sleep-action .action-rest .label { color: #fff; }
+.sleep-action .action-rest .meta { color: #c8ccdc; }
+
+/* Today card — sleeping vs active variant */
+.today-card.sleeping {
+  background: linear-gradient(180deg, #2e324a, #1c1f33);
+  color: #fff;
+  border-color: #0e0e10;
+}
+.today-card.sleeping .today-label { color: #b9bdd5; }
+.today-card.sleeping .today-name  { color: #fff; }
+.today-card.sleeping .today-hint  { color: #c4c8e0; }
+.today-sleep-icon {
+  font-size: 64px;
+  line-height: 1;
+  margin: 6px 0;
+  animation: gentle-bob 2.6s ease-in-out infinite;
+}
+@keyframes gentle-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Forecast tiles — sleep days look subdued */
+.forecast-day.forecast-cloudy { background: #e8eaf2; }
+.forecast-day.forecast-storm  { background: #d9deeb; }
+.forecast-day.forecast-cloudy .forecast-icon,
+.forecast-day.forecast-storm  .forecast-icon {
+  opacity: 0.85;
+}
+
+/* ========================================================
+   Slide-back animation (on loss)
+   The dashed line draws itself from the final position back
+   to (day 1, 0). Bug-Bug fades in at the start point.
+======================================================== */
+.slide-back-line {
+  fill: none;
+  stroke: #b91c1c;
+  stroke-width: 3;
+  stroke-dasharray: 8 6;
+  stroke-linecap: round;
+  opacity: 0.85;
+  /* Animate a stroke-dashoffset reveal */
+  stroke-dashoffset: 1200;
+  animation: slide-draw 1.4s ease-out 0.3s forwards;
+}
+@keyframes slide-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.slide-back-bug {
+  opacity: 0;
+  animation: slide-bug-in 0.4s ease-out 1.55s forwards;
+}
+@keyframes slide-bug-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.slide-back-label {
+  fill: #b91c1c;
+  font-weight: 800;
+  font-size: 16px;
+}

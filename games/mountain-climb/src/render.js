@@ -3,6 +3,7 @@
 import {
   ACTIONS, SUMMIT, TOTAL_DAYS, STARTING_STAMINA, canDo,
   todayWeather, summitFraction, sprintsRemaining, activeDaysRemaining,
+  isRestDay,
 } from "./state.js";
 import {
   bug, trophy, sun, cloud, storm, gradientDefs,
@@ -14,10 +15,11 @@ function muteButton(extraClass = "") {
   return `<button class="mute-toggle ${extraClass}" data-action="toggle-mute" aria-label="${m ? "Unmute" : "Mute"} sound" title="${m ? "Sound off — click to enable" : "Sound on — click to mute"}">${m ? "🔇" : "🔊"}</button>`;
 }
 
+// Weather config. Cloudy and storm are both "sleep" days mechanically.
 const WEATHER_GLYPH = {
-  sunny:  { fn: sun,   label: "SUNNY",  hint: "+10m bonus · great day to sprint",     icon: "☀️" },
-  cloudy: { fn: cloud, label: "CLOUDY", hint: "normal day",                            icon: "☁️" },
-  storm:  { fn: storm, label: "STORM",  hint: "Bug-Bug rests — you can't act",         icon: "⛈️" },
+  sunny:  { fn: sun,   label: "SUNNY",   hint: "great day to climb or sprint",       icon: "☀️" },
+  cloudy: { fn: cloud, label: "CLOUDY",  hint: "Bug-Bug naps in the shade",          icon: "💤" },
+  storm:  { fn: storm, label: "STORMY",  hint: "Bug-Bug shelters from the storm",    icon: "💤" },
 };
 
 // ---------- Title screen ----------
@@ -39,33 +41,32 @@ export function renderTitle(bestStars) {
         <details class="title-howto" open>
           <summary>How to play (click to expand)</summary>
           <div class="howto-body">
-            <p class="howto-goal"><strong>🏔 Goal:</strong> Climb to <strong>${SUMMIT}m</strong> in <strong>${TOTAL_DAYS} days</strong>. Reach the summit and Bug-Bug wins!</p>
+            <p class="howto-goal"><strong>🏔 Goal:</strong> Climb to <strong>${SUMMIT}m</strong> by day ${TOTAL_DAYS}. Reach the summit and your line chart wins!</p>
 
-            <p class="howto-hook"><strong>The Twist:</strong> You only have <strong>${STARTING_STAMINA} stamina</strong> for the entire climb. It does <em>not</em> refill. Storms force ${3} days of rest — so you only really control ${TOTAL_DAYS - 3} days.</p>
+            <p class="howto-hook"><strong>The Twist:</strong> Only <strong>☀️ sunny days</strong> are climb days. On <strong>☁️ cloudy</strong> and <strong>⛈️ stormy</strong> days, Bug-Bug must <strong>💤 sleep</strong> — no progress at all. Every game has 5 sunny days, 3 cloudy and 2 stormy days.</p>
 
             <h4>Each day's weather</h4>
             <ul class="howto-weather">
-              <li><span class="howto-icon">☀️</span> <strong>Sunny</strong> — every climb / sprint earns +10m bonus. Best day to sprint.</li>
-              <li><span class="howto-icon">☁️</span> <strong>Cloudy</strong> — a normal day. No bonus, no penalty.</li>
-              <li><span class="howto-icon">⛈️</span> <strong>Storm</strong> — Bug-Bug must wait it out. You don't pick anything.</li>
+              <li><span class="howto-icon">☀️</span> <strong>Sunny (5 days)</strong> — your action days. Climb or sprint.</li>
+              <li><span class="howto-icon">💤</span> <strong>Cloudy (3 days)</strong> — Bug-Bug naps. No movement, no stamina change.</li>
+              <li><span class="howto-icon">💤</span> <strong>Stormy (2 days)</strong> — Bug-Bug shelters. No movement, no stamina change.</li>
             </ul>
 
-            <h4>Your two actions (non-storm days)</h4>
+            <h4>Your two actions (sunny days)</h4>
             <ul class="howto-actions">
-              <li>🥾 <strong>CLIMB</strong> — costs 1 stamina, gains <strong>~50m</strong> (sunny: ~60m)</li>
-              <li>⚡ <strong>SPRINT</strong> — costs 2 stamina, gains <strong>~100m</strong> (sunny: ~110m)</li>
+              <li>🥾 <strong>CLIMB</strong> — costs 1 stamina, gains <strong>~70m</strong></li>
+              <li>⚡ <strong>SPRINT</strong> — costs 2 stamina, gains <strong>~135m</strong></li>
             </ul>
 
             <h4>The math you need to know</h4>
-            <p>With ${STARTING_STAMINA} stamina across ${TOTAL_DAYS - 3} non-storm days, you can sprint <strong>at most 2 times</strong>:</p>
+            <p>You start with <strong>${STARTING_STAMINA} stamina</strong>. There are 5 sunny days. So you can sprint <strong>at most 2 times</strong>:</p>
             <ul class="howto-math">
-              <li>🟥 <strong>7 climbs, no sprints</strong> → ~350m → <strong>you lose</strong> (short of ${SUMMIT}m).</li>
-              <li>🟧 <strong>1 sprint + 6 climbs</strong> → ~400m → <strong>bare win</strong>.</li>
-              <li>🟩 <strong>2 sprints + 5 climbs</strong> → ~450m → <strong>comfortable win</strong>.</li>
-              <li>⭐ <strong>2 sprints on sunny days</strong> → ~470m → <strong>3-star finish</strong>.</li>
+              <li>🟥 <strong>5 climbs, no sprints</strong> → ~350m → <strong>you lose</strong> (short of ${SUMMIT}m).</li>
+              <li>🟧 <strong>1 sprint + 4 climbs</strong> → ~415m → <strong>bare win</strong>.</li>
+              <li>🟩 <strong>2 sprints + 3 climbs</strong> → ~480m → <strong>3-star finish</strong>.</li>
             </ul>
 
-            <p class="howto-tip"><strong>💡 Tip:</strong> The 10-day forecast is visible at the start. Look at <em>where</em> the sunny days fall before you spend your first sprint. Saving sprints for sunny days = best score.</p>
+            <p class="howto-tip"><strong>💡 Tip:</strong> If you don't reach the summit, the line chart slides back to zero — all your effort wasted. A line chart only counts if it's "hooked" at both ends.</p>
           </div>
         </details>
       </div>
@@ -168,9 +169,8 @@ function forecastStrip(state) {
       <span class="forecast-label">10-DAY FORECAST</span>
       <div class="forecast-days">${tiles}</div>
       <span class="forecast-legend">
-        <span class="legend-item"><span class="legend-icon">☀️</span>+10m</span>
-        <span class="legend-item"><span class="legend-icon">☁️</span>normal</span>
-        <span class="legend-item"><span class="legend-icon">⛈️</span>forced rest</span>
+        <span class="legend-item"><span class="legend-icon">☀️</span>climb day</span>
+        <span class="legend-item"><span class="legend-icon">💤</span>sleep day</span>
       </span>
     </section>`;
 }
@@ -196,7 +196,7 @@ function chartSVG(state) {
   const VB_W = 960, VB_H = 500;
   const X0 = 110, X1 = 910;
   const Y0 = 60, Y1 = 460;
-  const Y_PER_M = (Y1 - Y0) / 500; // 500m mapped to plot height
+  const Y_PER_M = (Y1 - Y0) / 500;
 
   const xFor = (day) => X0 + ((day - 1) / (TOTAL_DAYS - 1)) * (X1 - X0);
   const yFor = (m) => Y1 - m * Y_PER_M;
@@ -213,6 +213,7 @@ function chartSVG(state) {
     <g transform="translate(${X1 + 24} ${summitY})">${trophy(0.85)}</g>
     <text x="${X1 + 24}" y="${summitY + 56}" text-anchor="middle" class="summit-label">SUMMIT</text>`;
 
+  // Draw the actual climb (each day's marker, line connecting them).
   let path = "";
   let dots = "";
   state.history.forEach((d, i) => {
@@ -228,6 +229,25 @@ function chartSVG(state) {
       </g>`;
   });
 
+  // Slide-back animation on loss — the line trails from the final position
+  // back down to the starting point (day 1, altitude 0) to dramatise the
+  // "line not hooked at both ends" idea.
+  let slideBack = "";
+  if (state.phase === "ended" && state.outcome === "lose" && state.history.length > 0) {
+    const last = state.history[state.history.length - 1];
+    const fromX = xFor(last.day);
+    const fromY = yFor(last.altitudeAfter);
+    const toX = xFor(1);
+    const toY = yFor(0);
+    slideBack = `
+      <path d="M ${fromX} ${fromY} L ${toX} ${toY}" class="slide-back-line"/>
+      <g class="slide-back-bug" transform="translate(${toX} ${toY - 26})">
+        ${bug(0.85)}
+        <text x="0" y="38" text-anchor="middle" class="slide-back-label">💤 slid back to start</text>
+      </g>`;
+  }
+
+  // Current day marker (during play only).
   let currentMarker = "";
   if (state.phase === "playing") {
     const x = xFor(state.day);
@@ -239,6 +259,7 @@ function chartSVG(state) {
       </g>`;
   }
 
+  // Future-day placeholder dots on the x-axis.
   let futureDots = "";
   for (let d = state.day + (state.phase === "playing" ? 1 : 0); d <= TOTAL_DAYS; d++) {
     const x = xFor(d);
@@ -261,6 +282,7 @@ function chartSVG(state) {
         ${path ? `<path d="${path.trim()}" class="climb-line"/>` : ""}
         ${futureDots}
         ${dots}
+        ${slideBack}
         ${currentMarker}
         ${dayLabels}
         <text x="${(X0 + X1) / 2}" y="${Y1 + 56}" text-anchor="middle" class="x-axis-title">Day</text>
@@ -272,11 +294,15 @@ function todayCard(state) {
   const w = todayWeather(state);
   if (!w) return "";
   const cfg = WEATHER_GLYPH[w];
+  const sleeping = isRestDay(w);
+  const headline = sleeping ? `💤 ${cfg.label}` : cfg.label;
   return `
-    <section class="today-card card weather-${w}">
+    <section class="today-card card weather-${w} ${sleeping ? "sleeping" : "active"}">
       <span class="today-label">TODAY · DAY ${state.day}</span>
-      <svg viewBox="-40 -40 80 80" aria-hidden="true">${cfg.fn(1)}</svg>
-      <strong class="today-name">${cfg.label}</strong>
+      ${sleeping
+        ? `<div class="today-sleep-icon">💤</div>`
+        : `<svg viewBox="-40 -40 80 80" aria-hidden="true">${cfg.fn(1)}</svg>`}
+      <strong class="today-name">${headline}</strong>
       <p class="today-hint">${cfg.hint}</p>
     </section>`;
 }
@@ -284,38 +310,36 @@ function todayCard(state) {
 function actionCard(state) {
   const today = todayWeather(state);
 
-  if (today === "storm") {
+  if (isRestDay(today)) {
+    const msg = today === "cloudy"
+      ? "Bug-Bug curls up in the cool shade and naps. No movement today."
+      : "The storm howls. Bug-Bug shelters and waits it out. No movement today.";
     return `
-      <section class="action-card card storm-action">
+      <section class="action-card card sleep-action">
         <h3>YOUR MOVE</h3>
-        <p class="action-prompt">⛈️ Storming today. Bug-Bug must rest.</p>
+        <p class="action-prompt">💤 ${today === "cloudy" ? "Cloudy" : "Stormy"} day — Bug-Bug sleeps.</p>
         <button class="action-btn action-rest" data-action="play:rest">
-          <span class="emoji">🛌</span>
-          <span class="label">RIDE OUT THE STORM</span>
-          <span class="meta">0 stamina · 0m</span>
+          <span class="emoji">💤</span>
+          <span class="label">LET BUG-BUG SLEEP</span>
+          <span class="meta">0 stamina · 0m altitude</span>
         </button>
-        <p class="action-hint">No sprint or climb today — the storm decides for you.</p>
+        <p class="action-hint">${msg}</p>
       </section>`;
   }
 
-  // Non-storm day → climb / sprint
+  // Sunny day → climb / sprint
   const sprintsLeft = sprintsRemaining(state);
-  const sunny = today === "sunny";
   let hint;
-  if (sunny && sprintsLeft > 0) {
-    hint = "☀️ Sunny! A great day to SPRINT (+10m bonus).";
-  } else if (sunny) {
-    hint = "☀️ Sunny — but you've used your sprints. Still +10m on climb.";
-  } else if (sprintsLeft === 0) {
-    hint = "All sprints used. Just climb your way home.";
+  if (sprintsLeft > 0) {
+    hint = `☀️ Sunny day! You have ${sprintsLeft} sprint${sprintsLeft === 1 ? "" : "s"} left in the budget.`;
   } else {
-    hint = "☁️ Cloudy day — save sprints for sunny days if you can.";
+    hint = "All sprints used. Climb steady from here.";
   }
 
   return `
     <section class="action-card card">
       <h3>YOUR MOVE</h3>
-      <p class="action-prompt">Pick climb or sprint →</p>
+      <p class="action-prompt">☀️ Sunny — pick climb or sprint.</p>
       ${actionButton(state, "climb")}
       ${actionButton(state, "sprint")}
       <p class="action-hint">${hint}</p>
@@ -340,34 +364,31 @@ function actionButton(state, action) {
 function tipFooter(state) {
   const recent = state.history.slice(-5).map((d) => {
     const emoji = ACTIONS[d.action].emoji;
-    return `<span class="chip">${emoji} ${d.altitudeGain}m</span>`;
+    const gainText = d.action === "rest" ? "—" : `${d.altitudeGain}m`;
+    return `<span class="chip">${emoji} ${gainText}</span>`;
   }).join("");
 
   const stillNeed = Math.max(0, SUMMIT - state.altitude);
-  const daysLeft = activeDaysRemaining(state);
+  const sunnyLeft = activeDaysRemaining(state);
   const sprintsLeft = sprintsRemaining(state);
 
-  // Strategic helper text
   let tipText;
   if (stillNeed === 0) {
     tipText = "Summit reached! Anything more is bonus altitude for stars.";
-  } else if (daysLeft === 0) {
-    tipText = "No active days left — the storms are running out the clock.";
+  } else if (sunnyLeft === 0) {
+    tipText = "No more sunny days left — the climb is over once the days run out.";
   } else if (sprintsLeft === 0) {
-    const climbsNeeded = Math.ceil(stillNeed / 50);
+    const climbsNeeded = Math.ceil(stillNeed / 70);
     tipText = `Need about ${climbsNeeded} more climb${climbsNeeded === 1 ? "" : "s"} to summit. Stay steady.`;
   } else {
-    const sunnyAhead = state.weather.slice(state.day - 1).filter(w => w === "sunny").length;
-    if (sunnyAhead > 0) {
-      tipText = `${sunnyAhead} sunny day${sunnyAhead === 1 ? "" : "s"} ahead. Save sprints for them if you can.`;
-    } else {
-      tipText = `No more sunny days. Sprint today if you have stamina to spare.`;
-    }
+    tipText = `${sunnyLeft} sunny day${sunnyLeft === 1 ? "" : "s"} left, ${sprintsLeft} sprint${sprintsLeft === 1 ? "" : "s"} you can still afford.`;
   }
 
   const lastResult = state.lastResult;
   const lastResultText = lastResult
-    ? `Last move (Day ${lastResult.day}): ${ACTIONS[lastResult.action].label.toLowerCase()} +${lastResult.altitudeGain}m.`
+    ? lastResult.action === "rest"
+      ? `Day ${lastResult.day} — Bug-Bug slept.`
+      : `Day ${lastResult.day} — ${ACTIONS[lastResult.action].label.toLowerCase()} +${lastResult.altitudeGain}m.`
     : "";
 
   return `
@@ -375,7 +396,7 @@ function tipFooter(state) {
       <div class="tip">
         <span class="label">STRATEGY TIP</span>
         <p class="tip-text">${tipText}</p>
-        <p class="tip-sub">${stillNeed}m to summit · ${daysLeft} active day${daysLeft === 1 ? "" : "s"} left · ${sprintsLeft} sprint${sprintsLeft === 1 ? "" : "s"} affordable. ${lastResultText}</p>
+        <p class="tip-sub">${stillNeed}m to summit · ${sunnyLeft} sunny day${sunnyLeft === 1 ? "" : "s"} ahead · ${sprintsLeft} sprint${sprintsLeft === 1 ? "" : "s"} affordable. ${lastResultText}</p>
       </div>
       <div class="recent">
         <span class="label">CLIMB SO FAR</span>
@@ -390,15 +411,15 @@ export function renderEnd(state) {
   const won = state.outcome === "win";
   const headline = won
     ? (state.stars === 3 ? "🏆 SUMMIT! 3 STARS" : state.stars === 2 ? "✨ SUMMIT REACHED" : "🚩 SUMMIT (BARELY)")
-    : "💤 SHORT OF THE SUMMIT";
+    : "💤 SLID BACK TO START";
   const sub = won
     ? `You reached <strong>${state.altitude}m</strong> in ${TOTAL_DAYS} days.`
-    : `You finished at <strong>${state.altitude}m</strong> — short of the ${SUMMIT}m summit.`;
+    : `You climbed to <strong>${state.peakAltitude}m</strong>, but didn't reach the ${SUMMIT}m summit. The line slid all the way back to zero — effort wasted!`;
   const stars = won ? "⭐".repeat(state.stars) + "☆".repeat(3 - state.stars) : "";
   const counts = countActions(state.history);
   const successMessage = won
-    ? `<p class="end-success">🎉 You just built a winning line chart!</p>`
-    : `<p class="end-success">Try again — sprint on more sunny days next time.</p>`;
+    ? `<p class="end-success">🎉 You completed a winning line chart! Both ends hooked.</p>`
+    : `<p class="end-success">A line chart only counts if it's hooked at both ends. Try again — spend sprints to bridge to the summit.</p>`;
   return `
     <div class="screen end-screen">
       <svg class="defs-only" aria-hidden="true">${gradientDefs()}</svg>
@@ -412,7 +433,7 @@ export function renderEnd(state) {
         <ul class="end-recap">
           <li>🥾 Climbed <strong>${counts.climb}</strong> ×</li>
           <li>⚡ Sprinted <strong>${counts.sprint}</strong> ×</li>
-          <li>⛈️ Storms ridden out: <strong>${counts.rest}</strong></li>
+          <li>💤 Slept <strong>${counts.rest}</strong> days</li>
         </ul>
         <div class="end-actions">
           <button class="primary-btn" data-action="new-game">🆕 NEW CLIMB</button>
