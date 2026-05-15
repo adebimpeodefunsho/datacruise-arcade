@@ -1,9 +1,24 @@
 /* ============================================================
-   DataCruise Arcade — Back-to-Arcade button
-   Self-contained: injected on load into each game's page.
-   Adds a floating top-left "← Arcade" pill linking to the hub.
+   DataCruise Arcade — shared script loaded by every game page
+     1. Injects the floating "← Arcade" back-to-hub button.
+     2. Loads Cloudflare Web Analytics (privacy-friendly, no cookies).
 ============================================================ */
 
+// ---- Cloudflare Web Analytics --------------------------------
+(function loadCfAnalytics() {
+  if (window.__cfBeaconLoaded) return;
+  window.__cfBeaconLoaded = true;
+  const s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute(
+    'data-cf-beacon',
+    '{"token": "b41ed92d610147e3bfc623898279857d"}'
+  );
+  (document.head || document.documentElement).appendChild(s);
+})();
+
+// ---- Back-to-Arcade button -----------------------------------
 (function () {
   if (window.__arcadeNavInjected) return;
   window.__arcadeNavInjected = true;
