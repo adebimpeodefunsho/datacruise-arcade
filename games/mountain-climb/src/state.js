@@ -235,27 +235,60 @@ export function advanceDay(state) {
     lastResult: dayResult,
   };
 
-  // Stamina exhausted → game ends immediately, slide back.
-  if (newStamina <= 0) {
-    return finishGame({ ...next, phase: "ended", outcome: "lose", stars: 0 });
-  }
-  // Completed day 7 with stamina remaining → win.
-  if (newDay > TOTAL_DAYS) {
+  // Hand off to finishGame if either game-end condition has been hit.
+  if (newStamina <= 0 || newDay > TOTAL_DAYS) {
     return finishGame(next);
   }
   return next;
 }
 
-/** Resolve win/lose and star count. */
+/**
+ * Resolve game outcome. Three terminal states:
+ *
+ *   1. Stamina ≤ 0 BEFORE day 7 is complete   → outcome "lose"
+ *   2. Stamina ≤ 0 AT day 7 (last day)         → outcome "win",
+ *                                                 exhaustedFinish=true,
+ *                                                 stars=0 (½-star vibe)
+ *   3. Day > 7 with stamina remaining          → outcome "win", stars 1-3
+ */
 export function finishGame(state) {
-  // Loss path is already set by advanceDay when stamina hits 0.
-  if (state.outcome === "lose") return state;
-  const survived = state.day > TOTAL_DAYS && state.stamina > 0;
-  if (!survived) return { ...state, phase: "ended", outcome: "lose", stars: 0 };
-  // Stars by how many hazards were taken (0 = perfect, 1 = solid, 2+ = barely).
-  const hazardsHit = STARTING_STAMINA - state.stamina;
-  let stars = 1;
-  if (hazardsHit === 0) stars = 3;
-  else if (hazardsHit === 1) stars = 2;
-  return { ...state, phase: "ended", outcome: "win", stars };
+  if (state.phase === "ended") return state; // already finalised
+  const completedAllDays = state.day > TOTAL_DAYS;
+  const stamina = state.stamina;
+
+  if (stamina <= 0 && !completedAllDays) {
+    return {
+      ...state,
+      phase: "ended",
+      outcome: "lose",
+      stars: 0,
+      exhaustedFinish: false,
+    };
+  }
+
+  if (stamina <= 0 && completedAllDays) {
+    return {
+      ...state,
+      phase: "ended",
+      outcome: "win",
+      stars: 0,
+      exhaustedFinish: true,
+    };
+  }
+
+  if (completedAllDays && stamina > 0) {
+    const hazardsHit = STARTING_STAMINA - stamina;
+    let stars = 1;
+    if (hazardsHit === 0) stars = 3;
+    else if (hazardsHit === 1) stars = 2;
+    return {
+      ...state,
+      phase: "ended",
+      outcome: "win",
+      stars,
+      exhaustedFinish: false,
+    };
+  }
+
+  return state;
 }

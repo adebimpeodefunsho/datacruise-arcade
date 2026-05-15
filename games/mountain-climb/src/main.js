@@ -78,7 +78,10 @@ function onClick(e) {
           if (state.outcome === "win") audio.playWin();
           else audio.playLose();
         }, 320);
-        if (state.outcome === "win" && state.stars > bestStars) {
+        // Exhausted finish counts as a win narratively but doesn't
+        // update the best-ever star tracker (so a real 1+ star run
+        // can still beat it).
+        if (state.outcome === "win" && !state.exhaustedFinish && state.stars > bestStars) {
           bestStars = state.stars;
           writeBestStars(bestStars);
         }

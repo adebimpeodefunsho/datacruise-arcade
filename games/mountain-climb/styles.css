@@ -1054,3 +1054,28 @@ button { font-family: inherit; cursor: pointer; }
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* Exhausted-finish trophy variant — slightly faded + softer badge */
+.victory-trophy.exhausted {
+  opacity: 0.85;
+}
+.victory-trophy.exhausted .badge-bg {
+  fill: #f4a261;
+}
+.victory-trophy.exhausted .badge-text {
+  fill: #5a1f00;
+}
+
+/* Half-star badge on the end screen */
+.exhausted-badge {
+  display: inline-block;
+  background: #f4a261;
+  color: #5a1f00;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 2.5px solid var(--text-strong);
+  box-shadow: 0 3px 0 0 var(--text-strong);
+  font-size: 14px;
+}

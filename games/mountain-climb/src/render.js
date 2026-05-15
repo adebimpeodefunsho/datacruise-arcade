@@ -228,13 +228,16 @@ function chartSVG(state) {
   // Victory trophy — appears at Bug-Bug's final landing dot on a win,
   // with the total altitude reached labelled underneath. Higher
   // landings carry the trophy + label higher up the chart.
+  // Exhausted finishes (stamina 0 on day 7) still show a trophy but
+  // with a wilted / faded variant.
   let victoryTrophy = "";
   if (state.phase === "ended" && state.outcome === "win" && state.history.length > 0) {
     const last = state.history[state.history.length - 1];
     const x = xFor(last.day);
     const y = yFor(last.altitudeAfter);
+    const cls = state.exhaustedFinish ? "victory-trophy exhausted" : "victory-trophy";
     victoryTrophy = `
-      <g class="victory-trophy" transform="translate(${x} ${y - 50})">
+      <g class="${cls}" transform="translate(${x} ${y - 50})">
         ${trophy(1.0)}
         <g class="victory-altitude-badge" transform="translate(0 32)">
           <rect x="-44" y="-14" width="88" height="26" rx="13" class="badge-bg"/>
@@ -410,17 +413,49 @@ function tipFooter(state) {
 
 export function renderEnd(state) {
   const won = state.outcome === "win";
-  const headline = won
-    ? (state.stars === 3 ? "🏆 PERFECT CLIMB — 3 STARS" : state.stars === 2 ? "✨ SUMMIT REACHED — 2 STARS" : "🚩 SUMMIT (BARELY)")
-    : "💔 OUT OF STAMINA";
-  const sub = won
-    ? `You survived all ${TOTAL_DAYS} days and finished at <strong>${state.altitude}m</strong> with <strong>${state.stamina} stamina</strong> left.`
-    : `Bug-Bug ran out of stamina on day ${state.day - 1} at <strong>${state.altitude}m</strong>. The climb ends here.`;
-  const stars = won ? "⭐".repeat(state.stars) + "☆".repeat(3 - state.stars) : "";
+  const exhausted = won && state.exhaustedFinish === true;
+
+  let headline;
+  if (exhausted) {
+    headline = "💪 EXHAUSTED FINISH";
+  } else if (won) {
+    headline = state.stars === 3
+      ? "🏆 PERFECT CLIMB — 3 STARS"
+      : state.stars === 2
+        ? "✨ SUMMIT REACHED — 2 STARS"
+        : "🚩 SUMMIT (BARELY)";
+  } else {
+    headline = "💔 OUT OF STAMINA";
+  }
+
+  let sub;
+  if (exhausted) {
+    sub = `Bug-Bug pushed all the way to <strong>${state.altitude}m</strong>, then collapsed at the finish line. You technically made it!`;
+  } else if (won) {
+    sub = `You survived all ${TOTAL_DAYS} days and finished at <strong>${state.altitude}m</strong> with <strong>${state.stamina} stamina</strong> left.`;
+  } else {
+    sub = `Bug-Bug ran out of stamina on day ${state.day - 1} at <strong>${state.altitude}m</strong>. The climb ends here.`;
+  }
+
+  let stars;
+  if (exhausted) {
+    stars = `<span class="exhausted-badge">💪 ½★ FINISH</span>`;
+  } else if (won) {
+    stars = "⭐".repeat(state.stars) + "☆".repeat(3 - state.stars);
+  } else {
+    stars = "";
+  }
+
   const counts = countOutcomes(state.history);
-  const successMessage = won
-    ? `<p class="end-success">🎉 You hooked the line chart at both ends. Stars: ${state.stars} of 3.</p>`
-    : `<p class="end-success">Try again — the cards and weather shuffle every game.</p>`;
+
+  let successMessage;
+  if (exhausted) {
+    successMessage = `<p class="end-success">Half star earned. Bug-Bug collapsed at the summit — try again for a full ⭐ run.</p>`;
+  } else if (won) {
+    successMessage = `<p class="end-success">🎉 You hooked the line chart at both ends. Stars: ${state.stars} of 3.</p>`;
+  } else {
+    successMessage = `<p class="end-success">Try again — the cards and weather shuffle every game.</p>`;
+  }
   return `
     <div class="screen end-screen">
       <svg class="defs-only" aria-hidden="true">${gradientDefs()}</svg>
