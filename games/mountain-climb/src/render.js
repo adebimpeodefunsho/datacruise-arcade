@@ -23,7 +23,8 @@ const WEATHER_GLYPH = {
 // ---------- Title screen ----------
 
 export function renderTitle(bestStars) {
-  const stars = bestStars > 0 ? `⭐`.repeat(bestStars) : "—";
+  // Always show 3 star slots — earned stars filled (⭐), the rest empty (☆).
+  const stars = "⭐".repeat(bestStars) + "☆".repeat(3 - bestStars);
   return `
     <div class="screen title-screen">
       <div class="title-card">
