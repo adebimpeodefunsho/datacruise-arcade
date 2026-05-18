@@ -15,7 +15,6 @@
     "nodejs_compat"
   ],
   "vars": {
-    "LEMONSQUEEZY_STORE_ID": "375568",
-    "LEMONSQUEEZY_PRODUCT_ID": "1058410"
+    "GUMROAD_PRODUCT_ID": "wxahk"
   }
 }

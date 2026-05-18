@@ -60,18 +60,17 @@ A pack of 10 browser games that teach the **feel** of data — chart-building an
 
 Hosted on **Cloudflare Workers Static Assets**. On push to `main`, Cloudflare rebuilds and serves:
 - Static files from the repo root (via the `ASSETS` binding)
-- `POST /api/validate-license` via the Worker at `src/worker.js`, which proxies to Lemon Squeezy's license API
+- `POST /api/validate-license` via the Worker at `src/worker.js`, which proxies to Gumroad's license-verify API
 
-The Worker needs three environment variables set in the Cloudflare dashboard
-(**Workers & Pages → datacruise-arcade → Settings → Variables and Secrets**):
+The Worker reads a single environment variable, declared in `wrangler.jsonc`:
 
 | Variable | Type | Value |
 |---|---|---|
-| `LEMONSQUEEZY_API_KEY` | **Secret** | The API key from LS → Settings → API |
-| `LEMONSQUEEZY_STORE_ID` | Plain text | `375568` (also baked into `wrangler.jsonc`) |
-| `LEMONSQUEEZY_PRODUCT_ID` | Plain text | `1058410` (also baked into `wrangler.jsonc`) |
+| `GUMROAD_PRODUCT_ID` | Plain text | `wxahk` (Gumroad product permalink) |
 
-The two plain-text variables are also declared in `wrangler.jsonc` so they're committed to source. Only the API key needs to be added in the dashboard as a secret.
+No secret / API key is needed — Gumroad's licence-verify endpoint is unauthenticated and only matches keys against the named product. The variable is baked into `wrangler.jsonc` so it deploys automatically with every push; nothing has to be set in the Cloudflare dashboard.
+
+Payments are handled by **Gumroad** (https://datacruise.gumroad.com/l/wxahk). Each sale auto-generates a unique licence key, which Gumroad emails to the buyer. The buyer pastes the key into the hub's unlock modal, the Worker confirms it with Gumroad, and the six paid games unlock on that device.
 
 Each `games/<slug>/` folder is a self-contained game (`index.html` plus its own assets). The only addition to each game's `index.html` is one line that loads `/shared/arcade-nav.js`, which injects a floating "← Arcade" pill linking back to the hub.
 
@@ -121,7 +120,7 @@ The arcade-nav `<script>` line in each game's `index.html` should be preserved �
 
 ## Roadmap
 
-- Freemium gate: free trial of 2 games per series + one-time unlock for the rest, via Lemon Squeezy + a Cloudflare Worker for license-key validation.
+- Freemium gate: free trial of 2 games per series + one-time unlock for the rest, via Gumroad + a Cloudflare Worker for license-key validation.
 - Per-game progress / stars saved in `localStorage`.
 - A scoreboard / replay feature.
 - More games — both series are designed to grow.
