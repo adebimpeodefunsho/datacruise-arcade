@@ -15,6 +15,9 @@
     "nodejs_compat"
   ],
   "vars": {
-    "GUMROAD_PRODUCT_ID": "wxahk"
+    // UNLOCK_CODE is intentionally NOT here — it's set as an encrypted
+    // secret in the Cloudflare dashboard (Workers & Pages → datacruise-arcade
+    // → Settings → Variables and Secrets) so it stays out of the public
+    // git repo.
   }
 }

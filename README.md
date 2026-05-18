@@ -60,17 +60,19 @@ A pack of 10 browser games that teach the **feel** of data — chart-building an
 
 Hosted on **Cloudflare Workers Static Assets**. On push to `main`, Cloudflare rebuilds and serves:
 - Static files from the repo root (via the `ASSETS` binding)
-- `POST /api/validate-license` via the Worker at `src/worker.js`, which proxies to Gumroad's license-verify API
+- `POST /api/validate-license` via the Worker at `src/worker.js`, which compares the submitted code against a shared `UNLOCK_CODE` secret
 
-The Worker reads a single environment variable, declared in `wrangler.jsonc`:
+The Worker reads a single environment variable, set in the Cloudflare dashboard as an encrypted secret (**Workers & Pages → datacruise-arcade → Settings → Variables and Secrets**):
 
 | Variable | Type | Value |
 |---|---|---|
-| `GUMROAD_PRODUCT_ID` | Plain text | `wxahk` (Gumroad product permalink) |
+| `UNLOCK_CODE` | **Secret** (encrypted) | The shared code every buyer receives in their Gumroad welcome.txt |
 
-No secret / API key is needed — Gumroad's licence-verify endpoint is unauthenticated and only matches keys against the named product. The variable is baked into `wrangler.jsonc` so it deploys automatically with every push; nothing has to be set in the Cloudflare dashboard.
+Matching is **case-insensitive** and **whitespace-tolerant** so buyers who mis-capitalise or add extra spaces still unlock.
 
-Payments are handled by **Gumroad** (https://datacruise.gumroad.com/l/wxahk). Each sale auto-generates a unique licence key, which Gumroad emails to the buyer. The buyer pastes the key into the hub's unlock modal, the Worker confirms it with Gumroad, and the six paid games unlock on that device.
+Payments are handled by **Gumroad** (https://datacruise.gumroad.com/l/wxahk). On purchase Gumroad delivers a welcome.txt file containing the unlock code to the buyer. The buyer pastes the code into the hub's unlock modal, the Worker compares it (normalised) against the `UNLOCK_CODE` secret, and the six paid games unlock on that device.
+
+> **Earlier design (now retired):** We initially tried Lemon Squeezy with per-buyer licence keys, then switched to Gumroad after LS rejected the seller's identity verification. Gumroad's `/v2/licenses/verify` endpoint returned "license does not exist" for legitimately-issued Gumroad keys (cause unclear, support ticket pending). Rather than block launch, we moved to a single shared unlock code. Rotating it is a one-line Cloudflare secret update, so if it ever leaks we can roll forward in seconds.
 
 Each `games/<slug>/` folder is a self-contained game (`index.html` plus its own assets). The only addition to each game's `index.html` is one line that loads `/shared/arcade-nav.js`, which injects a floating "← Arcade" pill linking back to the hub.
 
