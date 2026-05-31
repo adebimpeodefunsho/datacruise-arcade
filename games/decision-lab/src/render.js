@@ -6,6 +6,12 @@ import {
 import { ROUNDS } from './questions.js';
 import { renderChart } from './charts.js';
 import { capsule, logoMark, bug } from './svg.js';
+import { isMuted } from './audio.js';
+
+function muteButton() {
+  const m = isMuted();
+  return `<button class="mute-btn" data-action="toggle-mute" title="${m ? 'Sound off — click to enable' : 'Sound on — click to mute'}">${m ? '🔇' : '🔊'}</button>`;
+}
 
 // ---------- Top-level dispatch ----------
 
@@ -136,6 +142,7 @@ function headerBar(state) {
         <span class="label">TIME</span>
         <strong>${state.timer}s</strong>
       </div>
+      ${muteButton()}
     </header>`;
 }
 
@@ -186,7 +193,7 @@ function podPanel(state, q, mood = 'neutral') {
           ${state.typedAnswer ? escapeHtml(state.typedAnswer) : 'awaiting input...'}
         </div>
       </div>
-      <div class="capsule-wrap">
+      <div class="capsule-wrap capsule-${mood}">
         ${capsule(220, 280, mood)}
       </div>
       <div class="answer-input-area">

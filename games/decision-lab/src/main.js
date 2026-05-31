@@ -3,9 +3,10 @@
 
 import {
   createGame, startGame, beginRound, tickTimer, submitAnswer,
-  continueFromReveal, advanceFromRoundEnd, setTypedAnswer,
+  continueFromReveal, advanceFromRoundEnd, setTypedAnswer, didWin,
 } from './state.js';
 import { render } from './render.js';
+import * as audio from './audio.js';
 
 const app = document.getElementById('app');
 
@@ -38,11 +39,11 @@ function onClick(e) {
       return;
     case 'pick-mc':
       state = setTypedAnswer(state, target.getAttribute('data-value') || '');
+      audio.playPick();
       paint();
       return;
     case 'submit-answer':
-      state = submitAnswer(state);
-      paint();
+      handleSubmit();
       return;
     case 'continue-from-reveal':
       state = continueFromReveal(state);
@@ -50,13 +51,30 @@ function onClick(e) {
       return;
     case 'advance-round':
       state = advanceFromRoundEnd(state);
+      if (state.phase === 'ended') {
+        if (didWin(state)) audio.playGameWin();
+        else audio.playGameLose();
+      }
       paint();
       return;
     case 'restart':
       state = createGame();
       paint();
       return;
+    case 'toggle-mute':
+      audio.setMuted(!audio.isMuted());
+      paint();
+      return;
   }
+}
+
+function handleSubmit() {
+  state = submitAnswer(state);
+  if (state.phase === 'reveal') {
+    if (state.lastResult?.correct) audio.playCorrect();
+    else audio.playWrong();
+  }
+  paint();
 }
 
 // ---------- typed input (numeric / free text) ----------
@@ -72,8 +90,7 @@ function onInput(e) {
 function onSubmit(e) {
   if (e.target.matches('[data-answer-form]')) {
     e.preventDefault();
-    state = submitAnswer(state);
-    paint();
+    handleSubmit();
   }
 }
 
@@ -92,11 +109,18 @@ function ensureTimerRunning() {
   if (timerInterval) return;
   timerInterval = setInterval(() => {
     if (state.phase === 'question') {
+      const prevTimer = state.timer;
       state = tickTimer(state);
-      // If submitAnswer fired from timeout, repaint full screen
       if (state.phase !== 'question') {
+        // submitAnswer fired from timeout — full repaint + reveal sound
+        if (state.lastResult?.correct) audio.playCorrect();
+        else audio.playWrong();
         paint();
       } else {
+        // Tick sound for the last 5 seconds
+        if (state.timer <= 5 && state.timer >= 1 && state.timer !== prevTimer) {
+          audio.playTick();
+        }
         syncTimerOnly();
       }
     } else {
@@ -114,11 +138,28 @@ function stopTimer() {
 // ---------- render ----------
 
 function paint() {
+  const enteringRoundEnd = state.phase === 'round-end' && lastPhase !== 'round-end';
   app.innerHTML = render(state);
   lastPhase = state.phase;
+
+  // Play round-end fanfare on transition
+  if (enteringRoundEnd) {
+    const last = state.roundScores[state.roundScores.length - 1];
+    if (last?.passed) audio.playRoundWin();
+    else audio.playRoundFail();
+    // Animate the score-fill bar into its final width
+    requestAnimationFrame(() => {
+      const fill = app.querySelector('.end-score-fill');
+      if (fill) {
+        const target = fill.style.width;
+        fill.style.width = '0%';
+        requestAnimationFrame(() => { fill.style.width = target; });
+      }
+    });
+  }
+
   if (state.phase === 'question') {
     ensureTimerRunning();
-    // Auto-focus input for typing-style questions
     const input = app.querySelector('[data-answer-input]');
     if (input) {
       setTimeout(() => { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 30);
