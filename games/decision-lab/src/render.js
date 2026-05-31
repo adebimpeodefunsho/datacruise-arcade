@@ -1,8 +1,9 @@
 // Decision Lab — render functions. Each returns an HTML string for #app.
 
 import {
-  ROUNDS, TOTAL_ROUNDS, currentRound, currentQuestion, overallPercent, didWin,
+  TOTAL_ROUNDS, currentRound, currentQuestion, overallPercent, didWin,
 } from './state.js';
+import { ROUNDS } from './questions.js';
 import { renderChart } from './charts.js';
 import { capsule, logoMark, bug } from './svg.js';
 
