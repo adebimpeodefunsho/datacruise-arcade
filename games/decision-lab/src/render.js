@@ -170,15 +170,11 @@ function bigScreen(state, round, q, qIndex, total) {
 }
 
 function renderRevealBanner(result, q) {
-  const correctText = formatAnswerForDisplay(q, q.correctAnswer);
+  // The ✓/✗ + correct answer now live on the right-hand answer-display panel.
+  // The big-screen banner now just shows the educational explanation.
   return `
     <div class="reveal-banner ${result.correct ? 'correct' : 'wrong'}">
-      <div class="reveal-headline">
-        ${result.correct ? '✓ CORRECT' : '✗ WRONG'}
-      </div>
-      <div class="reveal-correct">
-        Correct answer: <strong>${escapeHtml(correctText)}</strong>
-      </div>
+      <span class="reveal-banner-label">WHY?</span>
       <div class="reveal-explanation">${escapeHtml(q.explanation || '')}</div>
     </div>`;
 }
@@ -187,12 +183,7 @@ function podPanel(state, q, mood = 'neutral') {
   // The right-hand "pod" area: small screen above the capsule + answer entry below.
   return `
     <aside class="pod-panel">
-      <div class="answer-display">
-        <span class="label">ANSWER</span>
-        <div class="answer-text ${state.typedAnswer ? '' : 'placeholder'}">
-          ${state.typedAnswer ? escapeHtml(state.typedAnswer) : 'awaiting input...'}
-        </div>
-      </div>
+      ${renderAnswerDisplay(state, q)}
       <div class="capsule-wrap capsule-${mood}">
         ${capsule(220, 280, mood)}
       </div>
@@ -200,6 +191,29 @@ function podPanel(state, q, mood = 'neutral') {
         ${renderAnswerInput(state, q)}
       </div>
     </aside>`;
+}
+
+function renderAnswerDisplay(state, q) {
+  // On reveal: the small screen flips to show ✓/✗ + the final correct answer.
+  if (state.phase === 'reveal' && state.lastResult) {
+    const result = state.lastResult;
+    const correctText = formatAnswerForDisplay(q, q.correctAnswer);
+    return `
+      <div class="answer-display reveal ${result.correct ? 'correct' : 'wrong'}">
+        <span class="label">${result.correct ? '✓ CORRECT' : '✗ WRONG'}</span>
+        <div class="answer-text reveal-answer">
+          ${escapeHtml(correctText)}
+        </div>
+      </div>`;
+  }
+  // Question phase: shows what the player has typed (or the placeholder).
+  return `
+    <div class="answer-display">
+      <span class="label">ANSWER</span>
+      <div class="answer-text ${state.typedAnswer ? '' : 'placeholder'}">
+        ${state.typedAnswer ? escapeHtml(state.typedAnswer) : 'awaiting input...'}
+      </div>
+    </div>`;
 }
 
 function renderAnswerInput(state, q) {
@@ -214,6 +228,7 @@ function renderAnswerInput(state, q) {
   if (q.type === 'multiple_choice') {
     return `
       <div class="mc-options">
+        <span class="input-label">Enter your answer ↓</span>
         ${q.options.map((opt) => `
           <button class="mc-btn ${state.typedAnswer === opt ? 'selected' : ''}"
                   data-action="pick-mc"
@@ -235,6 +250,7 @@ function renderAnswerInput(state, q) {
     : 'type your answer…';
   return `
     <form class="answer-form" data-answer-form>
+      <span class="input-label">Enter your answer ↓</span>
       <input
         type="text"
         class="answer-input"

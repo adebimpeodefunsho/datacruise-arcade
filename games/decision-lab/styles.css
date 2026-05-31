@@ -249,29 +249,30 @@ button { font-family: inherit; }
 .question-counter { font-size: 12px; font-weight: 800; color: var(--muted); }
 .question-prompt { margin: 0; font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
 
-/* Reveal banner inside the big screen */
+/* Reveal banner on the big screen — now just the educational explanation
+   (the ✓/✗ + correct answer moved to the right-hand answer-display panel). */
 .reveal-banner {
   border: 3px solid var(--line);
   border-radius: 12px;
   padding: 14px 18px;
-  animation: reveal-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: banner-fade 0.4s ease-out;
 }
 .reveal-banner.correct { background: #d8f3dc; }
-.reveal-banner.wrong { background: #ffd6d6; }
-.reveal-headline {
-  font-size: 22px;
+.reveal-banner.wrong   { background: #ffd6d6; }
+.reveal-banner-label {
+  display: block;
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.15em;
+  color: var(--ink);
   margin-bottom: 6px;
 }
-.reveal-banner.correct .reveal-headline { color: var(--green-dk); }
-.reveal-banner.wrong .reveal-headline { color: var(--red-dk); }
-.reveal-correct { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-.reveal-explanation { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
-@keyframes reveal-pop {
-  0%   { transform: scale(0.92); opacity: 0; }
-  60%  { transform: scale(1.04); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+.reveal-banner.correct .reveal-banner-label { color: var(--green-dk); }
+.reveal-banner.wrong   .reveal-banner-label { color: var(--red-dk); }
+.reveal-explanation { font-size: 14px; color: var(--ink); line-height: 1.5; }
+@keyframes banner-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ===================== RIGHT: POD PANEL ===================== */
@@ -289,6 +290,7 @@ button { font-family: inherit; }
   border-radius: 14px;
   padding: 14px 16px;
   box-shadow: 0 6px 0 0 var(--line);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 .answer-display .label {
   display: block;
@@ -312,6 +314,52 @@ button { font-family: inherit; }
   text-shadow: 0 0 4px rgba(52, 211, 153, 0.5);
 }
 .answer-text.placeholder { color: #666; text-shadow: none; font-style: italic; }
+
+/* Reveal state — small screen flips colour to show right/wrong + final answer */
+.answer-display.reveal {
+  animation: reveal-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.answer-display.reveal.correct {
+  background: #064e3b;
+  border-color: var(--green-dk);
+  box-shadow: 0 6px 0 0 var(--green-dk);
+}
+.answer-display.reveal.wrong {
+  background: #7f1d1d;
+  border-color: var(--red-dk);
+  box-shadow: 0 6px 0 0 var(--red-dk);
+}
+.answer-display.reveal .label {
+  font-size: 14px;
+  color: #fff;
+}
+.answer-display.reveal.correct .label { color: #a7f3d0; }
+.answer-display.reveal.wrong   .label { color: #fecaca; }
+.answer-text.reveal-answer {
+  font-size: 17px;
+  font-weight: 900;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  font-family: var(--font);
+  letter-spacing: 0.01em;
+}
+@keyframes reveal-pop {
+  0%   { transform: scale(0.96); }
+  60%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* "Enter your answer ↓" label above the input area */
+.input-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--orange-dk);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
 
 /* The capsule + Bug-Bug animations */
 .capsule-wrap {
