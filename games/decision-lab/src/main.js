@@ -30,10 +30,15 @@ function onClick(e) {
 
   switch (action) {
     case 'start':
+      // Unlock the AudioContext on the very first user gesture so all
+      // subsequent sounds play reliably (browsers block audio until
+      // they see a click).
+      audio.unlock();
       state = startGame(state);
       paint();
       return;
     case 'begin-round':
+      audio.unlock(); // belt-and-braces in case the user disables sound at title and re-enables
       state = beginRound(state);
       paint();
       return;
