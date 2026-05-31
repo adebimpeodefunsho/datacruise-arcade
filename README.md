@@ -1,6 +1,6 @@
 # DataCruise Arcade
 
-A pack of 10 browser games that teach the **feel** of data — chart-building and word puzzles, no install, no accounts. Built as plain HTML/CSS/ES-module JavaScript so it can be hosted as a static site anywhere.
+A pack of 11 browser games that teach the **feel** of data — chart-building, word puzzles, and a data-analysis quiz. No install, no accounts. Built as plain HTML/CSS/ES-module JavaScript so it can be hosted as a static site anywhere.
 
 ## What's in the pack
 

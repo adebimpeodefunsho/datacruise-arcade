@@ -1,7 +1,7 @@
 {
   "name": "DataCruise Arcade",
   "short_name": "Arcade",
-  "description": "Ten little browser games that teach the feel of data — chart-building, word puzzles, and more.",
+  "description": "Eleven little browser games that teach the feel of data — chart-building, word puzzles, decision-making quiz, and more.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
