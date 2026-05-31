@@ -14,7 +14,7 @@
   // ---------- catalogue: edit free/paid here -----------------
   const CATALOGUE = {
     free: ['mountain-climb', 'block-city', 'derive-jargon', 'sentence-builder'],
-    paid: ['pie-spinner', 'bubble-catcher', 'dashboard-drop', 'data-crossword', 'scrub-mess', 'data-hunt'],
+    paid: ['pie-spinner', 'bubble-catcher', 'dashboard-drop', 'data-crossword', 'scrub-mess', 'data-hunt', 'decision-lab'],
   };
 
   // ---------- config -----------------------------------------
@@ -97,7 +97,7 @@
         meta.classList.add('is-unlocked');
       } else {
         if (icon) icon.textContent = '🔓';
-        if (text) text.textContent = '4 games free · 6 unlocked with the full pack';
+        if (text) text.textContent = '4 games free · 7 unlocked with the full pack';
         if (action) {
           action.textContent = 'Unlock the full pack';
           action.classList.remove('is-unlocked');

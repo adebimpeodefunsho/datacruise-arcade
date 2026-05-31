@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="Bug-Bug in a lab capsule next to a quiz board with a bar chart and a tick">
+  <rect width="320" height="180" fill="#fff8d6"/>
+
+  <!-- Big screen on the left -->
+  <rect x="14" y="22" width="200" height="138" rx="10" fill="#1c1f33" stroke="#0e0e10" stroke-width="3"/>
+  <rect x="22" y="30" width="184" height="122" rx="6" fill="#fff"/>
+
+  <!-- Mini bar chart inside the screen -->
+  <g stroke="#0e0e10" stroke-width="2">
+    <rect x="36" y="100" width="20" height="34" fill="#ff6a00"/>
+    <rect x="62" y="78"  width="20" height="56" fill="#ffc94d"/>
+    <rect x="88" y="62"  width="20" height="72" fill="#0ea5a4"/>
+    <rect x="114" y="86" width="20" height="48" fill="#a78bfa"/>
+    <rect x="140" y="74" width="20" height="60" fill="#dc2626"/>
+  </g>
+  <line x1="32" y1="134" x2="180" y2="134" stroke="#0e0e10" stroke-width="2"/>
+
+  <!-- Question text mock -->
+  <rect x="32" y="40" width="140" height="6" rx="2" fill="#0e0e10"/>
+  <rect x="32" y="50" width="110" height="6" rx="2" fill="#6b6b73"/>
+
+  <!-- Tick badge -->
+  <circle cx="186" cy="42" r="11" fill="#34d399" stroke="#0e0e10" stroke-width="2.5"/>
+  <path d="M 180 42 L 184 46 L 191 38" stroke="#0e0e10" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Pod on the right -->
+  <!-- Small answer screen above pod -->
+  <rect x="232" y="22" width="74" height="22" rx="4" fill="#1c1f33" stroke="#0e0e10" stroke-width="2"/>
+  <text x="269" y="38" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" font-weight="800" fill="#34d399">8.4</text>
+
+  <!-- Capsule -->
+  <rect x="232" y="52" width="74" height="108" rx="37" fill="#fff" stroke="#0e0e10" stroke-width="3"/>
+  <rect x="237" y="57" width="64" height="98" rx="32" fill="#fff8f1"/>
+
+  <!-- Bug-Bug in capsule -->
+  <g transform="translate(269 100)">
+    <!-- antennae -->
+    <line x1="-5" y1="-14" x2="-8" y2="-21" stroke="#0e0e10" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="5"  y1="-14" x2="8"  y2="-21" stroke="#0e0e10" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="-8" cy="-21" r="2" fill="#0e0e10"/>
+    <circle cx="8"  cy="-21" r="2" fill="#0e0e10"/>
+    <!-- body -->
+    <ellipse cx="0" cy="0" rx="14" ry="13" fill="#ff6a00" stroke="#0e0e10" stroke-width="2"/>
+    <line x1="0" y1="-13" x2="0" y2="13" stroke="#0e0e10" stroke-width="1.5"/>
+    <circle cx="-6" cy="-3" r="1.8" fill="#0e0e10"/>
+    <circle cx="6"  cy="-3" r="1.8" fill="#0e0e10"/>
+    <circle cx="-5" cy="5"  r="1.6" fill="#0e0e10"/>
+    <circle cx="5"  cy="5"  r="1.6" fill="#0e0e10"/>
+    <!-- face -->
+    <ellipse cx="0" cy="-8" rx="9" ry="6" fill="#ffd8a8" stroke="#0e0e10" stroke-width="1.5"/>
+    <circle cx="-3" cy="-9" r="1" fill="#0e0e10"/>
+    <circle cx="3"  cy="-9" r="1" fill="#0e0e10"/>
+  </g>
+
+  <!-- Panel lights at bottom of capsule -->
+  <circle cx="252" cy="148" r="3" fill="#ff6a00" stroke="#0e0e10" stroke-width="1.5"/>
+  <circle cx="269" cy="148" r="3" fill="#ffc94d" stroke="#0e0e10" stroke-width="1.5"/>
+  <circle cx="286" cy="148" r="3" fill="#0ea5a4" stroke="#0e0e10" stroke-width="1.5"/>
+</svg>
