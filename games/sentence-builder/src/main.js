@@ -370,8 +370,9 @@ function renderControls() {
       }),
       el('button', {
         class: 'btn',
-        text: ready ? 'Submit round' : 'Fill all slots',
+        text: 'Submit round',
         disabled: !ready,
+        title: ready ? '' : 'Fill every slot before you can submit',
         onClick: () => submitRound(false),
       }),
     ]);
