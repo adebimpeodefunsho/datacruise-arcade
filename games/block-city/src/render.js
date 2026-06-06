@@ -122,7 +122,7 @@ export function renderGameShell(state) {
     <div class="topbar">
       <div class="title">${d.emoji} ${d.label}</div>
       <div class="carry-pill" id="carry-pill">
-        <span class="carry-label">CARRYING (max ${CARRY_MAX})</span>
+        <span class="carry-label">BUG-BUG CARRYING</span>
         <span class="carry-slots" id="carry-slots">
           ${Array.from({length: CARRY_MAX}).map(() => `<span class="slot"></span>`).join("")}
         </span>
@@ -132,6 +132,10 @@ export function renderGameShell(state) {
       <div class="timer" id="timer">0:${String(Math.floor(d.timeLimitMs/1000)).padStart(2,"0")}</div>
     </div>
     <div class="stage">
+      <div class="max-warning" id="max-warning" aria-live="polite">
+        <span class="max-warning-icon">⚠</span>
+        BUG-BUG IS FULL (${CARRY_MAX} / ${CARRY_MAX}) — DROP NOW!
+      </div>
       <svg viewBox="0 0 ${VIEW.W} ${VIEW.H}" preserveAspectRatio="xMidYMid meet" id="stage-svg">
         <rect x="0" y="0" width="${VIEW.W}" height="${VIEW.H}" fill="#FFFFFF"/>
         <rect x="${AXIS_W}" y="${TOP_Y - 40}" width="${VIEW.W - AXIS_W - 20}" height="${GROUND_Y - TOP_Y + 60}" fill="#FAF4D6"/>
@@ -254,9 +258,7 @@ function renderDropButtons(state) {
     g += `<g class="drop-button" data-action="drop:${i}" transform="translate(${cx}, ${cy})">
       <g class="drop-bounce">
         <rect class="drop-bg" x="-82" y="-18" width="164" height="36" rx="14"/>
-        <text class="drop-glyph" x="14" y="6">CLICK TO DROP</text>
-        <circle class="drop-keynum-bg" cx="-66" cy="0" r="12"/>
-        <text class="drop-keynum" x="-66" y="5">${i + 1}</text>
+        <text class="drop-glyph" x="0" y="6">CLICK TO DROP</text>
       </g>
     </g>`;
   }
@@ -306,6 +308,10 @@ export function patchGame(state) {
     svg.classList.toggle("has-carry", state.carried > 0);
     svg.classList.toggle("max-carry", state.carried >= CARRY_MAX);
   }
+
+  // Banner warning when Bug-Bug is at max load
+  const maxWarn = document.getElementById("max-warning");
+  if (maxWarn) maxWarn.classList.toggle("show", state.carried >= CARRY_MAX);
 
   patchGroup("stacks", renderStacks(state.targets, state.built));
   patchGroup("targets", renderTargets(state.targets, state.built));

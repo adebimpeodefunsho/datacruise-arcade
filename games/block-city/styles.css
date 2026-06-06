@@ -256,8 +256,8 @@ button.ghost {
   letter-spacing: 1px;
   transition: background 160ms ease, transform 120ms ease;
 }
-.carry-pill .carry-label { opacity: 0.85; font-weight: 800; }
-.carry-pill .carry-num { font-variant-numeric: tabular-nums; font-size: 16px; min-width: 44px; }
+.carry-pill .carry-label { opacity: 0.9; font-weight: 800; font-size: 12px; }
+.carry-pill .carry-num { font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 900; min-width: 56px; }
 .carry-slots { display: inline-flex; gap: 4px; }
 .carry-slots .slot {
   width: 18px;
@@ -356,9 +356,39 @@ button.ghost {
 .drop-bg { fill: var(--orange); stroke: var(--ink); stroke-width: 3; }
 .drop-button:hover .drop-bg { fill: #FF8035; }
 .drop-glyph { fill: var(--ink); font: 900 14px "Fredoka", sans-serif; text-anchor: middle; letter-spacing: 1px; }
-.drop-keynum-bg { fill: var(--ink); stroke: var(--paper); stroke-width: 2; }
-.drop-keynum { fill: var(--paper); font: 900 14px "Fredoka", sans-serif; text-anchor: middle; }
 .stage svg.max-carry .drop-bg { fill: var(--gold); }
+
+/* Max-load warning banner — appears when Bug-Bug is at CARRY_MAX */
+.max-warning {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: linear-gradient(180deg, #FF3030 0%, #B30000 100%);
+  color: #FFFFFF;
+  font: 900 18px "Fredoka", sans-serif;
+  letter-spacing: 1.5px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.max-warning .max-warning-icon { font-size: 22px; }
+.max-warning.show {
+  opacity: 1;
+  animation: max-warning-pulse 0.6s ease-in-out infinite;
+}
+@keyframes max-warning-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.06); }
+}
 
 .demolish-btn { cursor: pointer; }
 .demolish-bg { fill: #FF3D3D; stroke: var(--ink); stroke-width: 2.5; }
