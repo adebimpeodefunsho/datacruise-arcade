@@ -159,6 +159,23 @@ function clearAll() {
   render();
 }
 
+/**
+ * Clear a single placed answer — returns just that one word to the bank.
+ * Triggered by the small × button rendered inside each filled slot.
+ */
+function clearSlot(rowId, slotIdx) {
+  if (state.status !== 'playing') return;
+  const row = state.sentences[rowId];
+  const word = row.slots[slotIdx];
+  if (!word) return;
+  row.slots[slotIdx] = null;
+  word.location = 'bank';
+  state.bank.push(word);
+  if (state.selectedWordId === word.id) state.selectedWordId = null;
+  sfx.returnToBank();
+  render();
+}
+
 function submitRound(viaTimeout = false) {
   if (state.status !== 'playing') return;
   if (state.timer) { clearInterval(state.timer); state.timer = null; }
@@ -269,11 +286,22 @@ function renderRow(s, idx) {
         + (filled ? 'filled' : 'empty')
         + (state.selectedWordId && !filled ? ' target' : '')
         + (isSelected ? ' selected' : '');
+      const children = filled
+        ? [
+            el('span', { class: 'slot-text', text: w.text }),
+            el('button', {
+              class: 'slot-clear',
+              title: 'Clear this answer',
+              'aria-label': 'Clear this answer',
+              text: '×',
+              onClick: (e) => { e.stopPropagation(); clearSlot(s.rowId, i); },
+            }),
+          ]
+        : [];
       return el('span', {
         class: slotCls,
-        text: filled ? w.text : '',
         onClick: () => onSlotClick(s.rowId, i),
-      });
+      }, children);
     }),
     el('span', { class: 'fixed', text: s.last }),
   ]);
