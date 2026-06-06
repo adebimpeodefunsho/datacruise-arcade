@@ -148,15 +148,17 @@ button { font-family: inherit; cursor: pointer; }
   transition: transform 200ms ease;
 }
 .best-star.filled {
-  /* Bright yellow + glow for achieved star slots */
+  /* Bright yellow emoji + glow for achieved star slots */
   filter: drop-shadow(0 0 6px rgba(255, 201, 77, 0.7));
 }
 .best-star.empty {
-  /* Clearly visible "not yet earned" slot — golden outline, dimmed */
-  color: #d4af37;
-  opacity: 0.45;
+  /* Bright yellow outline — same colour family as filled stars, so all
+     three read as a single yellow row. Distinguished by being an outlined
+     glyph rather than a filled one. */
+  color: #ffc94d;
   font-weight: 900;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  text-shadow: 0 0 4px rgba(255, 201, 77, 0.35);
+  -webkit-text-stroke: 0.5px #d75200;
 }
 
 .title-howto {

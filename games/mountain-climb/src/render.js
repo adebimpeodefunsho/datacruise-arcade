@@ -23,10 +23,16 @@ const WEATHER_GLYPH = {
 // ---------- Title screen ----------
 
 export function renderTitle(bestStars) {
-  // The Best indicator always shows three bright yellow stars — purely a
-  // brand element ("this game tops out at 3 stars"), not a per-player
-  // progress meter. (Per-run star tier is still shown on the end screen.)
-  const stars = '<span class="best-star filled">⭐</span>'.repeat(3);
+  // Always show 3 yellow star slots so the player can see the goal at a
+  // glance. Earned stars are bright filled ⭐ (with glow); unearned stars
+  // are bright YELLOW outlines (not dimmed) so all three look like part of
+  // the same row. After each game ends, bestStars is updated in localStorage
+  // so the row fills in over time as the player performs better.
+  let stars = '';
+  for (let i = 0; i < 3; i++) {
+    const filled = i < bestStars;
+    stars += `<span class="best-star ${filled ? 'filled' : 'empty'}">${filled ? '⭐' : '☆'}</span>`;
+  }
   return `
     <div class="screen title-screen">
       <div class="title-card">
