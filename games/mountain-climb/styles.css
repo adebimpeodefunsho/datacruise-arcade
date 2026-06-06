@@ -131,6 +131,32 @@ button { font-family: inherit; cursor: pointer; }
   margin: 16px 0 0;
   color: var(--text-warm);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.best-stars {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.best-star {
+  font-size: 28px;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+.best-star.filled {
+  /* Bright yellow + glow for achieved star slots */
+  filter: drop-shadow(0 0 6px rgba(255, 201, 77, 0.7));
+}
+.best-star.empty {
+  /* Clearly visible "not yet earned" slot — golden outline, dimmed */
+  color: #d4af37;
+  opacity: 0.45;
+  font-weight: 900;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
 .title-howto {

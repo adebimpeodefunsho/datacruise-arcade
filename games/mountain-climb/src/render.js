@@ -23,8 +23,15 @@ const WEATHER_GLYPH = {
 // ---------- Title screen ----------
 
 export function renderTitle(bestStars) {
-  // Always show 3 star slots — earned stars filled (⭐), the rest empty (☆).
-  const stars = "⭐".repeat(bestStars) + "☆".repeat(3 - bestStars);
+  // Always show 3 star slots so the player can see the goal at a glance.
+  // Earned slots are filled bright yellow ⭐; unearned slots show a clearly
+  // visible outlined ☆ in a muted gold (rather than the near-invisible
+  // default ☆ glyph).
+  let stars = '';
+  for (let i = 0; i < 3; i++) {
+    const filled = i < bestStars;
+    stars += `<span class="best-star ${filled ? 'filled' : 'empty'}">${filled ? '⭐' : '☆'}</span>`;
+  }
   return `
     <div class="screen title-screen">
       <div class="title-card">
@@ -36,7 +43,7 @@ export function renderTitle(bestStars) {
         <h1 class="title-heading">BUG-BUG'S<br/>MOUNTAIN CLIMB</h1>
         <p class="title-subtitle">A hazard-guessing climb game · DataCruise Arcade</p>
         <button class="primary-btn" data-action="start">▶ PLAY</button>
-        <p class="title-best">Best: <strong>${stars}</strong></p>
+        <p class="title-best">Best: <span class="best-stars">${stars}</span></p>
         <details class="title-howto" open>
           <summary>How to play (click to expand)</summary>
           <div class="howto-body">
