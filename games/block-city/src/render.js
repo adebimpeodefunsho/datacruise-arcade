@@ -10,7 +10,7 @@ import {
 import { isMuted } from "./sound.js?v=14";
 
 const PLOT_WIDTH = (VIEW.W - AXIS_W - 20) / PLOT_COUNT;
-const PLOT_LABELS = ["A", "B", "C", "D"];
+const PLOT_LABELS = ["Bar 1", "Bar 2", "Bar 3", "Bar 4"];
 
 // ---------- TITLE SCREEN ----------
 
@@ -25,7 +25,7 @@ export function renderTitle(bestByDifficulty) {
         <p><strong>Goal:</strong> match every building's target height EXACTLY before the timer runs out — that's how you finish your bar chart.</p>
         <p><strong>Walk:</strong> click the ground or hold <b>←</b> / <b>→</b> arrow keys. Bug-Bug catches any falling block that lands on him.</p>
         <p><strong>Carry max 4:</strong> Bug-Bug can only hold <b>4 blocks</b> at a time. When the tracker shows <b>4/4</b>, drop them right away — Bug-Bug can't catch any more until you do, so you'd just be wasting time.</p>
-        <p><strong>Drop:</strong> click the orange <b>CLICK TO DROP</b> button at the base of a plot, or press <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b> for plots A, B, C, D. Drops are instant.</p>
+        <p><strong>Drop:</strong> click the orange <b>CLICK TO DROP</b> button at the base of a plot, or press <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b> for Bar 1, Bar 2, Bar 3, Bar 4. Drops are instant.</p>
         <p><strong>Demolish to win:</strong> each plot must end <em>exactly</em> on its target. If you overshoot, click the red <b>−</b> to remove a floor — overbuilt plots can't lock, so you must demolish to complete the bar chart.</p>
       </div>
       <p class="prompt">CHOOSE YOUR SPEED</p>
