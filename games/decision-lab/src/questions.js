@@ -131,6 +131,61 @@ export const ROUNDS = [
         unit: 'thousand',
         explanation: 'Taylor Swift sold ~632k copies — the top album of 2023 by some distance.',
       },
+      {
+        id: 'r1q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'How UK grocery is bought (2024)',
+          data: [
+            { label: 'In-store',        value: 78 },
+            { label: 'Online delivery', value: 14 },
+            { label: 'Click & collect', value: 8 },
+          ],
+        },
+        prompt: 'What share of UK grocery shopping happens via online delivery?',
+        options: ['8%', '14%', '22%', '36%'],
+        correctAnswer: '14%',
+        explanation: 'Online delivery is ~14% of UK grocery. In-store still dominates at 78%; click-and-collect is the small remainder.',
+      },
+      {
+        id: 'r1q7',
+        type: 'numeric',
+        chart: {
+          type: 'line',
+          title: 'UK rail passenger journeys per year (millions)',
+          ylabel: 'Journeys (m)',
+          xlabels: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Journeys', values: [1654, 1718, 1731, 1709, 1755, 1750, 388, 990, 1380, 1545, 1620] },
+          ],
+        },
+        prompt: 'In which year did the FEWEST rail journeys take place?',
+        correctAnswer: 2020,
+        tolerance: 0,
+        unit: 'year',
+        explanation: '2020 collapsed to 388m journeys (COVID lockdowns). Recovery has been steady but 2024 is still below the 2019 pre-pandemic peak.',
+      },
+      {
+        id: 'r1q8',
+        type: 'free_text',
+        chart: {
+          type: 'bar',
+          title: 'Top CO2 emitters by country (2023, billion tonnes)',
+          ylabel: 'CO2 (bn t)',
+          data: [
+            { label: 'China',  value: 11.4 },
+            { label: 'USA',    value: 4.8 },
+            { label: 'India',  value: 2.9 },
+            { label: 'Russia', value: 1.7 },
+            { label: 'Japan',  value: 1.0 },
+          ],
+        },
+        prompt: 'Which country emits the most CO2? (type the name)',
+        correctAnswer: 'China',
+        acceptedAnswers: ['china', 'prc'],
+        explanation: 'China at ~11.4 bn tonnes — more than double the next-largest (USA, ~4.8 bn). China + USA together account for over half the world\'s emissions.',
+      },
     ],
   },
 
@@ -242,6 +297,69 @@ export const ROUNDS = [
         acceptedAnswers: ['the weeknd', 'weeknd'],
         explanation: 'The Weeknd leads at ~102m monthly listeners, narrowly ahead of Taylor Swift (~92m).',
       },
+      {
+        id: 'r2q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'UK electricity generation mix (2024, % of total)',
+          data: [
+            { label: 'Wind',    value: 30 },
+            { label: 'Gas',     value: 28 },
+            { label: 'Nuclear', value: 15 },
+            { label: 'Imports', value: 13 },
+            { label: 'Solar',   value: 7  },
+            { label: 'Biomass', value: 5  },
+            { label: 'Other',   value: 2  },
+          ],
+        },
+        prompt: 'Which is the SECOND-largest source of UK electricity?',
+        options: ['Nuclear', 'Solar', 'Gas', 'Biomass'],
+        correctAnswer: 'Gas',
+        explanation: 'Wind has overtaken gas to lead at 30%, but gas is a very close second at 28%. Nuclear (15%) and imports (13%) make up the next tier.',
+      },
+      {
+        id: 'r2q7',
+        type: 'numeric',
+        chart: {
+          type: 'bar',
+          title: 'Paris 2024 Olympics — top 5 nations by total medals',
+          ylabel: 'Total medals',
+          data: [
+            { label: 'USA',       value: 126 },
+            { label: 'China',     value: 91  },
+            { label: 'Great Britain', value: 65 },
+            { label: 'France',    value: 64  },
+            { label: 'Australia', value: 53  },
+          ],
+        },
+        prompt: 'How many MORE medals did the USA win than China?',
+        correctAnswer: 35,
+        tolerance: 3,
+        unit: 'medals',
+        explanation: 'USA 126 − China 91 = 35 medal gap. USA topped the overall table; China led on golds specifically.',
+      },
+      {
+        id: 'r2q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'UK unemployment rate by region (Q4 2024, %)',
+          ylabel: 'Unemployment (%)',
+          data: [
+            { label: 'North East',    value: 5.3 },
+            { label: 'London',        value: 4.6 },
+            { label: 'West Midlands', value: 4.5 },
+            { label: 'Yorkshire',     value: 4.1 },
+            { label: 'South East',    value: 3.2 },
+            { label: 'South West',    value: 3.0 },
+          ],
+        },
+        prompt: 'Which region has the LOWEST unemployment rate?',
+        options: ['North East', 'London', 'South East', 'South West'],
+        correctAnswer: 'South West',
+        explanation: 'South West at 3.0% — the lowest. North East at 5.3% is the highest. Pattern roughly tracks regional economic activity and demographics.',
+      },
     ],
   },
 
@@ -352,6 +470,73 @@ export const ROUNDS = [
         correctAnswer: 'Steady rise',
         explanation: 'Deposits climbed from 16% (2014) to 22% (2024) — a steady ~6-percentage-point rise. Affordability got tighter even before the pandemic spike.',
       },
+      {
+        id: 'r3q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global smartphone ownership (% of population)',
+          ylabel: 'Ownership (%)',
+          xlabels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024'],
+          series: [
+            { label: 'Smartphone', values: [7, 13, 22, 35, 48, 60, 68, 71] },
+          ],
+        },
+        prompt: 'What best describes the shape of this curve?',
+        options: [
+          'Linear — same-sized step every period',
+          'S-curve — fast growth, then slowing near a ceiling',
+          'Exponential, still accelerating',
+          'Flat, no real change',
+        ],
+        correctAnswer: 'S-curve — fast growth, then slowing near a ceiling',
+        explanation: 'Classic technology-adoption S-curve. Steepest growth was 2014–2020 (22% → 60%), since slowing as it approaches saturation around 70–75%.',
+      },
+      {
+        id: 'r3q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK retail sales: in-store vs online (% of total)',
+          ylabel: '% of retail sales',
+          xlabels: ['2015', '2017', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'In-store', values: [86, 82, 80, 71, 70, 75, 77, 76] },
+            { label: 'Online',   values: [14, 18, 20, 29, 30, 25, 23, 24] },
+          ],
+        },
+        prompt: 'What caused the visible spike in online share in 2020?',
+        options: [
+          'A new e-commerce technology launched',
+          'COVID lockdowns closing physical stores',
+          'A change in tax law',
+          'Random variation',
+        ],
+        correctAnswer: 'COVID lockdowns closing physical stores',
+        explanation: 'Online jumped from 20% to 29% in 2020 — physical stores forced shut. Note the partial reversion: most consumers returned in-store, but the new baseline is ~24% vs 14% pre-pandemic.',
+      },
+      {
+        id: 'r3q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global average life expectancy at birth (years)',
+          ylabel: 'Years',
+          xlabels: ['1950', '1970', '1990', '2010', '2019', '2020', '2021', '2024'],
+          series: [
+            { label: 'Life expectancy', values: [48, 58, 64, 70, 73, 72, 71, 73] },
+          ],
+        },
+        prompt: 'What does the small dip in 2020–2021 most likely reflect?',
+        options: [
+          'A methodology change',
+          'COVID-19 pandemic deaths',
+          'Long-term decline — humans live shorter now',
+          'Calendar reform',
+        ],
+        correctAnswer: 'COVID-19 pandemic deaths',
+        explanation: 'Global life expectancy dropped ~2 years during the pandemic — the first significant drop in modern records. Has since recovered.',
+      },
     ],
   },
 
@@ -461,6 +646,68 @@ export const ROUNDS = [
         options: ['Germany', 'Netherlands', 'France', 'Poland'],
         correctAnswer: 'Netherlands',
         explanation: 'Netherlands scores highest at 88 — smaller market but less crowded, easier to win. Launching where you can establish a foothold beats fighting in a saturated giant.',
+      },
+      {
+        id: 'r4q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'SaaS product — conversion to paid by acquisition channel (%)',
+          ylabel: 'Conversion (%)',
+          data: [
+            { label: 'Direct signup', value: 8  },
+            { label: 'Google ads',    value: 12 },
+            { label: 'Referral',      value: 38 },
+            { label: 'LinkedIn',      value: 22 },
+            { label: 'Cold email',    value: 4  },
+          ],
+        },
+        prompt: 'You have headcount for ONE new acquisition channel. Where should you invest?',
+        options: ['Referral programme', 'Cold email', 'Direct signup', 'Google ads'],
+        correctAnswer: 'Referral programme',
+        explanation: 'Referrals convert at 38% — by far the best. Proven channel; scaling has the highest expected return. Cold email at 4% is the worst by ~8×.',
+      },
+      {
+        id: 'r4q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Mobile app — opens by day of week (millions)',
+          ylabel: 'Opens (m)',
+          data: [
+            { label: 'Mon', value: 12.1 },
+            { label: 'Tue', value: 11.8 },
+            { label: 'Wed', value: 11.2 },
+            { label: 'Thu', value: 11.5 },
+            { label: 'Fri', value: 9.8  },
+            { label: 'Sat', value: 14.3 },
+            { label: 'Sun', value: 15.7 },
+          ],
+        },
+        prompt: 'Best day to send a non-urgent push notification?',
+        options: ['Monday', 'Friday', 'Sunday', 'Wednesday'],
+        correctAnswer: 'Sunday',
+        explanation: 'Sunday peaks at 15.7m opens — users are most receptive. Friday is the worst (9.8m, weekend cliff). Send push when people are actually checking the app.',
+      },
+      {
+        id: 'r4q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Customer Net Promoter Score (NPS) by market',
+          ylabel: 'NPS',
+          data: [
+            { label: 'UK',      value: 48 },
+            { label: 'Germany', value: 42 },
+            { label: 'France',  value: 31 },
+            { label: 'Italy',   value: 12 },
+            { label: 'Spain',   value: 39 },
+          ],
+        },
+        prompt: 'Which market needs the most urgent customer-care attention?',
+        options: ['UK', 'Italy', 'Germany', 'Spain'],
+        correctAnswer: 'Italy',
+        explanation: 'Italy at NPS 12 is well below the others (next-lowest France at 31). That low suggests customers aren\'t recommending you — investigate localisation, support quality, product fit.',
       },
     ],
   },
@@ -592,9 +839,111 @@ export const ROUNDS = [
         correctAnswer: 'Focus on the first few months',
         explanation: 'New subscribers churn at 6–12% in months 1–6 then stabilise to ~3% by month 24. Long-tenured subs are at 2% (much stickier). Onboarding improvements pay back fastest — once you keep them past month 6, they tend to stay.',
       },
+      {
+        id: 'r5q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global AI startup funding ($bn per year)',
+          ylabel: 'Funding ($bn)',
+          xlabels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'AI funding', values: [25, 33, 42, 78, 65, 91, 145] },
+          ],
+        },
+        prompt: 'Best forward-looking insight from this trend?',
+        options: [
+          'AI funding is plateauing — 2021 was the peak',
+          'AI funding has accelerated sharply since 2022',
+          'The market is shrinking',
+          'Random noise — no real signal',
+        ],
+        correctAnswer: 'AI funding has accelerated sharply since 2022',
+        explanation: 'Funding more than doubled $65bn (2022) → $145bn (2024). The November 2022 ChatGPT launch reshaped investor enthusiasm — trajectory is steepening, not levelling.',
+      },
+      {
+        id: 'r5q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK workers reporting hybrid or fully-remote work (%)',
+          ylabel: '% of workers',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Hybrid/remote', values: [4, 47, 38, 28, 26, 27] },
+          ],
+        },
+        prompt: 'Most accurate forecast for 2026?',
+        options: [
+          'Will return to pre-pandemic 4% — fully office-based',
+          'Will keep falling rapidly — back to ~10%',
+          'Likely settles around 25–30% — a new normal',
+          'Will spike back to 47%',
+        ],
+        correctAnswer: 'Likely settles around 25–30% — a new normal',
+        explanation: 'The line stabilised at 26–28% for 2022–2024 — 3 consecutive years suggests a new equilibrium. The pre-pandemic 4% baseline isn\'t coming back, but the lockdown peak isn\'t either.',
+      },
+      {
+        id: 'r5q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Two streaming services — monthly churn (%) over 12 months',
+          ylabel: 'Monthly churn (%)',
+          xlabels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'],
+          series: [
+            { label: 'Service A', values: [3.2, 3.0, 3.1, 2.9, 2.8, 3.0, 3.1, 3.2, 3.1, 3.0, 2.9, 3.1] },
+            { label: 'Service B', values: [4.5, 5.1, 5.6, 6.0, 6.5, 7.2, 7.8, 8.3, 8.9, 9.5, 10.1, 10.8] },
+          ],
+        },
+        prompt: 'Strategic implication for Service B?',
+        options: [
+          'Doing fine — comparable to Service A',
+          'Slight improvement needed but not urgent',
+          'Existential issue — churn is steadily climbing',
+          'Stop measuring churn — not useful',
+        ],
+        correctAnswer: 'Existential issue — churn is steadily climbing',
+        explanation: 'Service B\'s churn went 4.5% → 10.8% in 12 months — more than doubled, no sign of stopping. At 10% monthly churn you lose half your subscribers every ~7 months. Service A is stable around 3%.',
+      },
     ],
   },
 ];
+
+// ---------- Per-game randomisation ----------
+
+const QUESTIONS_PER_ROUND = 5;
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Build the round set for one playthrough. Each round picks 5 questions
+ * at random from its pool of 8 (so replays show different subsets), and
+ * shuffles the option order for any multiple-choice question (so even
+ * a repeated question feels new).
+ *
+ * Pure of state — pass through state.rounds to lock the selection for
+ * the duration of one game.
+ */
+export function generateGameRounds() {
+  return ROUNDS.map(pool => {
+    const picked = shuffleArray(pool.questions).slice(0, QUESTIONS_PER_ROUND);
+    const finalised = picked.map(q => {
+      if (q.type === 'multiple_choice' && Array.isArray(q.options)) {
+        return { ...q, options: shuffleArray(q.options) };
+      }
+      return q;
+    });
+    return { ...pool, questions: finalised };
+  });
+}
 
 // ---------- Answer checking ----------
 

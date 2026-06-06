@@ -9,15 +9,21 @@
 //   'round-end'     — round complete, shows pass/fail vs threshold
 //   'ended'         — game over (either ran out of rounds, or failed a round)
 
-import { ROUNDS, checkAnswer, TIMER_SECONDS } from './questions.js';
+import { ROUNDS, generateGameRounds, checkAnswer, TIMER_SECONDS } from './questions.js';
 
 export const TOTAL_ROUNDS = ROUNDS.length;
 
-/** Create a fresh game state. */
+/** Create a fresh game state.
+ *
+ * `rounds` is the per-playthrough subset chosen from each round's question
+ * pool. Two consecutive games will see different questions (and shuffled
+ * multiple-choice options), so replays feel fresh.
+ */
 export function createGame() {
   return {
     phase: 'title',
-    roundIndex: 0,         // 0-based index into ROUNDS
+    rounds: generateGameRounds(), // per-game pick of 5 questions per round, options shuffled
+    roundIndex: 0,         // 0-based index into state.rounds
     questionIndex: 0,      // 0-based index into the current round's questions
     timer: TIMER_SECONDS,
     typedAnswer: '',
@@ -27,9 +33,12 @@ export function createGame() {
   };
 }
 
-/** Get the current round object (or null if past the last round). */
+/** Get the current round object (or null if past the last round).
+ *  Reads from state.rounds (the per-game pick) — falls back to the static
+ *  ROUNDS pool defensively if state was constructed without it.
+ */
 export function currentRound(state) {
-  return ROUNDS[state.roundIndex] || null;
+  return state.rounds?.[state.roundIndex] || ROUNDS[state.roundIndex] || null;
 }
 
 /** Get the current question object (or null). */
