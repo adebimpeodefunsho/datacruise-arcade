@@ -152,13 +152,12 @@ button { font-family: inherit; cursor: pointer; }
   filter: drop-shadow(0 0 6px rgba(255, 201, 77, 0.7));
 }
 .best-star.empty {
-  /* Bright yellow outline — same colour family as filled stars, so all
-     three read as a single yellow row. Distinguished by being an outlined
-     glyph rather than a filled one. */
-  color: #ffc94d;
+  /* Visibly dim 'not yet earned' slot — distinguishable from filled at
+     a glance so the player can see their progress toward 3 stars.
+     Dark gold-grey, partial opacity. */
+  color: #8b7355;
+  opacity: 0.5;
   font-weight: 900;
-  text-shadow: 0 0 4px rgba(255, 201, 77, 0.35);
-  -webkit-text-stroke: 0.5px #d75200;
 }
 
 .title-howto {

@@ -23,15 +23,23 @@ const WEATHER_GLYPH = {
 // ---------- Title screen ----------
 
 export function renderTitle(bestStars) {
-  // Always show 3 yellow star slots so the player can see the goal at a
-  // glance. Earned stars are bright filled ⭐ (with glow); unearned stars
-  // are bright YELLOW outlines (not dimmed) so all three look like part of
-  // the same row. After each game ends, bestStars is updated in localStorage
-  // so the row fills in over time as the player performs better.
+  // Two distinct states for the 'Best:' indicator:
+  //
+  //   - Before any game has been played (bestStars === 0):
+  //     show three bright yellow ⭐⭐⭐ as the goal / brand element.
+  //
+  //   - After at least one game (bestStars >= 1):
+  //     show the slot pattern — earned slots are bright filled ⭐
+  //     (with glow), unearned slots are visibly dimmer so the player
+  //     can see their actual progress toward 3.
   let stars = '';
-  for (let i = 0; i < 3; i++) {
-    const filled = i < bestStars;
-    stars += `<span class="best-star ${filled ? 'filled' : 'empty'}">${filled ? '⭐' : '☆'}</span>`;
+  if (bestStars === 0) {
+    stars = '<span class="best-star filled">⭐</span>'.repeat(3);
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const filled = i < bestStars;
+      stars += `<span class="best-star ${filled ? 'filled' : 'empty'}">${filled ? '⭐' : '☆'}</span>`;
+    }
   }
   return `
     <div class="screen title-screen">
