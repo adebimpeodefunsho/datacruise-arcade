@@ -270,9 +270,17 @@
       '.dc-res-ov{position:fixed;inset:0;z-index:2147483603;display:none;align-items:center;justify-content:center;',
       'background:rgba(14,14,16,.72);backdrop-filter:blur(4px);padding:18px;}',
       '.dc-res-ov.open{display:flex;}',
-      '.dc-res-modal{width:min(420px,94vw);background:#fff;border:3px solid #0e0e10;border-radius:22px;',
+      '.dc-res-modal{width:min(420px,94vw);max-height:94vh;overflow-y:auto;background:#fff;border:3px solid #0e0e10;border-radius:22px;',
       'box-shadow:0 10px 0 0 #0e0e10;padding:16px;font-family:' + FAM + ';text-align:center;}',
       '.dc-res-modal img{width:100%;border-radius:14px;display:block;border:2px solid #0e0e10;}',
+      '.dc-res-slabel{font-size:12px;font-weight:800;color:#8a8a90;margin:14px 0 8px;letter-spacing:.05em;text-transform:uppercase;}',
+      '.dc-res-plat{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;}',
+      '.dc-res-plat a,.dc-res-plat .dc-res-cp{width:46px;height:46px;border-radius:50%;border:2px solid #0e0e10;',
+      'display:inline-flex;align-items:center;justify-content:center;font-size:19px;color:#fff;cursor:pointer;',
+      'text-decoration:none;box-shadow:0 3px 0 0 #0e0e10;padding:0;font-family:' + FAM + ';font-weight:900;}',
+      '.dc-res-plat a:active,.dc-res-plat .dc-res-cp:active{transform:translateY(2px);box-shadow:0 1px 0 0 #0e0e10;}',
+      '.dc-p-wa{background:#25D366;}.dc-p-fb{background:#1877F2;}.dc-p-x{background:#0e0e10;}',
+      '.dc-p-tg{background:#29A9EB;}.dc-p-em{background:#d9534f;}.dc-p-cp{background:#6b7280;}',
       '.dc-res-row{display:flex;gap:10px;margin-top:14px;}',
       '.dc-res-btn{flex:1;padding:13px 10px;border-radius:12px;border:3px solid #0e0e10;cursor:pointer;',
       'font-family:' + FAM + ';font-weight:900;font-size:16px;box-shadow:0 4px 0 0 #0e0e10;}',
@@ -287,9 +295,10 @@
   }
 
   function openModal(o, canvas, blob) {
-    var url = o.url;
-    var shareText = (o.headline ? o.headline + ' on ' : '') + (o.game || 'DataCruise Arcade') +
-      '! Can you beat me? Play free:';
+    var link = o._shortUrl || o.url;
+    var brag = (o.headline ? o.headline + ' on ' : '') + (o.game || 'DataCruise Arcade') +
+      '! Can you beat me? 🎮';
+    var U = encodeURIComponent(link);
 
     var ov = document.createElement('div');
     ov.className = 'dc-res-ov';
@@ -301,15 +310,61 @@
     img.src = URL.createObjectURL(blob);
     modal.appendChild(img);
 
+    // ---- per-platform share (link + your score as the message; the platform
+    //      builds its own preview from the game's og:image hero card) ----------
+    var slabel = document.createElement('div');
+    slabel.className = 'dc-res-slabel';
+    slabel.textContent = 'Share your score to';
+    modal.appendChild(slabel);
+
+    var plat = document.createElement('div');
+    plat.className = 'dc-res-plat';
+    function pRow(cls, ico, href, label) {
+      var a = document.createElement('a');
+      a.className = cls; a.href = href; a.target = '_blank'; a.rel = 'noopener';
+      a.setAttribute('aria-label', label);
+      a.innerHTML = ico;
+      return a;
+    }
+    plat.appendChild(pRow('dc-p-wa', '💬',
+      'https://wa.me/?text=' + encodeURIComponent(brag + '\n' + link), 'WhatsApp'));
+    plat.appendChild(pRow('dc-p-fb', 'f',
+      'https://www.facebook.com/sharer/sharer.php?u=' + U, 'Facebook'));
+    plat.appendChild(pRow('dc-p-x', '𝕏',
+      'https://twitter.com/intent/tweet?text=' + encodeURIComponent(brag) + '&url=' + U, 'X'));
+    plat.appendChild(pRow('dc-p-tg', '✈',
+      'https://t.me/share/url?url=' + U + '&text=' + encodeURIComponent(brag), 'Telegram'));
+    plat.appendChild(pRow('dc-p-em', '✉',
+      'mailto:?subject=' + encodeURIComponent(o.game || 'DataCruise Arcade') +
+      '&body=' + encodeURIComponent(brag + '\n\nPlay free: ' + link), 'Email'));
+    var cp = document.createElement('span');
+    cp.className = 'dc-p-cp dc-res-cp';
+    cp.setAttribute('role', 'button'); cp.setAttribute('aria-label', 'Copy link');
+    cp.innerHTML = '🔗';
+    cp.addEventListener('click', function () {
+      var done = function () { cp.innerHTML = '✓'; setTimeout(function () { cp.innerHTML = '🔗'; }, 1200); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(done, done);
+      } else {
+        var ta = document.createElement('textarea'); ta.value = link;
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+    plat.appendChild(cp);
+    modal.appendChild(plat);
+
+    // ---- send the actual score PICTURE (native file share / save) -----------
     var row = document.createElement('div');
     row.className = 'dc-res-row';
-    var shareBtn = document.createElement('button');
-    shareBtn.className = 'dc-res-btn dc-res-primary';
-    shareBtn.textContent = '📤 Share';
+    var picBtn = document.createElement('button');
+    picBtn.className = 'dc-res-btn dc-res-primary';
+    picBtn.textContent = '📸 Send the picture';
     var dlBtn = document.createElement('button');
     dlBtn.className = 'dc-res-btn dc-res-ghost';
-    dlBtn.textContent = '⬇ Save image';
-    row.appendChild(shareBtn); row.appendChild(dlBtn);
+    dlBtn.textContent = '⬇ Save';
+    row.appendChild(picBtn); row.appendChild(dlBtn);
     modal.appendChild(row);
 
     var closeBtn = document.createElement('button');
@@ -326,15 +381,14 @@
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
 
     var file = new File([blob], 'datacruise-' + o.slug + '.png', { type: 'image/png' });
-    shareBtn.addEventListener('click', function () {
-      // Best path: share the actual image file (mobile) -> Facebook/WhatsApp/IG composer
+    picBtn.addEventListener('click', function () {
+      // Share the actual score image via the device (mobile: pick WhatsApp / IG / etc.)
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], text: shareText + ' ' + url }).catch(function () {});
+        navigator.share({ files: [file], text: brag + ' ' + link }).catch(function () {});
         return;
       }
-      // Desktop fallback: save image + open Facebook share dialog for the link
+      // Desktop can't file-share — save the picture so it can be attached.
       download(blob, file.name);
-      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank', 'noopener');
     });
     dlBtn.addEventListener('click', function () { download(blob, file.name); });
   }
@@ -430,6 +484,14 @@
       if (!opts.url) {
         opts.url = metaContent('meta[property="og:url"]') ||
           (opts.slug ? BASE + '/games/' + opts.slug + '/' : location.href);
+      }
+      // Short link for the per-platform share buttons (falls back to opts.url).
+      opts._shortUrl = opts.url;
+      if (opts.slug) {
+        fetch('/api/short?slug=' + encodeURIComponent(opts.slug), { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) { if (d && d.short) opts._shortUrl = d.short; })
+          .catch(function () {});
       }
       // Preload the AI scene backdrop (same-origin, so the canvas stays
       // exportable). Missing endpoint (e.g. local dev) -> stays null -> the
