@@ -45,7 +45,7 @@
     let slug = 'hub';
     const m = fullUrl.match(/\/games\/([a-z0-9-]+)\/?/i);
     if (m) slug = m[1];
-    fetch('/api/short?slug=' + encodeURIComponent(slug))
+    fetch('/api/short?slug=' + encodeURIComponent(slug), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d && d.short) { linkUrl = d.short; } })
       .catch(function () {});
