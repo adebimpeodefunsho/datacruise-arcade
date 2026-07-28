@@ -117,7 +117,7 @@ const SCENE_PROMPTS = {
   'derive-jargon':
     'A friendly smiling cartoon magnifying-glass character discovering a glowing floating word, dreamy purple background, whimsical children\'s book illustration, flat vector, no text',
   'data-crossword':
-    'A playful glowing crossword grid with a friendly cartoon magnifying-glass character, dreamy purple background, cheerful children\'s book illustration, flat vector, no text',
+    'A friendly cartoon bee with a round brown face and a yellow-and-black striped body, small translucent wings, hovering beside a big glowing crossword grid, dreamy purple background, cheerful children\'s book illustration, flat vector, no text',
   'data-hunt':
     'A glowing treasure chest full of colorful gems on a wooden shelf with a friendly cartoon magnifying-glass character, dreamy purple tones, storybook children\'s book illustration, flat vector, no text',
   'scrub-mess':
@@ -133,9 +133,11 @@ async function handleScene(request, env, ctx) {
   if (!prompt) return json(400, { error: 'Unknown or missing slug.' });
   if (!env.AI) return json(503, { error: 'AI is not configured.' });
 
-  // Edge cache keyed by slug only (prompts are fixed). Bump ?v to force
-  // regeneration if a prompt changes.
-  const version = 'v1';
+  // Edge cache keyed by slug + a per-slug version. Bump a slug's number in
+  // SCENE_VERSION to force ONE scene to regenerate after its prompt changes
+  // (leaves the other cached scenes untouched).
+  const SCENE_VERSION = { 'data-crossword': 2 };
+  const version = 'v' + (SCENE_VERSION[slug] || 1);
   const cache = caches.default;
   const cacheKey = new Request(`${url.origin}/api/scene?slug=${slug}&${version}`, {
     method: 'GET',
