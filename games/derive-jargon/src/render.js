@@ -1,6 +1,6 @@
 // Rendering for Derive the Data Jargon (typed-input flow + daily mode).
 
-import { magniSvg } from './mascot.js';
+import { beeSvg } from './mascot.js';
 import { CONFIG, rankFor } from './state.js';
 import { puzzleFor, todayKey } from './daily.js';
 import { isMuted } from './sound.js';
@@ -35,7 +35,7 @@ export function renderSplash(s, handlers) {
   const today = puzzleFor(new Date());
   const html = termFrame(`
     <div class="splash">
-      <div class="mascot">${magniSvg()}</div>
+      <div class="mascot">${beeSvg()}</div>
       <h1>Derive the Data Jargon<span class="punc">.</span><span class="cursor">█</span></h1>
       <p class="tagline">
         Two cryptic icons. One <span class="hl">data term</span>.

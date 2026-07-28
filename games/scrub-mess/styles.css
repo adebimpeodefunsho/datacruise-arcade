@@ -136,7 +136,7 @@ body {
 .menu-magni {
   width: 140px;
   height: 140px;
-  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.25));
+  filter: drop-shadow(0 0 20px rgba(255, 196, 60, 0.32));
 }
 
 .card {
@@ -418,7 +418,7 @@ body {
 .magni-side {
   width: 110px;
   height: 110px;
-  filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.25));
+  filter: drop-shadow(0 0 14px rgba(255, 196, 60, 0.32));
 }
 .bin {
   width: 180px;
@@ -573,10 +573,10 @@ body {
 .result-magni {
   width: 90px;
   height: 90px;
-  filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.25));
+  filter: drop-shadow(0 0 14px rgba(255, 196, 60, 0.32));
 }
 .result-magni.cheer {
-  filter: drop-shadow(0 0 18px rgba(0, 255, 156, 0.45));
+  filter: drop-shadow(0 0 18px rgba(255, 196, 60, 0.5));
   animation: bob 1.2s ease-in-out infinite;
 }
 .result-headline {

@@ -3,7 +3,7 @@
 // Click a messy tile -> flies into the bin. Click a clean tile -> shakes + time penalty.
 
 import { buildHeap, CLEAN_TERMS } from './words.js';
-import { magniSvg, trashBinSvg } from './mascot.js';
+import { beeSvg, trashBinSvg } from './mascot.js';
 import { sfx, isMuted, toggleMuted } from './sound.js';
 
 const CLEAN_SET = new Set(CLEAN_TERMS);
@@ -48,7 +48,7 @@ function renderMenu() {
         <p class="subtitle">Toss the typos, dupes, junk and off-topic words into the bin. Save the clean data.</p>
       </header>
 
-      <div class="menu-magni" aria-hidden="true">${magniSvg({ mood: 'smirk' })}</div>
+      <div class="menu-magni" aria-hidden="true">${beeSvg({ mood: 'smirk' })}</div>
 
       <section class="card">
         <div class="card-label">SELECT DIFFICULTY</div>
@@ -119,7 +119,7 @@ function renderPlay() {
       <main class="playfield" id="playfield">
         <div class="heap" id="heap"></div>
         <div class="bin-area">
-          <div class="magni-side" aria-hidden="true">${magniSvg({ mood: 'smirk' })}</div>
+          <div class="magni-side" aria-hidden="true">${beeSvg({ mood: 'smirk' })}</div>
           <div class="bin" id="bin">${trashBinSvg()}</div>
         </div>
       </main>
@@ -157,7 +157,7 @@ function renderResultPanel() {
   return `
     <div class="result-panel">
       <div class="result-magni ${cheer ? 'cheer' : ''}" aria-hidden="true">
-        ${magniSvg({ mood: cheer ? 'cheer' : 'frown' })}
+        ${beeSvg({ mood: cheer ? 'cheer' : 'frown' })}
       </div>
       <div class="result-headline">${headline}</div>
       <div class="result-score">

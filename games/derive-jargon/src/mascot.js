@@ -1,66 +1,68 @@
-// Magni — magnifying-glass detective mascot for the DataCruise Word Games series.
+// Buzz — the brown-faced bee mascot for the DataCruise Word Games series.
 // Returns an inline SVG string. Sized to the host container (100% width/height).
+// Supports { blink } and { mood: 'smirk' | 'cheer' | 'frown' }.
 
-export function magniSvg({ blink = false } = {}) {
+export function beeSvg({ blink = false, mood = 'smirk' } = {}) {
+  const eyes = blink
+    ? `<path d="M74 83 Q82 88 90 83" fill="none" stroke="#241a0f" stroke-width="3.5" stroke-linecap="round"/>
+       <path d="M110 83 Q118 88 126 83" fill="none" stroke="#241a0f" stroke-width="3.5" stroke-linecap="round"/>`
+    : mood === 'cheer'
+    ? `<path d="M73 86 Q82 76 91 86" fill="none" stroke="#241a0f" stroke-width="4" stroke-linecap="round"/>
+       <path d="M109 86 Q118 76 127 86" fill="none" stroke="#241a0f" stroke-width="4" stroke-linecap="round"/>`
+    : `<circle cx="82" cy="82" r="11" fill="#fff"/>
+       <circle cx="118" cy="82" r="11" fill="#fff"/>
+       <circle cx="84" cy="84" r="6" fill="#241a0f"/>
+       <circle cx="120" cy="84" r="6" fill="#241a0f"/>
+       <circle cx="86.5" cy="81" r="2" fill="#fff"/>
+       <circle cx="122.5" cy="81" r="2" fill="#fff"/>`;
+
+  const mouth = mood === 'cheer'
+    ? `<path d="M80 106 Q100 132 120 106 Q100 118 80 106 Z" fill="#8a3b3b" stroke="#3a2a19" stroke-width="3" stroke-linejoin="round"/>`
+    : mood === 'frown'
+    ? `<path d="M84 119 Q100 104 116 119" fill="none" stroke="#3a2a19" stroke-width="4" stroke-linecap="round"/>`
+    : `<path d="M84 107 Q100 123 116 107" fill="none" stroke="#3a2a19" stroke-width="4" stroke-linecap="round"/>`;
+
   return `
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Magni the magnifying-glass detective">
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Buzz the bee">
   <defs>
-    <radialGradient id="lensGlow" cx="40%" cy="35%" r="65%">
-      <stop offset="0%"  stop-color="#0a0e14"/>
-      <stop offset="60%" stop-color="#06080c"/>
-      <stop offset="100%" stop-color="#000"/>
+    <linearGradient id="beeBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd54a"/>
+      <stop offset="100%" stop-color="#f3ad00"/>
+    </linearGradient>
+    <radialGradient id="beeFace" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#e2ab77"/>
+      <stop offset="100%" stop-color="#c6875a"/>
     </radialGradient>
-    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"  stop-color="#00ff9c"/>
-      <stop offset="100%" stop-color="#00f0ff"/>
+    <linearGradient id="beeWing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e2fbff"/>
+      <stop offset="100%" stop-color="#a6e6ff"/>
     </linearGradient>
-    <linearGradient id="handle" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"  stop-color="#ff2e92"/>
-      <stop offset="100%" stop-color="#7a1a4d"/>
-    </linearGradient>
-    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.2"/>
-    </filter>
+    <clipPath id="beeBodyClip"><ellipse cx="100" cy="152" rx="48" ry="36"/></clipPath>
   </defs>
 
-  <!-- handle (drawn first, behind the rim) -->
-  <g transform="rotate(38 130 130)">
-    <rect x="124" y="118" width="74" height="22" rx="11" fill="url(#handle)" stroke="#ff7ab8" stroke-width="1.2"/>
-    <rect x="124" y="118" width="74" height="22" rx="11" fill="none" stroke="#000" stroke-width="0.6" opacity="0.5"/>
-    <rect x="186" y="120" width="10" height="18" rx="3" fill="#7a1a4d"/>
+  <g opacity="0.8">
+    <ellipse cx="58" cy="64" rx="24" ry="40" transform="rotate(-30 58 64)" fill="url(#beeWing)" stroke="#7fd6ef" stroke-width="2"/>
+    <ellipse cx="142" cy="64" rx="24" ry="40" transform="rotate(30 142 64)" fill="url(#beeWing)" stroke="#7fd6ef" stroke-width="2"/>
   </g>
 
-  <!-- glow halo -->
-  <circle cx="86" cy="86" r="76" fill="url(#rim)" opacity="0.18" filter="url(#soft)"/>
-
-  <!-- rim -->
-  <circle cx="86" cy="86" r="62" fill="url(#lensGlow)" stroke="url(#rim)" stroke-width="8"/>
-  <!-- inner rim accent -->
-  <circle cx="86" cy="86" r="56" fill="none" stroke="#00f0ff" stroke-width="1.2" opacity="0.6"/>
-
-  <!-- "scanned data" inside the lens -->
-  <g opacity="0.55" font-family="JetBrains Mono, monospace" font-size="8" fill="#00ff9c">
-    <text x="42" y="56">01010111</text>
-    <text x="42" y="68">10110010</text>
-    <text x="42" y="80" opacity="0.7">DATA?</text>
-    <text x="42" y="118" opacity="0.7">11001011</text>
-    <text x="42" y="130">00101110</text>
+  <ellipse cx="100" cy="152" rx="48" ry="36" fill="url(#beeBody)" stroke="#c8891a" stroke-width="2.5"/>
+  <g clip-path="url(#beeBodyClip)" fill="#2e2417">
+    <rect x="50" y="149" width="100" height="13"/>
+    <rect x="50" y="176" width="100" height="13"/>
   </g>
 
-  <!-- face: eyes + mouth -->
-  ${blink
-    ? `<line x1="68" y1="90" x2="80" y2="90" stroke="#00ff9c" stroke-width="3" stroke-linecap="round"/>
-       <line x1="92" y1="90" x2="104" y2="90" stroke="#00ff9c" stroke-width="3" stroke-linecap="round"/>`
-    : `<circle cx="74" cy="88" r="5" fill="#00ff9c"/>
-       <circle cx="98" cy="88" r="5" fill="#00ff9c"/>
-       <circle cx="75.5" cy="86.5" r="1.2" fill="#06080c"/>
-       <circle cx="99.5" cy="86.5" r="1.2" fill="#06080c"/>`
-  }
-  <!-- smirk -->
-  <path d="M70 104 Q86 116 102 104" fill="none" stroke="#00ff9c" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="100" cy="86" r="56" fill="url(#beeFace)" stroke="#a9713f" stroke-width="2.5"/>
 
-  <!-- glint -->
-  <circle cx="60" cy="62" r="6" fill="#fff" opacity="0.18"/>
-  <circle cx="68" cy="70" r="3" fill="#fff" opacity="0.25"/>
+  <path d="M82 40 Q74 16 62 12" fill="none" stroke="#2e2417" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="61" cy="11" r="6.5" fill="#2e2417"/>
+  <path d="M118 40 Q126 16 138 12" fill="none" stroke="#2e2417" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="139" cy="11" r="6.5" fill="#2e2417"/>
+
+  <circle cx="70" cy="101" r="11" fill="#ff8f8f" opacity="0.72"/>
+  <circle cx="130" cy="101" r="11" fill="#ff8f8f" opacity="0.72"/>
+
+  ${eyes}
+  ${mouth}
+  <circle cx="78" cy="62" r="7" fill="#fff" opacity="0.18"/>
 </svg>`.trim();
 }

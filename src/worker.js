@@ -115,15 +115,15 @@ const SCENE_PROMPTS = {
   'decision-lab':
     'A curious cartoon ladybug scientist in a friendly bright laboratory with charts and beakers, orange tones, cheerful children\'s book illustration, flat vector, no text',
   'derive-jargon':
-    'A friendly smiling cartoon magnifying-glass character discovering a glowing floating word, dreamy purple background, whimsical children\'s book illustration, flat vector, no text',
+    'A friendly cartoon bee with a round brown face and a yellow-and-black striped body and small translucent wings, discovering a glowing floating word, dreamy purple background, whimsical children\'s book illustration, flat vector, no text',
   'data-crossword':
     'A friendly cartoon bee with a round brown face and a yellow-and-black striped body, small translucent wings, hovering beside a big glowing crossword grid, dreamy purple background, cheerful children\'s book illustration, flat vector, no text',
   'data-hunt':
-    'A glowing treasure chest full of colorful gems on a wooden shelf with a friendly cartoon magnifying-glass character, dreamy purple tones, storybook children\'s book illustration, flat vector, no text',
+    'A glowing treasure chest full of colorful gems on a wooden shelf with a friendly cartoon bee with a round brown face and a yellow-and-black striped body and small translucent wings, dreamy purple tones, storybook children\'s book illustration, flat vector, no text',
   'scrub-mess':
-    'A cheerful tidy-up scene of sparkling clean data blocks with a friendly cartoon magnifying-glass character and a little bin, dreamy purple background, children\'s book illustration, flat vector, no text',
+    'A cheerful tidy-up scene of sparkling clean data blocks with a friendly cartoon bee with a round brown face and a yellow-and-black striped body and small translucent wings and a little bin, dreamy purple background, children\'s book illustration, flat vector, no text',
   'sentence-builder':
-    'A whimsical bridge built from glowing word blocks crossing a gentle river, a friendly cartoon magnifying-glass character, dreamy purple sky, children\'s book illustration, flat vector, no text',
+    'A whimsical bridge built from glowing word blocks crossing a gentle river, a friendly cartoon bee with a round brown face and a yellow-and-black striped body and small translucent wings, dreamy purple sky, children\'s book illustration, flat vector, no text',
 };
 
 async function handleScene(request, env, ctx) {
@@ -136,7 +136,13 @@ async function handleScene(request, env, ctx) {
   // Edge cache keyed by slug + a per-slug version. Bump a slug's number in
   // SCENE_VERSION to force ONE scene to regenerate after its prompt changes
   // (leaves the other cached scenes untouched).
-  const SCENE_VERSION = { 'data-crossword': 2 };
+  const SCENE_VERSION = {
+    'data-crossword': 2,
+    'derive-jargon': 2,
+    'data-hunt': 2,
+    'scrub-mess': 2,
+    'sentence-builder': 2,
+  };
   const version = 'v' + (SCENE_VERSION[slug] || 1);
   const cache = caches.default;
   const cacheKey = new Request(`${url.origin}/api/scene?slug=${slug}&${version}`, {
