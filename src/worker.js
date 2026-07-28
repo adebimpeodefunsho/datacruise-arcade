@@ -187,6 +187,55 @@ async function handleScene(request, env, ctx) {
   return resp;
 }
 
+/* ============================================================
+   Short share links  —  GET /api/short?slug=<game|hub>
+   ------------------------------------------------------------
+   Returns a short URL for the game (or hub) so shared links are
+   tidy — especially in a WhatsApp message. Shortens via is.gd
+   server-side (no key, no CORS worries) and caches the result at
+   the edge (short links are stable, so at most one call per slug).
+   The short link 301-redirects to the game page, whose og:image is
+   the hero card — so WhatsApp/Facebook still show the picture.
+   Falls back to the full URL if the shortener is unavailable.
+============================================================ */
+async function handleShort(request, env, ctx) {
+  const url = new URL(request.url);
+  const slug = String(url.searchParams.get('slug') || 'hub').toLowerCase();
+
+  let path;
+  if (slug === 'hub' || slug === '') path = '/';
+  else if (SCENE_PROMPTS[slug]) path = '/games/' + slug + '/';
+  else return json(400, { error: 'Unknown slug.' });
+
+  const target = url.origin + path;
+  const cache = caches.default;
+  const cacheKey = new Request(url.origin + '/api/short?slug=' + slug, { method: 'GET' });
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  let short = target; // fallback = full URL
+  try {
+    const r = await fetch(
+      'https://is.gd/create.php?format=simple&url=' + encodeURIComponent(target),
+      { headers: { 'user-agent': 'datacruise-arcade-share' } }
+    );
+    const t = (await r.text()).trim();
+    if (r.ok && /^https?:\/\/\S+$/.test(t)) short = t;
+  } catch (_) { /* keep fallback */ }
+
+  const body = JSON.stringify({ short: short, full: target });
+  const resp = new Response(body, {
+    headers: {
+      'content-type': 'application/json',
+      'access-control-allow-origin': '*',
+      // Only cache real short links hard; fallbacks are retried next time.
+      'cache-control': short !== target ? 'public, max-age=86400' : 'no-store',
+    },
+  });
+  if (short !== target) ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+  return resp;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -196,6 +245,9 @@ export default {
     }
     if (url.pathname === '/api/scene') {
       return handleScene(request, env, ctx);
+    }
+    if (url.pathname === '/api/short') {
+      return handleShort(request, env, ctx);
     }
 
     // Everything else falls through to static assets.

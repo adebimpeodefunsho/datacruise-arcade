@@ -1122,8 +1122,10 @@ button { font-family: inherit; cursor: pointer; }
   .game-screen, .status-bar, .forecast-strip, .game-main,
   .chart-card, .side, .cards-card, .today-card { min-width: 0; max-width: 100%; }
 
-  /* Compact header — the "to summit" progress bar is redundant with the chart */
-  .status-bar { grid-template-columns: 1.4fr auto auto; gap: 4px 8px; padding: 8px 10px; }
+  /* Compact header — the "to summit" progress bar is redundant with the chart.
+     Extra top padding keeps the title/stamina clear of the fixed
+     Arcade (top-left) and Share (top-right) buttons. */
+  .status-bar { grid-template-columns: 1.4fr auto auto; gap: 4px 8px; padding: 50px 10px 8px; }
   .status-bar > * { min-width: 0; }
   .stat-progress, .stat.stat-progress { display: none; }
   .brand h1 { font-size: 13px; line-height: 1.05; }
@@ -1138,7 +1140,7 @@ button { font-family: inherit; cursor: pointer; }
   /* Responsive chart: fill width, capped height */
   .game-main { grid-template-columns: 1fr; }
   .chart-card { padding: 8px 12px 4px; }
-  .chart-card svg { width: 100%; height: auto; max-height: 124px; }
+  .chart-card svg { width: 100%; height: auto; max-height: 86px; }
 
   .today-card { padding: 6px 10px; gap: 2px; }
   .today-card svg { width: 38px; height: 38px; }
