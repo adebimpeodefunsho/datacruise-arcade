@@ -202,40 +202,45 @@ async function handleShort(request, env, ctx) {
   const url = new URL(request.url);
   const slug = String(url.searchParams.get('slug') || 'hub').toLowerCase();
 
-  let path;
-  if (slug === 'hub' || slug === '') path = '/';
-  else if (SCENE_PROMPTS[slug]) path = '/games/' + slug + '/';
+  let dest, shortPath;
+  if (slug === 'hub' || slug === '') { dest = '/'; shortPath = url.origin + '/'; }
+  else if (SCENE_PROMPTS[slug]) { dest = '/games/' + slug + '/'; shortPath = url.origin + '/g/' + slug; }
   else return json(400, { error: 'Unknown slug.' });
+  const full = url.origin + dest;
 
-  const target = url.origin + path;
   const cache = caches.default;
-  const cacheKey = new Request(url.origin + '/api/short?slug=' + slug, { method: 'GET' });
+  const cacheKey = new Request(url.origin + '/api/short?slug=' + slug + '&v2', { method: 'GET' });
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
-  let short = target; // fallback = full URL
-  const providers = [
-    'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(target),
-    'https://is.gd/create.php?format=simple&url=' + encodeURIComponent(target),
-  ];
-  for (const api of providers) {
+  // Default short link = the on-domain /g/<slug> path (reliable, redirects to
+  // the game so the og:image still previews). If a TINYURL_TOKEN secret is set,
+  // upgrade to a real tinyurl.com/xxxx link.
+  let short = shortPath;
+  if (env.TINYURL_TOKEN) {
     try {
-      const r = await fetch(api, { headers: { 'user-agent': 'Mozilla/5.0 datacruise-arcade' } });
-      const t = (await r.text()).trim();
-      if (r.ok && /^https?:\/\/\S+$/.test(t) && !/error/i.test(t)) { short = t; break; }
-    } catch (_) { /* try next provider */ }
+      const r = await fetch('https://api.tinyurl.com/create', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer ' + env.TINYURL_TOKEN,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ url: shortPath }),
+      });
+      const j = await r.json();
+      if (j && j.data && j.data.tiny_url) short = j.data.tiny_url;
+    } catch (_) { /* keep the /g/ path */ }
   }
 
-  const body = JSON.stringify({ short: short, full: target });
+  const body = JSON.stringify({ short: short, full: full });
   const resp = new Response(body, {
     headers: {
       'content-type': 'application/json',
       'access-control-allow-origin': '*',
-      // Only cache real short links hard; fallbacks are retried next time.
-      'cache-control': short !== target ? 'public, max-age=86400' : 'no-store',
+      'cache-control': 'public, max-age=86400',
     },
   });
-  if (short !== target) ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+  ctx.waitUntil(cache.put(cacheKey, resp.clone()));
   return resp;
 }
 
@@ -251,6 +256,13 @@ export default {
     }
     if (url.pathname === '/api/short') {
       return handleShort(request, env, ctx);
+    }
+    // Short share paths: /g/<slug> -> the game page (keeps the og:image preview)
+    if (url.pathname.startsWith('/g/')) {
+      const gslug = url.pathname.slice(3).replace(/\/+$/, '').toLowerCase();
+      if (SCENE_PROMPTS[gslug]) {
+        return Response.redirect(url.origin + '/games/' + gslug + '/', 301);
+      }
     }
 
     // Everything else falls through to static assets.
