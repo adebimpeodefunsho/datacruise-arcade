@@ -1,7 +1,7 @@
 // Crack the Data Crossword — DOM rendering.
 
 import { GRID_SIZE, PUZZLES, clueGroups, wordCells } from './puzzle.js';
-import { magniSvg } from './mascot.js';
+import { beeSvg } from './mascot.js';
 import { CONFIG, getActiveWord } from './state.js';
 import { isMuted } from './sound.js';
 
@@ -20,10 +20,10 @@ export function renderSplash(state, handlers) {
           <div class="brand-meta">CASE #002</div>
         </div>
         <div class="splash">
-          <div class="mascot">${magniSvg()}</div>
+          <div class="mascot">${beeSvg()}</div>
           <h1>Crack the Data <span class="punc">::</span> Crossword<span class="cursor">_</span></h1>
           <p class="tagline">
-            Magni's clipped a fresh grid of <span class="hl">data terms</span>.
+            Buzz buzzed in a fresh grid of <span class="hl">data terms</span>.
             Find about <span class="hl">${avgWordCount} words</span> before the clock runs out.
             A new puzzle each game.
           </p>
@@ -213,7 +213,7 @@ function termBar(pathInner, hideMute = false) {
   return `
     <div class="term-bar">
       <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
-      <div class="path"><span class="prompt">magni@datacruise</span><span class="sep">:</span>${pathInner}</div>
+      <div class="path"><span class="prompt">buzz@datacruise</span><span class="sep">:</span>${pathInner}</div>
       ${hideMute ? '' : `<button class="mute-btn" id="btn-mute" aria-label="Toggle sound">${isMuted() ? '🔇' : '🔊'}</button>`}
     </div>
   `;

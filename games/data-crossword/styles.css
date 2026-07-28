@@ -141,7 +141,7 @@ body {
 .splash .mascot {
   margin: 18px auto 8px;
   width: 160px; height: 160px;
-  filter: drop-shadow(0 0 18px rgba(0, 255, 156, 0.35));
+  filter: drop-shadow(0 0 18px rgba(255, 196, 60, 0.4));
 }
 
 .how-to {

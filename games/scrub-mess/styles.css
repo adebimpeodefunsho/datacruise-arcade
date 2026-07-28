@@ -45,8 +45,11 @@ html, body {
 
 body {
   background:
-    radial-gradient(ellipse at top, rgba(0, 240, 255, 0.07), transparent 60%),
-    radial-gradient(ellipse at bottom, rgba(255, 46, 146, 0.06), transparent 60%),
+    radial-gradient(ellipse at 12% 8%, rgba(0, 240, 255, 0.11), transparent 55%),
+    radial-gradient(ellipse at 88% 12%, rgba(177, 139, 255, 0.11), transparent 55%),
+    radial-gradient(ellipse at 50% 105%, rgba(255, 46, 146, 0.11), transparent 60%),
+    radial-gradient(ellipse at 92% 82%, rgba(255, 159, 67, 0.09), transparent 55%),
+    radial-gradient(ellipse at 8% 78%, rgba(126, 217, 87, 0.08), transparent 55%),
     var(--bg-0);
   min-height: 100vh;
   min-height: 100dvh;
@@ -386,6 +389,19 @@ body {
   80% { translate: 3px 0; }
 }
 .tile-text { display: inline-block; }
+
+/* Vibrant tile colours — assigned by a hash of the word in main.js (never by
+   messy/clean, so they never hint the answer). Scoped to :not(.revealing) so
+   at round-end the tiles drop back to the dark base and the per-kind reveal
+   glows read correctly. */
+.heap:not(.revealing) .tile.tile-c0 { background: #ff7a6b; color: #24100f; border-color: #d85a4c; }
+.heap:not(.revealing) .tile.tile-c1 { background: #ff9f43; color: #241809; border-color: #d97e26; }
+.heap:not(.revealing) .tile.tile-c2 { background: #ffd23f; color: #241f0c; border-color: #d9ad1f; }
+.heap:not(.revealing) .tile.tile-c3 { background: #7ed957; color: #16240f; border-color: #5cb838; }
+.heap:not(.revealing) .tile.tile-c4 { background: #2ed9c3; color: #0f2421; border-color: #1fb3a0; }
+.heap:not(.revealing) .tile.tile-c5 { background: #57b9ff; color: #0f1d24; border-color: #3494e0; }
+.heap:not(.revealing) .tile.tile-c6 { background: #b18bff; color: #1b1424; border-color: #8f66e0; }
+.heap:not(.revealing) .tile.tile-c7 { background: #ff77c2; color: #24101c; border-color: #e055a0; }
 
 .bin-area {
   position: relative;

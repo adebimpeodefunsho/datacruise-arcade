@@ -234,7 +234,11 @@ function layoutHeap() {
       const y = top + jitterY;
 
       const tile = document.createElement('button');
-      tile.className = 'tile';
+      // Colour each tile from a hash of its TEXT — vibrant "paper scrap" look,
+      // deliberately NOT tied to messy/clean so it never hints the answer.
+      let _h = 0;
+      for (let k = 0; k < item.text.length; k++) _h = (_h * 31 + item.text.charCodeAt(k)) >>> 0;
+      tile.className = 'tile tile-c' + (_h % 8);
       tile.type = 'button';
       tile.dataset.id = item.id;
       tile.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0) rotate(${rot}deg)`;
