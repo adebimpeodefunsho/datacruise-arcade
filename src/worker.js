@@ -214,16 +214,18 @@ async function handleShort(request, env, ctx) {
   if (cached) return cached;
 
   let short = target; // fallback = full URL
+  let _dbg = 'none';
   try {
     const r = await fetch(
       'https://is.gd/create.php?format=simple&url=' + encodeURIComponent(target),
-      { headers: { 'user-agent': 'datacruise-arcade-share' } }
+      { headers: { 'user-agent': 'Mozilla/5.0 datacruise-arcade-share' } }
     );
     const t = (await r.text()).trim();
+    _dbg = r.status + ':' + t.slice(0, 120);
     if (r.ok && /^https?:\/\/\S+$/.test(t)) short = t;
-  } catch (_) { /* keep fallback */ }
+  } catch (e) { _dbg = 'throw:' + String(e && e.message || e); }
 
-  const body = JSON.stringify({ short: short, full: target });
+  const body = JSON.stringify({ short: short, full: target, _dbg: _dbg });
   const resp = new Response(body, {
     headers: {
       'content-type': 'application/json',
