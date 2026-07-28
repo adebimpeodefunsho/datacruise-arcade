@@ -211,6 +211,11 @@ function nextRound() {
     state.status = 'finished';
     sfx.gameover();
     render();
+    window.DataCruiseResult && DataCruiseResult.ready({
+      slug: 'sentence-builder', game: 'Bridge the Data Sentence',
+      headline: state.totalScore + ' pts',
+      sub: 'every sentence bridged 🌉',
+    });
   }
 }
 

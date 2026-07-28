@@ -111,6 +111,13 @@ function startLoop() {
         sfx.lose();
       }
       cancelLoop();
+      const rStars = state.outcome === "win" ? starsForWin(state.spinsUsed) : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "pie-spinner", game: "Pie Spinner",
+        headline: state.outcome === "win" ? state.spinsUsed + " spins" : "Out of spins!",
+        sub: state.outcome === "win" ? "perfect pie 🥧" : "so close",
+        stars: rStars, starsMax: 3,
+      });
       // Brief delay so the final slice's pop animation is visible before the end card slides in.
       setTimeout(showEnd, 900);
       return;

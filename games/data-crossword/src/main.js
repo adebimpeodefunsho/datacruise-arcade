@@ -104,6 +104,24 @@ function draw() {
   // Wire the mute button on every render (it lives in the term bar).
   const m = document.getElementById('btn-mute');
   if (m) m.addEventListener('click', handlers.onToggleMute);
+
+  // Fire the shareable result once, the first draw after entering game-over.
+  if (state.screen === 'gameover') {
+    if (!draw._over) {
+      draw._over = true;
+      const words = (state.puzzle && state.puzzle.words.length) || 1;
+      const found = state.foundKeys ? state.foundKeys.size : 0;
+      const pct = found / words;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: 'data-crossword', game: 'Crack the Data Crossword',
+        headline: state.score + ' pts',
+        sub: found + '/' + words + ' words solved ✏️',
+        stars: pct >= 1 ? 3 : pct >= 0.6 ? 2 : pct > 0 ? 1 : 0, starsMax: 3,
+      });
+    }
+  } else {
+    draw._over = false;
+  }
 }
 
 window.addEventListener('keydown', (e) => {

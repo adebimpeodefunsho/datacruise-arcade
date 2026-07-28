@@ -110,6 +110,12 @@ function startLoop() {
         writeBest();
       }
       cancelLoop();
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "dashboard-drop", game: "Dashboard Drop",
+        headline: state.correctCatches + "/6 charts",
+        sub: state.outcome === "win" ? "clean dashboard! 📊" : "keep it tidy next time",
+        stars: stars, starsMax: 3,
+      });
       setTimeout(showEnd, 950);
       return;
     }

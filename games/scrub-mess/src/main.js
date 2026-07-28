@@ -430,6 +430,18 @@ function finishRound() {
   else if (state.trashedMessy === state.totalMessy && state.wrongClicks === 0) sfx.win();
   else sfx.done();
 
+  {
+    const total = state.totalMessy || 1;
+    const pct = Math.round((state.trashedMessy / total) * 100);
+    const grade = pct >= 95 ? 'S' : pct >= 85 ? 'A' : pct >= 70 ? 'B' : pct >= 50 ? 'C' : pct >= 25 ? 'D' : 'F';
+    window.DataCruiseResult && DataCruiseResult.ready({
+      slug: 'scrub-mess', game: 'Scrub the Data Mess',
+      headline: pct + '%',
+      sub: 'grade ' + grade + ' · data scrubbed',
+      stars: pct >= 85 ? 3 : pct >= 70 ? 2 : pct > 0 ? 1 : 0, starsMax: 3,
+    });
+  }
+
   // Brief delay so any final trash animation finishes reading, then reveal in place.
   setTimeout(() => {
     revealHeap();

@@ -11,6 +11,11 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   },
+  // Workers AI — used by /api/scene to generate the dreamy result-card
+  // backdrops (one image per game, cached at the edge after first hit).
+  "ai": {
+    "binding": "AI"
+  },
   "compatibility_flags": [
     "nodejs_compat"
   ],

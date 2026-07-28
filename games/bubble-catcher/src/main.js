@@ -128,6 +128,13 @@ function startLoop() {
         sfx.lose();
       }
       cancelLoop();
+      const rStars = state.outcome === "win" ? starsForWin(state.elapsedMs, state.config.roundMs) : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "bubble-catcher", game: "Bubble Catcher",
+        headline: state.outcome === "win" ? state.catches + " caught" : "Missed it!",
+        sub: state.outcome === "win" ? "only " + state.misses + " misses 🫧" : "pop them all next time",
+        stars: rStars, starsMax: 3,
+      });
       // Brief pause so the last snap animation reads before the end card.
       setTimeout(showEnd, 900);
       return;

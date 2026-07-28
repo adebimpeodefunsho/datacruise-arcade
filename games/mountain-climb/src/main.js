@@ -85,6 +85,22 @@ function onClick(e) {
           bestStars = state.stars;
           writeBestStars(bestStars);
         }
+        // Mirror the game's own end-screen wording exactly (see renderEnd):
+        // loss reports "day {state.day - 1}" and the altitude in metres.
+        var mcWon = state.outcome === "win";
+        var mcExhausted = mcWon && state.exhaustedFinish === true;
+        window.DataCruiseResult && DataCruiseResult.ready({
+          slug: "mountain-climb", game: "Mountain Climb",
+          headline: mcExhausted
+            ? "EXHAUSTED FINISH 💪"
+            : state.altitude + "m" + (mcWon ? " 🏔️" : ""),
+          sub: mcExhausted
+            ? "collapsed at the summit — you made it!"
+            : mcWon
+              ? "summit reached · " + state.stamina + " stamina left"
+              : "out of stamina on day " + (state.day - 1),
+          stars: state.stars, starsMax: 3,
+        });
       }
     }
     render();

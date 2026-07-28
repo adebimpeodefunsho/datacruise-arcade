@@ -59,6 +59,17 @@ function onClick(e) {
       if (state.phase === 'ended') {
         if (didWin(state)) audio.playGameWin();
         else audio.playGameLose();
+        const _c = state.roundScores.reduce((a, r) => a + r.correct, 0);
+        const _t = state.roundScores.reduce((a, r) => a + r.total, 0) || 1;
+        const _pct = _c / _t;
+        window.DataCruiseResult && DataCruiseResult.ready({
+          slug: 'decision-lab', game: 'Decision Lab',
+          headline: _c + '/' + _t,
+          sub: didWin(state)
+            ? 'cleared every round! 🧪'
+            : state.roundScores.length + '/5 rounds reached',
+          stars: _pct >= 0.9 ? 3 : _pct >= 0.7 ? 2 : _pct > 0 ? 1 : 0, starsMax: 3,
+        });
       }
       paint();
       return;

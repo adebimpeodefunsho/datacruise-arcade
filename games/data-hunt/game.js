@@ -1235,6 +1235,14 @@ function showGameEnd() {
     `<li>${t.word} <span>${t.missed ? 'missed' : '+' + t.points + ' pts'}</span></li>`
   ).join('');
   gameEndModal.classList.remove('hidden');
+  const found = state.treasuresFound.filter(t => !t.missed).length;
+  const totalT = state.gameSessions.length || 5;
+  window.DataCruiseResult && DataCruiseResult.ready({
+    slug: 'data-hunt', game: 'Hunt the Data Treasure',
+    headline: found + '/' + totalT + ' 💎',
+    sub: state.score + ' pts of treasure',
+    stars: found >= totalT ? 3 : found >= Math.ceil(totalT * 0.6) ? 2 : found > 0 ? 1 : 0, starsMax: 3,
+  });
 }
 
 playAgainBtn.addEventListener('click', () => {

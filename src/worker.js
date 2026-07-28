@@ -90,12 +90,95 @@ async function handleValidateLicense(request, env) {
   });
 }
 
+/* ============================================================
+   AI result-card scenes  —  GET /api/scene?slug=<game>
+   ------------------------------------------------------------
+   Generates ONE dreamy, kids'-storybook illustration per game
+   with Workers AI (Flux), then caches it at the edge so it is
+   generated at most once per game (prompts are fixed, so the
+   cache key is just the slug). No user photos are ever involved
+   — these are themed art scenes only. The result card composites
+   the image as its hero backdrop; if this endpoint is missing
+   (e.g. local dev) the card falls back to a flat gradient.
+============================================================ */
+const SCENE_PROMPTS = {
+  'mountain-climb':
+    'A cheerful cartoon ladybug triumphantly planting a tiny flag on a sunny golden mountain summit, warm orange sky, soft rounded shapes, storybook children\'s book illustration, flat vector, no text',
+  'block-city':
+    'A cute cartoon ladybug standing proudly atop a colorful skyline of stacked toy building blocks arranged like a bar chart, bright orange sky, playful children\'s book illustration, flat vector, no text',
+  'bubble-catcher':
+    'A happy cartoon ladybug floating among big translucent soap bubbles of different sizes, warm orange background, whimsical children\'s book illustration, flat vector, no text',
+  'dashboard-drop':
+    'A cheerful cartoon ladybug beside a neat wall of little glowing chart screens forming a dashboard, orange tones, playful children\'s book illustration, flat vector, no text',
+  'pie-spinner':
+    'A joyful cartoon ladybug spinning a big colorful pie-chart wheel, bright orange background, storybook children\'s book illustration, flat vector, no text',
+  'decision-lab':
+    'A curious cartoon ladybug scientist in a friendly bright laboratory with charts and beakers, orange tones, cheerful children\'s book illustration, flat vector, no text',
+  'derive-jargon':
+    'A friendly smiling cartoon magnifying-glass character discovering a glowing floating word, dreamy purple background, whimsical children\'s book illustration, flat vector, no text',
+  'data-crossword':
+    'A playful glowing crossword grid with a friendly cartoon magnifying-glass character, dreamy purple background, cheerful children\'s book illustration, flat vector, no text',
+  'data-hunt':
+    'A glowing treasure chest full of colorful gems on a wooden shelf with a friendly cartoon magnifying-glass character, dreamy purple tones, storybook children\'s book illustration, flat vector, no text',
+  'scrub-mess':
+    'A cheerful tidy-up scene of sparkling clean data blocks with a friendly cartoon magnifying-glass character and a little bin, dreamy purple background, children\'s book illustration, flat vector, no text',
+  'sentence-builder':
+    'A whimsical bridge built from glowing word blocks crossing a gentle river, a friendly cartoon magnifying-glass character, dreamy purple sky, children\'s book illustration, flat vector, no text',
+};
+
+async function handleScene(request, env, ctx) {
+  const url = new URL(request.url);
+  const slug = String(url.searchParams.get('slug') || '').toLowerCase();
+  const prompt = SCENE_PROMPTS[slug];
+  if (!prompt) return json(400, { error: 'Unknown or missing slug.' });
+  if (!env.AI) return json(503, { error: 'AI is not configured.' });
+
+  // Edge cache keyed by slug only (prompts are fixed). Bump ?v to force
+  // regeneration if a prompt changes.
+  const version = 'v1';
+  const cache = caches.default;
+  const cacheKey = new Request(`${url.origin}/api/scene?slug=${slug}&${version}`, {
+    method: 'GET',
+  });
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  let bytes;
+  try {
+    // Flux-schnell returns { image: <base64 jpeg> }.
+    const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
+      prompt,
+      steps: 6,
+    });
+    if (!out || !out.image) throw new Error('No image returned.');
+    const bin = atob(out.image);
+    bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  } catch (err) {
+    return json(502, { error: 'Scene generation failed.', detail: String(err && err.message || err) });
+  }
+
+  const resp = new Response(bytes, {
+    headers: {
+      'content-type': 'image/jpeg',
+      // long-lived: identical per slug, safe to cache hard
+      'cache-control': 'public, max-age=31536000, immutable',
+      'access-control-allow-origin': '*',
+    },
+  });
+  ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+  return resp;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === '/api/validate-license') {
       return handleValidateLicense(request, env);
+    }
+    if (url.pathname === '/api/scene') {
+      return handleScene(request, env, ctx);
     }
 
     // Everything else falls through to static assets.

@@ -176,6 +176,12 @@ function startLoop() {
       }
       cancelLoop();
       showEnd();
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "block-city", game: "Block City",
+        headline: state.outcome === "win" ? (state.elapsedMs / 1000).toFixed(1) + "s" : "City fell!",
+        sub: state.outcome === "win" ? "skyline complete 🏙️" : "rebuild it next time",
+        stars: state.stars, starsMax: 3,
+      });
       return;
     }
     rafId = requestAnimationFrame(step);

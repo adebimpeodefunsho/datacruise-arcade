@@ -142,6 +142,23 @@ function draw() {
   if (state.screen === 'splash') renderSplash(state, handlers);
   else if (state.screen === 'round') renderRound(state, handlers);
   else if (state.screen === 'gameover') renderGameOver(state, handlers);
+
+  // Fire the shareable result once, the first draw after entering game-over.
+  if (state.screen === 'gameover') {
+    if (!draw._over) {
+      draw._over = true;
+      const solved = state.correctCount, totalQ = (state.deck && state.deck.length) || 10;
+      const pct = totalQ ? solved / totalQ : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: 'derive-jargon', game: 'Derive the Data Jargon',
+        headline: state.score + ' pts',
+        sub: solved + '/' + totalQ + ' words decoded 🔍',
+        stars: pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : pct > 0 ? 1 : 0, starsMax: 3,
+      });
+    }
+  } else {
+    draw._over = false;
+  }
 }
 
 // Keyboard:
