@@ -214,21 +214,19 @@ async function handleShort(request, env, ctx) {
   if (cached) return cached;
 
   let short = target; // fallback = full URL
-  const _dbg = [];
   const providers = [
-    ['tiny', 'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(target)],
-    ['isgd', 'https://is.gd/create.php?format=simple&url=' + encodeURIComponent(target)],
+    'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(target),
+    'https://is.gd/create.php?format=simple&url=' + encodeURIComponent(target),
   ];
-  for (const [name, api] of providers) {
+  for (const api of providers) {
     try {
       const r = await fetch(api, { headers: { 'user-agent': 'Mozilla/5.0 datacruise-arcade' } });
       const t = (await r.text()).trim();
-      _dbg.push(name + '=' + r.status + ':' + t.slice(0, 60));
       if (r.ok && /^https?:\/\/\S+$/.test(t) && !/error/i.test(t)) { short = t; break; }
-    } catch (e) { _dbg.push(name + '=throw:' + String(e && e.message || e).slice(0, 50)); }
+    } catch (_) { /* try next provider */ }
   }
 
-  const body = JSON.stringify({ short: short, full: target, _dbg: _dbg.join(' || ') });
+  const body = JSON.stringify({ short: short, full: target });
   const resp = new Response(body, {
     headers: {
       'content-type': 'application/json',
