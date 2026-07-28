@@ -494,3 +494,13 @@ body {
   }
   .scanlines { display: none; }
 }
+
+/* Mobile fit — grid stays visible, clue list scrolls inside a capped box */
+@media (max-width: 820px) {
+  html, body { overflow-x: hidden; }
+  #app { padding: 6px; align-items: flex-start; }
+  .term-body { padding: 10px 12px 12px; }
+  .brand { margin-bottom: 4px; }
+  .hud { margin-bottom: 6px; }
+  .clues { max-height: 198px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+}

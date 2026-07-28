@@ -659,3 +659,19 @@ body {
   .hud-left { gap: 12px; }
   .hud-val { font-size: 15px; }
 }
+
+/* Mobile fit — keep the whole play area within the phone width */
+@media (max-width: 820px) {
+  html, body { overflow-x: hidden; }
+  .screen-play { max-width: 100%; }
+  .hud { padding: 8px 10px; gap: 8px; }
+  .hud-left { gap: 10px; }
+  .hud-key { font-size: 9px; }
+  .hud-val { font-size: 14px; }
+  .hud-right { gap: 6px; }
+  .timer { min-width: 60px; font-size: 22px; }
+  .btn-ghost-sm { padding: 5px 8px; font-size: 11px; }
+  .playfield { grid-template-columns: 1fr 122px; }
+  .bin { width: 100px; height: 126px; }
+  .magni-side { width: 52px; height: 52px; }
+}

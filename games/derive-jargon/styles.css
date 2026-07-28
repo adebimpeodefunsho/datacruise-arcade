@@ -1019,3 +1019,11 @@ body {
   }
   .scanlines { display: none; }
 }
+
+/* Mobile fit — trim padding so the whole round fits without scrolling */
+@media (max-width: 820px) {
+  html, body { overflow-x: hidden; }
+  #app { padding: 6px; align-items: flex-start; }
+  .term-body { padding: 12px 14px 14px; }
+  .splash .mascot { margin: 8px auto 4px; width: 116px; height: 116px; }
+}

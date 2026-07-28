@@ -478,3 +478,19 @@ body {
   .slot { min-width: 78px; }
   .row { padding: 8px 10px; gap: 6px; }
 }
+
+/* Mobile fit — compress the round so all sentences + word bank fit */
+@media (max-width: 820px) {
+  html, body { overflow-x: hidden; }
+  #app { padding: 6px; align-items: flex-start; }
+  .term-body { padding: 10px 12px 12px; }
+  .hdr { padding-bottom: 8px; margin-bottom: 8px; gap: 4px 12px; }
+  .sentences { gap: 6px; margin-bottom: 8px; max-height: 46vh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 2px; }
+  .banner { padding: 8px 10px; font-size: 12px; }
+  .row { padding: 6px 8px; gap: 3px; }
+  .row-line { gap: 6px; }
+  .fixed, .slot, .word { font-size: 13px; padding: 4px 8px; }
+  .slot { min-width: 64px; }
+  .bank { padding: 8px; min-height: 44px; margin-bottom: 8px; gap: 6px; }
+  .controls { margin-top: 4px; gap: 8px; }
+}
