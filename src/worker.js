@@ -143,19 +143,28 @@ async function handleScene(request, env, ctx) {
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
-  let bytes;
-  try {
-    // Flux-schnell returns { image: <base64 jpeg> }.
-    const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
-      prompt,
-      steps: 6,
-    });
-    if (!out || !out.image) throw new Error('No image returned.');
-    const bin = atob(out.image);
-    bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  } catch (err) {
-    return json(502, { error: 'Scene generation failed.', detail: String(err && err.message || err) });
+  // Flux-schnell returns { image: <base64 jpeg> }. Workers AI occasionally
+  // rejects a request under transient load ("8001: Invalid input"); a retry
+  // clears it, so try a few times before giving up (the client still has a
+  // gradient fallback if all attempts fail).
+  let bytes, lastErr;
+  for (let attempt = 0; attempt < 3 && !bytes; attempt++) {
+    try {
+      const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
+        prompt,
+        steps: 6,
+      });
+      if (!out || !out.image) throw new Error('No image returned.');
+      const bin = atob(out.image);
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      bytes = arr;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  if (!bytes) {
+    return json(502, { error: 'Scene generation failed.', detail: String(lastErr && lastErr.message || lastErr) });
   }
 
   const resp = new Response(bytes, {
