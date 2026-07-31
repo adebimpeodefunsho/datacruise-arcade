@@ -244,9 +244,23 @@ async function handleShort(request, env, ctx) {
   return resp;
 }
 
+// Canonical host — everything served from the old `*.workers.dev` URL is
+// permanently redirected here so bookmarks/links keep working after the
+// migration to the custom domain.
+const CANONICAL_HOST = 'arcade.datacruise.app';
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Redirect old workers.dev traffic to the custom domain.
+    const host = (request.headers.get('host') || '').toLowerCase();
+    if (host.endsWith('.workers.dev')) {
+      return Response.redirect(
+        'https://' + CANONICAL_HOST + url.pathname + url.search,
+        301,
+      );
+    }
 
     if (url.pathname === '/api/validate-license') {
       return handleValidateLicense(request, env);
