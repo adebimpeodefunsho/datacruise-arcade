@@ -9,7 +9,12 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // Run the Worker script for every request first, so custom logic
+    // (e.g. the workers.dev → arcade.datacruise.app redirect) applies to
+    // static-asset paths too. The script falls through to env.ASSETS.fetch
+    // for anything it doesn't handle explicitly.
+    "run_worker_first": true
   },
   // Workers AI — used by /api/scene to generate the dreamy result-card
   // backdrops (one image per game, cached at the edge after first hit).
