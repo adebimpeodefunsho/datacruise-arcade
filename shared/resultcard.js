@@ -27,7 +27,7 @@
   'use strict';
   if (window.DataCruiseResult) return;
 
-  var BASE = 'https://datacruise-arcade.adebimpeodefunsho.workers.dev';
+  var BASE = 'https://arcade.datacruise.app';
 
   // series palette + mascot per game slug
   var CHART = { accent: '#ff6a00', accent2: '#b23a00', mascot: '🐞', ink: '#0e0e10' };
