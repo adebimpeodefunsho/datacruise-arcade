@@ -1,0 +1,2856 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Bug-Bug's Decision Lab</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwZTBlMTAiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIzNiIgaGVpZ2h0PSIyMiIgcng9IjMiIGZpbGw9IiNmZjZhMDAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjIwIiB5MT0iNDQiIHgyPSI0NCIgeTI9IjQ0IiBzdHJva2U9IiNmZmM5NGQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjIyIiB5MT0iNTAiIHgyPSI0MiIgeTI9IjUwIiBzdHJva2U9IiNmZmM5NGQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iNDQiIGN5PSIyMiIgcj0iMyIgZmlsbD0iI2ZmYzk0ZCIvPgo8L3N2Zz4K"/>
+  <style>
+/* ============================================================
+   Bug-Bug's Decision Lab — styles
+============================================================ */
+
+:root {
+  --bg:        #fff8f1;
+  --ink:       #0e0e10;
+  --ink-soft:  #3a3a40;
+  --muted:     #6b6b73;
+  --orange:    #ff6a00;
+  --orange-dk: #d75200;
+  --yellow:    #ffc94d;
+  --green:     #34d399;
+  --green-dk:  #047857;
+  --red:       #dc2626;
+  --red-dk:    #991b1b;
+  --teal:      #0ea5a4;
+  --lilac:     #a78bfa;
+  --card:      #ffffff;
+  --line:      #0e0e10;
+  --shadow:    0 6px 0 0 var(--line);
+  --radius:    14px;
+  --font:      ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.45; }
+button { font-family: inherit; }
+
+.primary-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--orange);
+  color: #fff;
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 0 var(--line); }
+.primary-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 0 var(--line); }
+.primary-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ===================== TITLE SCREEN ===================== */
+
+.title-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.title-card {
+  max-width: 640px;
+  width: 100%;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 0 0 var(--line);
+  text-align: center;
+}
+.title-logo { width: 100px; height: 80px; margin-bottom: 12px; }
+.title-heading {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.title-subtitle { margin: 0 0 22px; color: var(--ink-soft); font-size: 15px; }
+
+.title-howto {
+  margin-top: 22px;
+  text-align: left;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 14px;
+}
+.title-howto summary { cursor: pointer; font-weight: 900; color: var(--ink); padding: 4px 0; }
+.howto-body { margin-top: 10px; color: var(--ink-soft); line-height: 1.55; }
+.howto-body h4 { margin: 16px 0 6px; font-size: 13px; font-weight: 900; color: var(--ink); letter-spacing: 0.05em; text-transform: uppercase; }
+.howto-goal { background: #ffe0b3; border: 2px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 0 0 10px !important; }
+.howto-rounds { padding-left: 22px; margin: 4px 0 0; }
+.howto-rounds li { padding: 6px 0; }
+.howto-round-desc { color: var(--muted); }
+.howto-threshold { display: inline-block; background: var(--yellow); border: 2px solid var(--line); padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 800; margin-left: 6px; }
+.howto-flow { list-style: none; padding: 0; margin: 4px 0 0; }
+.howto-flow li { padding: 4px 0; }
+.howto-tip { background: #e8f4ea; border: 2px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-top: 14px !important; font-size: 13px; }
+
+/* ===================== ROUND INTRO ===================== */
+
+.round-intro-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.round-intro-card {
+  max-width: 560px;
+  width: 100%;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 0 0 var(--line);
+  text-align: center;
+}
+.round-badge {
+  display: inline-block;
+  background: var(--orange);
+  color: #fff;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.round-name { margin: 0 0 8px; font-size: 32px; font-weight: 900; letter-spacing: -0.01em; }
+.round-desc { color: var(--ink-soft); font-size: 15px; margin: 0 0 24px; }
+.round-stats { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.round-stat {
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 110px;
+}
+.round-stat .label { display: block; font-size: 10px; font-weight: 900; color: var(--muted); letter-spacing: 0.12em; }
+.round-stat strong { display: block; font-size: 22px; font-weight: 900; margin-top: 4px; }
+
+/* ===================== GAME SCREEN ===================== */
+
+.game-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.status-bar {
+  display: grid;
+  grid-template-columns: 1.8fr 0.7fr 0.9fr 1.2fr 0.7fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 18px;
+  background: var(--card);
+  border-bottom: 3px solid var(--line);
+}
+.mute-btn {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-size: 18px;
+  padding: 6px 10px;
+  cursor: pointer;
+  line-height: 1;
+}
+.mute-btn:hover { background: var(--bg); }
+.status-bar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-bar .brand-logo { width: 36px; height: 28px; }
+.status-bar .brand h1 { margin: 0; font-size: 15px; font-weight: 900; letter-spacing: 0.02em; }
+.status-bar .brand p { margin: 0; font-size: 11px; color: var(--muted); }
+.header-stat .label { display: block; font-size: 9px; font-weight: 900; color: var(--muted); letter-spacing: 0.12em; }
+.header-stat strong { display: block; font-size: 18px; font-weight: 900; margin-top: 2px; }
+.header-stat .dim { color: var(--muted); font-weight: 600; }
+.header-timer.urgent strong { color: var(--red); animation: pulse-red 1s ease-in-out infinite; }
+@keyframes pulse-red { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+/* Main split layout */
+.game-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.7fr 0.8fr;
+  gap: 18px;
+  padding: 18px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ===================== LEFT: BIG SCREEN ===================== */
+
+.big-screen {
+  position: relative;
+}
+.screen-bezel {
+  background: #1c1f33;
+  border: 6px solid var(--line);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 8px 0 0 var(--line);
+  min-height: 540px;
+  display: flex;
+  flex-direction: column;
+}
+.screen-inner {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 18px 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.chart-area {
+  background: var(--bg);
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 10px;
+}
+.chart-svg { width: 100%; height: auto; display: block; }
+
+.question-area {
+  background: #fff7e8;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.question-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.question-tag {
+  background: var(--orange);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+}
+.question-counter { font-size: 12px; font-weight: 800; color: var(--muted); }
+.question-prompt { margin: 0; font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+
+/* Reveal banner on the big screen — now just the educational explanation
+   (the ✓/✗ + correct answer moved to the right-hand answer-display panel). */
+.reveal-banner {
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 18px;
+  animation: banner-fade 0.4s ease-out;
+}
+.reveal-banner.correct { background: #d8f3dc; }
+.reveal-banner.wrong   { background: #ffd6d6; }
+.reveal-banner-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.reveal-banner.correct .reveal-banner-label { color: var(--green-dk); }
+.reveal-banner.wrong   .reveal-banner-label { color: var(--red-dk); }
+.reveal-explanation { font-size: 14px; color: var(--ink); line-height: 1.5; }
+@keyframes banner-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================== RIGHT: POD PANEL ===================== */
+
+.pod-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Small "answer screen" above the capsule */
+.answer-display {
+  background: #1c1f33;
+  border: 4px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 0 0 var(--line);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.answer-display .label {
+  display: block;
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--yellow);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+.answer-text {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  background: #000;
+  border: 2px solid #444;
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-height: 22px;
+  word-break: break-word;
+  text-shadow: 0 0 4px rgba(52, 211, 153, 0.5);
+}
+.answer-text.placeholder { color: #666; text-shadow: none; font-style: italic; }
+
+/* Reveal state — small screen flips colour to show right/wrong + final answer */
+.answer-display.reveal {
+  animation: reveal-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.answer-display.reveal.correct {
+  background: #064e3b;
+  border-color: var(--green-dk);
+  box-shadow: 0 6px 0 0 var(--green-dk);
+}
+.answer-display.reveal.wrong {
+  background: #7f1d1d;
+  border-color: var(--red-dk);
+  box-shadow: 0 6px 0 0 var(--red-dk);
+}
+.answer-display.reveal .label {
+  font-size: 14px;
+  color: #fff;
+}
+.answer-display.reveal.correct .label { color: #a7f3d0; }
+.answer-display.reveal.wrong   .label { color: #fecaca; }
+.answer-text.reveal-answer {
+  font-size: 17px;
+  font-weight: 900;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  font-family: var(--font);
+  letter-spacing: 0.01em;
+}
+@keyframes reveal-pop {
+  0%   { transform: scale(0.96); }
+  60%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* "Enter your answer ↓" label above the input area */
+.input-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--orange-dk);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* The capsule + Bug-Bug animations */
+.capsule-wrap {
+  display: flex;
+  justify-content: center;
+}
+.capsule-svg {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+/* Idle bobble when waiting for player to type (thinking) */
+.capsule-thinking .capsule-svg {
+  animation: bob 2.4s ease-in-out infinite;
+}
+.capsule-thinking .capsule-svg g[transform^="translate"]:last-of-type {
+  /* The Bug-Bug group inside — wobble the antennae */
+  animation: think-wobble 1.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes think-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-3deg); }
+  75%      { transform: rotate(3deg); }
+}
+
+/* Happy — bounce up on correct */
+.capsule-happy .capsule-svg {
+  animation: bounce-happy 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+}
+@keyframes bounce-happy {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-14px) scale(1.05); }
+  70%  { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Sad — slight slump on wrong */
+.capsule-sad .capsule-svg {
+  animation: slump-sad 0.7s ease-out 1 forwards;
+}
+@keyframes slump-sad {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(6px); }
+}
+
+/* Answer input below the capsule */
+.answer-input-area { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.answer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.answer-input {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+}
+.answer-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--yellow);
+}
+.pod-submit-btn { width: 100%; }
+.pod-continue-btn { width: 100%; }
+
+/* Multiple choice */
+.mc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.mc-btn {
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 80ms ease, background 80ms ease;
+}
+.mc-btn:hover { background: #fff; transform: translateX(2px); }
+.mc-btn.selected { background: var(--orange); color: #fff; border-color: var(--line); }
+
+/* ===================== ROUND END SCREEN ===================== */
+
+.round-end-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.round-end-card {
+  max-width: 560px;
+  width: 100%;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 0 0 var(--line);
+  text-align: center;
+}
+.round-end-card.passed { background: #ecfdf5; }
+.round-end-card.failed { background: #fef2f2; }
+.end-icon { font-size: 64px; line-height: 1; margin-bottom: 4px; }
+.end-headline { margin: 0 0 4px; font-size: 28px; font-weight: 900; letter-spacing: 0.02em; }
+.end-roundname { margin: 0 0 22px; font-size: 16px; font-weight: 700; color: var(--ink-soft); }
+
+.end-score-bar-wrap { margin: 0 0 18px; }
+.end-score-bar {
+  position: relative;
+  height: 24px;
+  background: #fff;
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.end-score-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--orange);
+  border-right: 3px solid var(--line);
+  transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.end-score-fill.pass { background: var(--green); }
+.end-score-fill.fail { background: var(--red); }
+.end-score-threshold {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 3px;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+.end-score-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.end-score-labels .dim { color: var(--muted); }
+.end-message { font-size: 14px; color: var(--ink-soft); margin: 0 0 22px; }
+
+/* ===================== FINAL END SCREEN ===================== */
+
+.final-end-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.final-end-card {
+  max-width: 640px;
+  width: 100%;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 0 0 var(--line);
+  text-align: center;
+}
+.final-icon { font-size: 72px; line-height: 1; margin-bottom: 8px; }
+.final-headline { margin: 0 0 6px; font-size: 32px; font-weight: 900; }
+.final-sub { color: var(--ink-soft); font-size: 15px; margin: 0 0 24px; }
+.final-overall {
+  background: var(--yellow);
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 0 0 22px;
+  display: inline-block;
+}
+.final-overall .label {
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: 0.15em;
+}
+.final-overall .value { display: block; font-size: 44px; font-weight: 900; margin-top: 4px; }
+
+.final-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 24px;
+  font-size: 14px;
+}
+.final-table th, .final-table td {
+  padding: 8px 12px;
+  border: 2px solid var(--line);
+  text-align: left;
+}
+.final-table th { background: var(--yellow); font-weight: 900; }
+.final-table td:first-child, .final-table th:first-child { text-align: center; }
+
+.final-actions { margin-bottom: 16px; }
+.final-data-note { font-size: 12px; color: var(--muted); font-style: italic; }
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 1000px) {
+  .game-main { grid-template-columns: 1fr; }
+  .pod-panel { flex-direction: row; flex-wrap: wrap; }
+  .answer-display { flex: 1 1 100%; }
+  .capsule-wrap { flex: 0 0 220px; }
+  .answer-input-area { flex: 1 1 200px; }
+  .status-bar { grid-template-columns: 1.5fr 0.5fr 0.7fr 1fr 0.5fr; }
+}
+@media (max-width: 700px) {
+  .status-bar { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px; }
+  .status-bar .brand { grid-column: span 2; }
+  .game-main { padding: 12px; gap: 12px; }
+  .screen-bezel { min-height: auto; padding: 10px; }
+  .screen-inner { padding: 12px 14px; }
+  .pod-panel { flex-direction: column; }
+  .capsule-wrap { flex: 0 0 auto; }
+  .capsule-svg { max-width: 160px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script>
+/* ==== svg.js ==== */
+// Mini SVG assets specific to Decision Lab.
+
+/** Bug-Bug — friendly orange ladybug with antennae. */
+function bug(scale = 1, mood = 'neutral') {
+  const s = scale;
+  // mood: 'happy' | 'sad' | 'neutral' | 'thinking'
+  let mouth = `<path d="M -8 6 Q 0 10 8 6" stroke="#0e0e10" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  if (mood === 'happy')    mouth = `<path d="M -10 4 Q 0 14 10 4" stroke="#0e0e10" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  if (mood === 'sad')      mouth = `<path d="M -8 9 Q 0 3 8 9" stroke="#0e0e10" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  if (mood === 'thinking') mouth = `<line x1="-6" y1="8" x2="6" y2="8" stroke="#0e0e10" stroke-width="2.5" stroke-linecap="round"/>`;
+  return `<g transform="scale(${s})">
+    <!-- antennae -->
+    <line x1="-8" y1="-22" x2="-12" y2="-32" stroke="#0e0e10" stroke-width="2" stroke-linecap="round"/>
+    <line x1="8"  y1="-22" x2="12"  y2="-32" stroke="#0e0e10" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="-12" cy="-32" r="3" fill="#0e0e10"/>
+    <circle cx="12"  cy="-32" r="3" fill="#0e0e10"/>
+    <!-- body -->
+    <ellipse cx="0" cy="0" rx="22" ry="20" fill="#ff6a00" stroke="#0e0e10" stroke-width="2.5"/>
+    <!-- centre line -->
+    <line x1="0" y1="-20" x2="0" y2="20" stroke="#0e0e10" stroke-width="2"/>
+    <!-- spots -->
+    <circle cx="-10" cy="-4" r="3" fill="#0e0e10"/>
+    <circle cx="10"  cy="-4" r="3" fill="#0e0e10"/>
+    <circle cx="-8"  cy="8"  r="2.5" fill="#0e0e10"/>
+    <circle cx="8"   cy="8"  r="2.5" fill="#0e0e10"/>
+    <!-- face -->
+    <ellipse cx="0" cy="-12" rx="14" ry="10" fill="#ffd8a8" stroke="#0e0e10" stroke-width="2"/>
+    <circle cx="-5" cy="-13" r="1.8" fill="#0e0e10"/>
+    <circle cx="5"  cy="-13" r="1.8" fill="#0e0e10"/>
+    <g transform="translate(0 -10)">
+      ${mouth}
+    </g>
+  </g>`;
+}
+
+/** Capsule — Bug-Bug in a vertical pill-shape pod (think astronaut capsule). */
+function capsule(width = 200, height = 280, mood = 'neutral') {
+  const cx = width / 2;
+  return `<svg viewBox="0 0 ${width} ${height}" class="capsule-svg" role="img" aria-label="Bug-Bug in the answer pod">
+    <!-- capsule outer -->
+    <rect x="14" y="14" width="${width - 28}" height="${height - 28}" rx="${(width - 28) / 2}" fill="#fff" stroke="#0e0e10" stroke-width="3"/>
+    <!-- inner shading -->
+    <rect x="22" y="22" width="${width - 44}" height="${height - 44}" rx="${(width - 44) / 2}" fill="#fff8f1"/>
+    <!-- window glass shine -->
+    <ellipse cx="${cx - 24}" cy="60" rx="10" ry="36" fill="#fff" opacity="0.7"/>
+    <!-- Bug-Bug -->
+    <g transform="translate(${cx} ${height / 2 + 10})">
+      ${bug(1.6, mood)}
+    </g>
+    <!-- panel detail -->
+    <circle cx="${cx - 50}" cy="${height - 38}" r="5" fill="#ff6a00" stroke="#0e0e10" stroke-width="2"/>
+    <circle cx="${cx}" cy="${height - 38}" r="5" fill="#ffc94d" stroke="#0e0e10" stroke-width="2"/>
+    <circle cx="${cx + 50}" cy="${height - 38}" r="5" fill="#0ea5a4" stroke="#0e0e10" stroke-width="2"/>
+  </svg>`;
+}
+
+/** Decision Lab logo — a chart with a tick mark. */
+function logoMark(scale = 1) {
+  return `<g transform="scale(${scale})">
+    <rect x="-30" y="-22" width="60" height="40" rx="5" fill="#ff6a00" stroke="#0e0e10" stroke-width="3"/>
+    <rect x="-22" y="-6"  width="6"  height="20" fill="#fff"/>
+    <rect x="-12" y="-14" width="6"  height="28" fill="#fff"/>
+    <rect x="-2"  y="-2"  width="6"  height="16" fill="#fff"/>
+    <rect x="8"   y="-16" width="6"  height="30" fill="#fff"/>
+    <circle cx="22" cy="-22" r="8" fill="#34d399" stroke="#0e0e10" stroke-width="2.5"/>
+    <path d="M 18 -22 L 21 -19 L 26 -25" stroke="#0e0e10" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>`;
+}
+
+
+/* ==== audio.js ==== */
+// Decision Lab — audio. Web Audio API tones, no external files.
+// Mirrors the Mountain Climb audio pattern. All sounds short and
+// muted-by-default-respecting.
+
+let ctx = null;
+let muted = false;
+
+function ensureCtx() {
+  if (ctx) return ctx;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC();
+  } catch (_) {
+    ctx = null;
+  }
+  return ctx;
+}
+
+/**
+ * Call this from a click handler (e.g. the PLAY button) to make sure
+ * the AudioContext is unlocked from the browser's autoplay policy.
+ * Browsers won't let audio play until they see a user gesture.
+ */
+function unlock() {
+  const c = ensureCtx();
+  if (!c) return;
+  if (c.state === 'suspended') {
+    c.resume?.();
+  }
+  // Play an inaudible blip to fully "warm up" iOS / Safari
+  try {
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    gain.gain.setValueAtTime(0.0001, t0);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.01);
+  } catch (_) { /* ignore */ }
+}
+
+function setMuted(m) {
+  muted = !!m;
+  if (muted && ctx && ctx.state === 'running') {
+    ctx.suspend?.();
+  } else if (!muted && ctx && ctx.state === 'suspended') {
+    ctx.resume?.();
+  }
+}
+
+function isMuted() {
+  return muted;
+}
+
+function envelope(gain, t0, peak, attack, decay, sustain, sustainLevel, release) {
+  gain.gain.cancelScheduledValues(t0);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(peak, t0 + attack);
+  gain.gain.linearRampToValueAtTime(peak * sustainLevel, t0 + attack + decay);
+  gain.gain.setValueAtTime(peak * sustainLevel, t0 + attack + decay + sustain);
+  gain.gain.linearRampToValueAtTime(0, t0 + attack + decay + sustain + release);
+}
+
+function tone({ freq, type = 'sine', peak = 0.2, attack = 0.01, decay = 0.05, sustain = 0.05, sustainLevel = 0.6, release = 0.1, freqEndRamp = null }) {
+  if (muted) return;
+  const c = ensureCtx();
+  if (!c) return;
+  if (c.state === 'suspended') c.resume?.();
+  const t0 = c.currentTime;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (freqEndRamp != null) {
+    osc.frequency.exponentialRampToValueAtTime(Math.max(1, freqEndRamp), t0 + attack + decay + sustain + release);
+  }
+  envelope(gain, t0, peak, attack, decay, sustain, sustainLevel, release);
+  osc.connect(gain).connect(c.destination);
+  osc.start(t0);
+  osc.stop(t0 + attack + decay + sustain + release + 0.02);
+}
+
+// ---------- public sounds ----------
+
+/** Soft typing tick when a key is registered. */
+function playKey() {
+  tone({ freq: 1200, type: 'square', peak: 0.12, attack: 0.005, decay: 0.02, sustain: 0, sustainLevel: 0.4, release: 0.04 });
+}
+
+/** Countdown tick — last few seconds. Punchy enough to grab attention. */
+function playTick() {
+  tone({ freq: 880, type: 'square', peak: 0.32, attack: 0.005, decay: 0.04, sustain: 0.03, sustainLevel: 0.5, release: 0.08 });
+}
+
+/** Soft confirm when the player picks an MC option. */
+function playPick() {
+  tone({ freq: 660, type: 'triangle', peak: 0.30, attack: 0.005, decay: 0.05, sustain: 0.03, sustainLevel: 0.6, release: 0.12 });
+}
+
+/** Reveal — answer correct. Ascending two-note chime. */
+function playCorrect() {
+  tone({ freq: 660, type: 'triangle', peak: 0.45, attack: 0.005, decay: 0.06, sustain: 0.08, sustainLevel: 0.7, release: 0.20 });
+  setTimeout(() => tone({ freq: 990, type: 'triangle', peak: 0.50, attack: 0.005, decay: 0.06, sustain: 0.12, sustainLevel: 0.7, release: 0.26 }), 110);
+}
+
+/** Reveal — answer wrong. Descending buzz. */
+function playWrong() {
+  tone({ freq: 280, type: 'sawtooth', peak: 0.40, attack: 0.005, decay: 0.06, sustain: 0.14, sustainLevel: 0.7, release: 0.20, freqEndRamp: 110 });
+}
+
+/** Round passed — short fanfare. */
+function playRoundWin() {
+  tone({ freq: 523, type: 'triangle', peak: 0.42, attack: 0.005, decay: 0.05, sustain: 0.10, sustainLevel: 0.7, release: 0.16 });
+  setTimeout(() => tone({ freq: 659, type: 'triangle', peak: 0.42, attack: 0.005, decay: 0.05, sustain: 0.10, sustainLevel: 0.7, release: 0.16 }), 130);
+  setTimeout(() => tone({ freq: 784, type: 'triangle', peak: 0.48, attack: 0.005, decay: 0.05, sustain: 0.20, sustainLevel: 0.8, release: 0.26 }), 260);
+}
+
+/** Round failed — sad descending. */
+function playRoundFail() {
+  tone({ freq: 392, type: 'sine', peak: 0.42, attack: 0.005, decay: 0.06, sustain: 0.14, sustainLevel: 0.7, release: 0.22 });
+  setTimeout(() => tone({ freq: 311, type: 'sine', peak: 0.38, attack: 0.005, decay: 0.06, sustain: 0.18, sustainLevel: 0.7, release: 0.26 }), 180);
+  setTimeout(() => tone({ freq: 233, type: 'sine', peak: 0.34, attack: 0.005, decay: 0.06, sustain: 0.22, sustainLevel: 0.7, release: 0.32 }), 360);
+}
+
+/** Whole game won — triumphant. */
+function playGameWin() {
+  const seq = [523, 659, 784, 1047];
+  seq.forEach((f, i) => {
+    setTimeout(() => tone({ freq: f, type: 'triangle', peak: 0.50, attack: 0.005, decay: 0.06, sustain: 0.20, sustainLevel: 0.8, release: 0.30 }), i * 120);
+  });
+}
+
+/** Whole game ended (lost on a round) — sad. */
+function playGameLose() {
+  const seq = [330, 277, 220];
+  seq.forEach((f, i) => {
+    setTimeout(() => tone({ freq: f, type: 'sine', peak: 0.42, attack: 0.005, decay: 0.06, sustain: 0.20, sustainLevel: 0.7, release: 0.30 }), i * 170);
+  });
+}
+
+
+/* ==== charts.js ==== */
+// SVG chart renderers for Decision Lab.
+// Each function returns an SVG string. Pure functions, no DOM access.
+
+const PALETTE = ['#ff6a00', '#ffc94d', '#0ea5a4', '#a78bfa', '#2563eb', '#dc2626', '#16a34a'];
+
+function fmtNum(n) {
+  if (Math.abs(n) >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1000) return (n / 1000).toFixed(1) + 'k';
+  if (Number.isInteger(n)) return String(n);
+  return n.toFixed(1);
+}
+
+// ---------- Bar chart ----------
+// Spec: { type: 'bar', title, ylabel, data: [{label, value, color?}] }
+function renderBar(spec) {
+  const VB_W = 640, VB_H = 360;
+  const PAD_L = 60, PAD_R = 20, PAD_T = 40, PAD_B = 60;
+  const plotW = VB_W - PAD_L - PAD_R;
+  const plotH = VB_H - PAD_T - PAD_B;
+
+  const data = spec.data;
+  const maxV = Math.max(...data.map(d => d.value));
+  const barW = plotW / data.length * 0.7;
+  const gap = plotW / data.length * 0.3;
+
+  let yTicks = '';
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const v = (maxV * i) / ticks;
+    const y = PAD_T + plotH - (plotH * i) / ticks;
+    yTicks += `<line x1="${PAD_L}" y1="${y}" x2="${PAD_L + plotW}" y2="${y}" stroke="#e5e5e5" stroke-width="1"/>`;
+    yTicks += `<text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6b6b73" font-family="ui-sans-serif, system-ui">${fmtNum(v)}</text>`;
+  }
+
+  let bars = '';
+  data.forEach((d, i) => {
+    const x = PAD_L + (plotW / data.length) * i + gap / 2;
+    const h = (d.value / maxV) * plotH;
+    const y = PAD_T + plotH - h;
+    const color = d.color || PALETTE[i % PALETTE.length];
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${color}" stroke="#0e0e10" stroke-width="2" rx="3"/>`;
+    bars += `<text x="${x + barW / 2}" y="${y - 6}" text-anchor="middle" font-size="11" font-weight="700" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${fmtNum(d.value)}</text>`;
+    bars += `<text x="${x + barW / 2}" y="${PAD_T + plotH + 18}" text-anchor="middle" font-size="11" fill="#3a3a40" font-family="ui-sans-serif, system-ui">${escapeXml(d.label)}</text>`;
+  });
+
+  const title = spec.title ? `<text x="${VB_W / 2}" y="22" text-anchor="middle" font-size="15" font-weight="800" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${escapeXml(spec.title)}</text>` : '';
+  const ylabel = spec.ylabel ? `<text x="14" y="${PAD_T + plotH / 2}" text-anchor="middle" transform="rotate(-90 14 ${PAD_T + plotH / 2})" font-size="11" font-weight="700" fill="#3a3a40" font-family="ui-sans-serif, system-ui">${escapeXml(spec.ylabel)}</text>` : '';
+
+  return `<svg viewBox="0 0 ${VB_W} ${VB_H}" class="chart-svg" role="img" aria-label="${escapeXml(spec.title || 'Bar chart')}">
+    ${title}
+    ${yTicks}
+    <line x1="${PAD_L}" y1="${PAD_T + plotH}" x2="${PAD_L + plotW}" y2="${PAD_T + plotH}" stroke="#0e0e10" stroke-width="2"/>
+    <line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${PAD_T + plotH}" stroke="#0e0e10" stroke-width="2"/>
+    ${bars}
+    ${ylabel}
+  </svg>`;
+}
+
+// ---------- Line chart ----------
+// Spec: { type: 'line', title, ylabel, xlabels, series: [{label, color, values}] }
+function renderLine(spec) {
+  const VB_W = 640, VB_H = 360;
+  const PAD_L = 60, PAD_R = 110, PAD_T = 40, PAD_B = 50;
+  const plotW = VB_W - PAD_L - PAD_R;
+  const plotH = VB_H - PAD_T - PAD_B;
+
+  const allVals = spec.series.flatMap(s => s.values);
+  const maxV = Math.max(...allVals);
+  const minV = Math.min(0, ...allVals);
+  const range = maxV - minV;
+  const n = spec.xlabels.length;
+  const xFor = (i) => PAD_L + (plotW * i) / (n - 1);
+  const yFor = (v) => PAD_T + plotH - ((v - minV) / range) * plotH;
+
+  let yTicks = '';
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const v = minV + (range * i) / ticks;
+    const y = yFor(v);
+    yTicks += `<line x1="${PAD_L}" y1="${y}" x2="${PAD_L + plotW}" y2="${y}" stroke="#e5e5e5" stroke-width="1"/>`;
+    yTicks += `<text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6b6b73" font-family="ui-sans-serif, system-ui">${fmtNum(v)}</text>`;
+  }
+
+  let xLabels = '';
+  spec.xlabels.forEach((lbl, i) => {
+    xLabels += `<text x="${xFor(i)}" y="${PAD_T + plotH + 18}" text-anchor="middle" font-size="11" fill="#3a3a40" font-family="ui-sans-serif, system-ui">${escapeXml(lbl)}</text>`;
+  });
+
+  let lines = '';
+  let legend = '';
+  spec.series.forEach((s, idx) => {
+    const color = s.color || PALETTE[idx % PALETTE.length];
+    const path = s.values.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i)} ${yFor(v)}`).join(' ');
+    lines += `<path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s.values.forEach((v, i) => {
+      lines += `<circle cx="${xFor(i)}" cy="${yFor(v)}" r="4" fill="${color}" stroke="#0e0e10" stroke-width="1.5"/>`;
+    });
+    legend += `<g transform="translate(${PAD_L + plotW + 12} ${PAD_T + 16 + idx * 22})">
+      <rect width="14" height="14" fill="${color}" stroke="#0e0e10" stroke-width="1.5" rx="2"/>
+      <text x="20" y="11" font-size="11" font-weight="700" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${escapeXml(s.label)}</text>
+    </g>`;
+  });
+
+  const title = spec.title ? `<text x="${VB_W / 2}" y="22" text-anchor="middle" font-size="15" font-weight="800" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${escapeXml(spec.title)}</text>` : '';
+  const ylabel = spec.ylabel ? `<text x="14" y="${PAD_T + plotH / 2}" text-anchor="middle" transform="rotate(-90 14 ${PAD_T + plotH / 2})" font-size="11" font-weight="700" fill="#3a3a40" font-family="ui-sans-serif, system-ui">${escapeXml(spec.ylabel)}</text>` : '';
+
+  return `<svg viewBox="0 0 ${VB_W} ${VB_H}" class="chart-svg" role="img" aria-label="${escapeXml(spec.title || 'Line chart')}">
+    ${title}
+    ${yTicks}
+    <line x1="${PAD_L}" y1="${PAD_T + plotH}" x2="${PAD_L + plotW}" y2="${PAD_T + plotH}" stroke="#0e0e10" stroke-width="2"/>
+    <line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${PAD_T + plotH}" stroke="#0e0e10" stroke-width="2"/>
+    ${lines}
+    ${xLabels}
+    ${legend}
+    ${ylabel}
+  </svg>`;
+}
+
+// ---------- Pie chart ----------
+// Spec: { type: 'pie', title, data: [{label, value, color?}] }
+function renderPie(spec) {
+  const VB_W = 640, VB_H = 360;
+  const cx = 220, cy = 200, r = 130;
+  const total = spec.data.reduce((s, d) => s + d.value, 0);
+
+  let slices = '';
+  let legend = '';
+  let cursor = -Math.PI / 2;
+  spec.data.forEach((d, i) => {
+    const portion = d.value / total;
+    const angle = portion * Math.PI * 2;
+    const x1 = cx + r * Math.cos(cursor);
+    const y1 = cy + r * Math.sin(cursor);
+    cursor += angle;
+    const x2 = cx + r * Math.cos(cursor);
+    const y2 = cy + r * Math.sin(cursor);
+    const large = angle > Math.PI ? 1 : 0;
+    const color = d.color || PALETTE[i % PALETTE.length];
+    slices += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${color}" stroke="#0e0e10" stroke-width="2.5"/>`;
+
+    // Percentage label inside the slice
+    const midAngle = cursor - angle / 2;
+    const labelR = r * 0.65;
+    const lx = cx + labelR * Math.cos(midAngle);
+    const ly = cy + labelR * Math.sin(midAngle);
+    if (portion > 0.05) {
+      slices += `<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" font-family="ui-sans-serif, system-ui">${(portion * 100).toFixed(0)}%</text>`;
+    }
+
+    legend += `<g transform="translate(400 ${100 + i * 26})">
+      <rect width="16" height="16" fill="${color}" stroke="#0e0e10" stroke-width="1.5" rx="2"/>
+      <text x="22" y="13" font-size="12" font-weight="700" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${escapeXml(d.label)} — ${fmtNum(d.value)}</text>
+    </g>`;
+  });
+
+  const title = spec.title ? `<text x="${VB_W / 2}" y="22" text-anchor="middle" font-size="15" font-weight="800" fill="#0e0e10" font-family="ui-sans-serif, system-ui">${escapeXml(spec.title)}</text>` : '';
+
+  return `<svg viewBox="0 0 ${VB_W} ${VB_H}" class="chart-svg" role="img" aria-label="${escapeXml(spec.title || 'Pie chart')}">
+    ${title}
+    ${slices}
+    ${legend}
+  </svg>`;
+}
+
+function renderChart(spec) {
+  switch (spec.type) {
+    case 'bar':  return renderBar(spec);
+    case 'line': return renderLine(spec);
+    case 'pie':  return renderPie(spec);
+    default:     return `<svg viewBox="0 0 640 360"><text x="320" y="180" text-anchor="middle">[unsupported chart: ${spec.type}]</text></svg>`;
+  }
+}
+
+function escapeXml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+
+/* ==== questions.js ==== */
+// Question bank for Decision Lab.
+//
+// 5 rounds × 5 questions = 25 total. Each round represents a stage
+// of data work:
+//   1. Read the Chart      — extract specific values from a chart
+//   2. Compare & Rank      — relative comparisons across categories
+//   3. Spot Trends         — direction / pattern / anomaly over time
+//   4. Make Decisions      — recommend an action given the data
+//   5. Insight & Forecast  — what's next, what's the bigger story
+//
+// Pass thresholds rise per round (50% → 80%) so difficulty matches
+// the task difficulty.
+//
+// Answer types:
+//   'numeric'         — accepts numbers (with tolerance)
+//   'multiple_choice' — pick one from options[]
+//   'free_text'       — short text answer, case/whitespace tolerant,
+//                        optional acceptedAnswers[] alternatives
+//
+// Datasets are realistic-but-synthesised, sourced from public
+// reports (ONS, World Bank, industry data). Numbers picked to be
+// plausible without claiming precise authority.
+
+const TIMER_SECONDS = 30;
+
+const ROUNDS = [
+  // ─────────────────────────────────────────────────────────────
+  // ROUND 1 — Read the Chart (50% to pass)
+  // ─────────────────────────────────────────────────────────────
+  {
+    number: 1,
+    name: "Read the Chart",
+    description: "Look at the chart and tell us what you see. No tricks — just read the values.",
+    passThreshold: 0.5,
+    questions: [
+      {
+        id: 'r1q1',
+        type: 'numeric',
+        chart: {
+          type: 'bar',
+          title: 'UK monthly streaming-service subscribers (2024, millions)',
+          ylabel: 'Subscribers (m)',
+          data: [
+            { label: 'Netflix',   value: 17.3 },
+            { label: 'Amazon',    value: 14.8 },
+            { label: 'Disney+',   value: 8.4  },
+            { label: 'NOW',       value: 4.1  },
+            { label: 'Apple TV+', value: 3.2  },
+          ],
+        },
+        prompt: 'How many millions of subscribers does Disney+ have in the UK?',
+        correctAnswer: 8.4,
+        tolerance: 0.3,
+        unit: 'million',
+        explanation: 'Disney+ shows ~8.4 million UK subscribers — third behind Netflix (17.3m) and Amazon Prime Video (14.8m).',
+      },
+      {
+        id: 'r1q2',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'UK mobile-phone OS market share (2024)',
+          data: [
+            { label: 'iOS (iPhone)', value: 52 },
+            { label: 'Android',      value: 47 },
+            { label: 'Other',        value: 1  },
+          ],
+        },
+        prompt: 'Which operating system has the largest share of the UK mobile market?',
+        options: ['Android', 'iOS (iPhone)', 'Other', 'They are equal'],
+        correctAnswer: 'iOS (iPhone)',
+        explanation: 'iOS leads at 52% — the UK is one of the few markets where iPhone outsells Android.',
+      },
+      {
+        id: 'r1q3',
+        type: 'numeric',
+        chart: {
+          type: 'line',
+          title: 'UK consumer-price inflation (CPI), annual %',
+          ylabel: 'CPI (%)',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'CPI', values: [1.8, 0.9, 2.6, 9.1, 7.3, 3.2] },
+          ],
+        },
+        prompt: 'What was the UK inflation rate (CPI %) in 2022?',
+        correctAnswer: 9.1,
+        tolerance: 0.5,
+        unit: '%',
+        explanation: 'CPI peaked at 9.1% in 2022 — energy + food prices following the Ukraine war and post-pandemic supply shocks.',
+      },
+      {
+        id: 'r1q4',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'UK regional school-leaver university applicants (2024, thousands)',
+          ylabel: 'Applicants (k)',
+          data: [
+            { label: 'London',     value: 142 },
+            { label: 'South East', value: 98  },
+            { label: 'North West', value: 86  },
+            { label: 'Midlands',   value: 79  },
+            { label: 'Scotland',   value: 54  },
+            { label: 'Wales',      value: 22  },
+          ],
+        },
+        prompt: 'Which region had the FEWEST university applicants in 2024?',
+        options: ['Scotland', 'Wales', 'Midlands', 'London'],
+        correctAnswer: 'Wales',
+        explanation: 'Wales had ~22k applicants — the smallest bar in the chart. Scotland was next-smallest at ~54k.',
+      },
+      {
+        id: 'r1q5',
+        type: 'numeric',
+        chart: {
+          type: 'bar',
+          title: 'Top 5 best-selling UK music albums (2023, thousands sold)',
+          ylabel: 'Sales (k)',
+          data: [
+            { label: 'Taylor Swift',  value: 632 },
+            { label: 'The Weeknd',    value: 412 },
+            { label: 'Harry Styles',  value: 385 },
+            { label: 'SZA',           value: 298 },
+            { label: 'Olivia Rodrigo', value: 271 },
+          ],
+        },
+        prompt: 'In thousands, how many copies did the #1 album (Taylor Swift) sell in 2023?',
+        correctAnswer: 632,
+        tolerance: 20,
+        unit: 'thousand',
+        explanation: 'Taylor Swift sold ~632k copies — the top album of 2023 by some distance.',
+      },
+      {
+        id: 'r1q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'How UK grocery is bought (2024)',
+          data: [
+            { label: 'In-store',        value: 78 },
+            { label: 'Online delivery', value: 14 },
+            { label: 'Click & collect', value: 8 },
+          ],
+        },
+        prompt: 'What share of UK grocery shopping happens via online delivery?',
+        options: ['8%', '14%', '22%', '36%'],
+        correctAnswer: '14%',
+        explanation: 'Online delivery is ~14% of UK grocery. In-store still dominates at 78%; click-and-collect is the small remainder.',
+      },
+      {
+        id: 'r1q7',
+        type: 'numeric',
+        chart: {
+          type: 'line',
+          title: 'UK rail passenger journeys per year (millions)',
+          ylabel: 'Journeys (m)',
+          xlabels: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Journeys', values: [1654, 1718, 1731, 1709, 1755, 1750, 388, 990, 1380, 1545, 1620] },
+          ],
+        },
+        prompt: 'In which year did the FEWEST rail journeys take place?',
+        correctAnswer: 2020,
+        tolerance: 0,
+        unit: 'year',
+        explanation: '2020 collapsed to 388m journeys (COVID lockdowns). Recovery has been steady but 2024 is still below the 2019 pre-pandemic peak.',
+      },
+      {
+        id: 'r1q8',
+        type: 'free_text',
+        chart: {
+          type: 'bar',
+          title: 'Top CO2 emitters by country (2023, billion tonnes)',
+          ylabel: 'CO2 (bn t)',
+          data: [
+            { label: 'China',  value: 11.4 },
+            { label: 'USA',    value: 4.8 },
+            { label: 'India',  value: 2.9 },
+            { label: 'Russia', value: 1.7 },
+            { label: 'Japan',  value: 1.0 },
+          ],
+        },
+        prompt: 'Which country emits the most CO2? (type the name)',
+        correctAnswer: 'China',
+        acceptedAnswers: ['china', 'prc'],
+        explanation: 'China at ~11.4 bn tonnes — more than double the next-largest (USA, ~4.8 bn). China + USA together account for over half the world\'s emissions.',
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // ROUND 2 — Compare & Rank (55% to pass)
+  // ─────────────────────────────────────────────────────────────
+  {
+    number: 2,
+    name: "Compare & Rank",
+    description: "Which is bigger, smaller, fastest growing? Compare the data and rank.",
+    passThreshold: 0.55,
+    questions: [
+      {
+        id: 'r2q1',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'UK households by type of heating (2023)',
+          data: [
+            { label: 'Gas central heating', value: 78 },
+            { label: 'Electric',            value: 11 },
+            { label: 'Heat pump',           value: 5  },
+            { label: 'Oil',                 value: 4  },
+            { label: 'Other',               value: 2  },
+          ],
+        },
+        prompt: 'Which heating type is the LEAST common in UK households?',
+        options: ['Gas central heating', 'Electric', 'Heat pump', 'Other'],
+        correctAnswer: 'Other',
+        explanation: '"Other" covers only 2% of households — the smallest slice. Gas dominates at 78%.',
+      },
+      {
+        id: 'r2q2',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'UK daily-newspaper print circulation (2024, average daily copies, thousands)',
+          ylabel: 'Daily copies (k)',
+          data: [
+            { label: 'The Sun',       value: 580 },
+            { label: 'Daily Mail',    value: 720 },
+            { label: 'Metro (free)',  value: 950 },
+            { label: 'Telegraph',     value: 270 },
+            { label: 'Guardian',      value: 110 },
+            { label: 'i (paper)',     value: 90  },
+          ],
+        },
+        prompt: 'Which is the LARGEST paid (non-free) daily newspaper?',
+        options: ['The Sun', 'Daily Mail', 'Metro (free)', 'Telegraph'],
+        correctAnswer: 'Daily Mail',
+        explanation: 'Metro tops the chart but it\'s a free paper. Among paid titles, Daily Mail leads at ~720k vs Sun at ~580k.',
+      },
+      {
+        id: 'r2q3',
+        type: 'numeric',
+        chart: {
+          type: 'line',
+          title: 'England vs Scotland — average new-build house price (£000s)',
+          ylabel: 'Price (£000s)',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'England',  values: [263, 274, 313, 327, 309, 305] },
+            { label: 'Scotland', values: [182, 192, 217, 226, 218, 215] },
+          ],
+        },
+        prompt: 'In 2024, roughly how many thousand pounds MORE does an average English new-build cost than a Scottish one? (in £000s)',
+        correctAnswer: 90,
+        tolerance: 12,
+        unit: '£000s',
+        explanation: 'England 305k − Scotland 215k = ~90k difference. The premium has held remarkably steady at £85–100k across all 6 years.',
+      },
+      {
+        id: 'r2q4',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'UK takeaway market — orders per week by cuisine (2024, millions)',
+          ylabel: 'Orders/week (m)',
+          data: [
+            { label: 'Chinese',  value: 4.8 },
+            { label: 'Indian',   value: 4.2 },
+            { label: 'Pizza',    value: 6.7 },
+            { label: 'Burger',   value: 5.9 },
+            { label: 'Sushi',    value: 1.3 },
+          ],
+        },
+        prompt: 'Pizza orders are roughly how many times bigger than sushi orders?',
+        options: ['About 2× bigger', 'About 3× bigger', 'About 5× bigger', 'About 10× bigger'],
+        correctAnswer: 'About 5× bigger',
+        explanation: 'Pizza 6.7 ÷ Sushi 1.3 ≈ 5.15× — pizza is just over 5 times the sushi market.',
+      },
+      {
+        id: 'r2q5',
+        type: 'free_text',
+        chart: {
+          type: 'bar',
+          title: 'Most-listened Spotify artists in the UK (2024, monthly listeners, millions)',
+          ylabel: 'Listeners (m)',
+          data: [
+            { label: 'Drake',        value: 78 },
+            { label: 'Taylor Swift', value: 92 },
+            { label: 'The Weeknd',   value: 102 },
+            { label: 'Ed Sheeran',   value: 89 },
+            { label: 'Bad Bunny',    value: 68 },
+          ],
+        },
+        prompt: 'Which artist has the most UK monthly Spotify listeners? (type the name)',
+        correctAnswer: 'The Weeknd',
+        acceptedAnswers: ['the weeknd', 'weeknd'],
+        explanation: 'The Weeknd leads at ~102m monthly listeners, narrowly ahead of Taylor Swift (~92m).',
+      },
+      {
+        id: 'r2q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'UK electricity generation mix (2024, % of total)',
+          data: [
+            { label: 'Wind',    value: 30 },
+            { label: 'Gas',     value: 28 },
+            { label: 'Nuclear', value: 15 },
+            { label: 'Imports', value: 13 },
+            { label: 'Solar',   value: 7  },
+            { label: 'Biomass', value: 5  },
+            { label: 'Other',   value: 2  },
+          ],
+        },
+        prompt: 'Which is the SECOND-largest source of UK electricity?',
+        options: ['Nuclear', 'Solar', 'Gas', 'Biomass'],
+        correctAnswer: 'Gas',
+        explanation: 'Wind has overtaken gas to lead at 30%, but gas is a very close second at 28%. Nuclear (15%) and imports (13%) make up the next tier.',
+      },
+      {
+        id: 'r2q7',
+        type: 'numeric',
+        chart: {
+          type: 'bar',
+          title: 'Paris 2024 Olympics — top 5 nations by total medals',
+          ylabel: 'Total medals',
+          data: [
+            { label: 'USA',       value: 126 },
+            { label: 'China',     value: 91  },
+            { label: 'Great Britain', value: 65 },
+            { label: 'France',    value: 64  },
+            { label: 'Australia', value: 53  },
+          ],
+        },
+        prompt: 'How many MORE medals did the USA win than China?',
+        correctAnswer: 35,
+        tolerance: 3,
+        unit: 'medals',
+        explanation: 'USA 126 − China 91 = 35 medal gap. USA topped the overall table; China led on golds specifically.',
+      },
+      {
+        id: 'r2q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'UK unemployment rate by region (Q4 2024, %)',
+          ylabel: 'Unemployment (%)',
+          data: [
+            { label: 'North East',    value: 5.3 },
+            { label: 'London',        value: 4.6 },
+            { label: 'West Midlands', value: 4.5 },
+            { label: 'Yorkshire',     value: 4.1 },
+            { label: 'South East',    value: 3.2 },
+            { label: 'South West',    value: 3.0 },
+          ],
+        },
+        prompt: 'Which region has the LOWEST unemployment rate?',
+        options: ['North East', 'London', 'South East', 'South West'],
+        correctAnswer: 'South West',
+        explanation: 'South West at 3.0% — the lowest. North East at 5.3% is the highest. Pattern roughly tracks regional economic activity and demographics.',
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // ROUND 3 — Spot Trends (65% to pass)
+  // ─────────────────────────────────────────────────────────────
+  {
+    number: 3,
+    name: "Spot Trends",
+    description: "What's happening over time? Patterns, growth, decline, anomalies — name them.",
+    passThreshold: 0.65,
+    questions: [
+      {
+        id: 'r3q1',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK average house price (£000s), 2014–2024',
+          ylabel: 'Price (£000s)',
+          xlabels: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'England',  values: [195, 210, 232, 244, 255, 263, 274, 313, 327, 309, 305] },
+            { label: 'Scotland', values: [150, 156, 159, 165, 175, 182, 192, 217, 226, 218, 215] },
+          ],
+        },
+        prompt: 'Which statement best describes the trend?',
+        options: [
+          'Steady linear growth every year',
+          'Sharp jump then a correction',
+          'Steady decline',
+          'Flat — no meaningful movement',
+        ],
+        correctAnswer: 'Sharp jump then a correction',
+        explanation: 'Both countries show a pandemic-era spike between 2020 and 2021 (low rates, demand surge), then prices ease back from 2022 as interest rates rose.',
+      },
+      {
+        id: 'r3q2',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK monthly average temperature (°C), 2024',
+          ylabel: '°C',
+          xlabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          series: [
+            { label: 'Mean temp', values: [4.5, 5.8, 7.2, 9.1, 12.4, 15.6, 17.8, 17.5, 14.8, 11.2, 7.5, 5.2] },
+          ],
+        },
+        prompt: 'When does the UK temperature peak in 2024?',
+        options: ['June',  'July', 'August', 'September'],
+        correctAnswer: 'July',
+        explanation: 'July hits 17.8°C — the year\'s peak, with August (17.5°C) a close second. UK summer typically peaks in late July.',
+      },
+      {
+        id: 'r3q3',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK pub closures — net change per year, 2014–2024',
+          ylabel: 'Net change (pubs)',
+          xlabels: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Net pubs', values: [-900, -1100, -800, -700, -500, -600, -2300, -1200, -1450, -930, -800] },
+          ],
+        },
+        prompt: 'Which year stands out as an anomaly (clearly different from the rest)?',
+        options: ['2014', '2018', '2020', '2024'],
+        correctAnswer: '2020',
+        explanation: '2020 lost ~2,300 pubs net — more than double the typical year. COVID lockdowns hit hospitality hardest that year. All other years sit in the 500–1,500 range.',
+      },
+      {
+        id: 'r3q4',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global share of new cars sold that are electric (BEV %), 2018–2024',
+          ylabel: 'BEV share (%)',
+          xlabels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'China',  values: [2.7, 3.6, 5.4, 13.5, 22.0, 25.5, 28.0] },
+            { label: 'Europe', values: [1.0, 1.9, 4.1, 9.2, 12.1, 14.6, 16.5] },
+            { label: 'USA',    values: [1.2, 1.3, 1.7, 3.2, 5.8, 7.2, 8.0] },
+          ],
+        },
+        prompt: 'Which region is most clearly ACCELERATING away from the others?',
+        options: ['USA', 'Europe', 'China', 'All three are flat'],
+        correctAnswer: 'China',
+        explanation: 'China went from 2.7% in 2018 to 28% in 2024 — a roughly 10× increase, while Europe ~16× and USA ~7× from similar bases. China\'s absolute lead has widened sharply.',
+      },
+      {
+        id: 'r3q5',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK first-time-buyer average deposit as % of price, 2014–2024',
+          ylabel: 'Deposit (%)',
+          xlabels: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Deposit %', values: [16, 17, 18, 19, 20, 21, 24, 26, 25, 23, 22] },
+          ],
+        },
+        prompt: 'What\'s the long-term direction over the 10 years?',
+        options: [
+          'Steady decline',
+          'Steady rise',
+          'No clear direction',
+          'Cyclical (up then down)',
+        ],
+        correctAnswer: 'Steady rise',
+        explanation: 'Deposits climbed from 16% (2014) to 22% (2024) — a steady ~6-percentage-point rise. Affordability got tighter even before the pandemic spike.',
+      },
+      {
+        id: 'r3q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global smartphone ownership (% of population)',
+          ylabel: 'Ownership (%)',
+          xlabels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024'],
+          series: [
+            { label: 'Smartphone', values: [7, 13, 22, 35, 48, 60, 68, 71] },
+          ],
+        },
+        prompt: 'What best describes the shape of this curve?',
+        options: [
+          'Linear — same-sized step every period',
+          'S-curve — fast growth, then slowing near a ceiling',
+          'Exponential, still accelerating',
+          'Flat, no real change',
+        ],
+        correctAnswer: 'S-curve — fast growth, then slowing near a ceiling',
+        explanation: 'Classic technology-adoption S-curve. Steepest growth was 2014–2020 (22% → 60%), since slowing as it approaches saturation around 70–75%.',
+      },
+      {
+        id: 'r3q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK retail sales: in-store vs online (% of total)',
+          ylabel: '% of retail sales',
+          xlabels: ['2015', '2017', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'In-store', values: [86, 82, 80, 71, 70, 75, 77, 76] },
+            { label: 'Online',   values: [14, 18, 20, 29, 30, 25, 23, 24] },
+          ],
+        },
+        prompt: 'What caused the visible spike in online share in 2020?',
+        options: [
+          'A new e-commerce technology launched',
+          'COVID lockdowns closing physical stores',
+          'A change in tax law',
+          'Random variation',
+        ],
+        correctAnswer: 'COVID lockdowns closing physical stores',
+        explanation: 'Online jumped from 20% to 29% in 2020 — physical stores forced shut. Note the partial reversion: most consumers returned in-store, but the new baseline is ~24% vs 14% pre-pandemic.',
+      },
+      {
+        id: 'r3q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global average life expectancy at birth (years)',
+          ylabel: 'Years',
+          xlabels: ['1950', '1970', '1990', '2010', '2019', '2020', '2021', '2024'],
+          series: [
+            { label: 'Life expectancy', values: [48, 58, 64, 70, 73, 72, 71, 73] },
+          ],
+        },
+        prompt: 'What does the small dip in 2020–2021 most likely reflect?',
+        options: [
+          'A methodology change',
+          'COVID-19 pandemic deaths',
+          'Long-term decline — humans live shorter now',
+          'Calendar reform',
+        ],
+        correctAnswer: 'COVID-19 pandemic deaths',
+        explanation: 'Global life expectancy dropped ~2 years during the pandemic — the first significant drop in modern records. Has since recovered.',
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // ROUND 4 — Make Decisions (75% to pass)
+  // ─────────────────────────────────────────────────────────────
+  {
+    number: 4,
+    name: "Make Decisions",
+    description: "You're the analyst. Given the data, what would you recommend?",
+    passThreshold: 0.75,
+    questions: [
+      {
+        id: 'r4q1',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Marketing channel — customer acquisition cost (CAC, £)',
+          ylabel: 'CAC (£)',
+          data: [
+            { label: 'TikTok',    value: 18 },
+            { label: 'Instagram', value: 24 },
+            { label: 'Google',    value: 42 },
+            { label: 'Facebook',  value: 55 },
+            { label: 'Billboard', value: 120 },
+          ],
+        },
+        prompt: 'Fixed marketing budget. You want the most NEW customers per £. Where should you invest first?',
+        options: ['Billboard', 'Google', 'Instagram', 'TikTok'],
+        correctAnswer: 'TikTok',
+        explanation: 'TikTok costs only £18 per customer — every pound buys ~6.7× more customers than billboards (£120). Lowest CAC wins.',
+      },
+      {
+        id: 'r4q2',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Product line — monthly profit margin (%)',
+          ylabel: 'Margin (%)',
+          data: [
+            { label: 'Coffee',       value: 68 },
+            { label: 'Pastries',     value: 22 },
+            { label: 'Sandwiches',   value: 31 },
+            { label: 'Bottled drinks', value: 12 },
+            { label: 'Branded mugs', value: 78 },
+          ],
+        },
+        prompt: 'You need to discontinue ONE line to free up counter space. Which is the safest cut?',
+        options: ['Coffee', 'Pastries', 'Bottled drinks', 'Branded mugs'],
+        correctAnswer: 'Bottled drinks',
+        explanation: 'Bottled drinks have the lowest margin (12%) — every other line earns more per £ of sale. Mugs (78%) are tiny in volume but extremely profitable.',
+      },
+      {
+        id: 'r4q3',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Weekly active users (WAU) by feature — last 12 weeks',
+          ylabel: 'WAU (thousands)',
+          xlabels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'],
+          series: [
+            { label: 'Search',     values: [120, 122, 119, 124, 126, 128, 131, 134, 138, 142, 145, 149] },
+            { label: 'Chat',       values: [80,  79,  77,  75,  72,  68,  64,  60,  55,  50,  44,  38] },
+            { label: 'Recommendations', values: [60, 62, 65, 68, 73, 79, 86, 93, 102, 110, 118, 127] },
+          ],
+        },
+        prompt: 'You can fund only TWO of these features going forward. Which one would you sunset?',
+        options: ['Search', 'Chat', 'Recommendations'],
+        correctAnswer: 'Chat',
+        explanation: 'Chat is in clear decline (80k → 38k, more than halved). The other two are growing steadily. Cut the one that\'s losing users.',
+      },
+      {
+        id: 'r4q4',
+        type: 'multiple_choice',
+        chart: {
+          type: 'pie',
+          title: 'Customer support tickets — breakdown by issue type (last 30 days)',
+          data: [
+            { label: 'Billing',          value: 38 },
+            { label: 'Login problems',   value: 27 },
+            { label: 'Feature requests', value: 18 },
+            { label: 'Bug reports',      value: 12 },
+            { label: 'Other',            value: 5  },
+          ],
+        },
+        prompt: 'Engineering has time for ONE big project next quarter. What should they tackle to reduce ticket volume fastest?',
+        options: ['Build a new feature', 'Rewrite the billing system', 'Fix small bugs', 'Improve internal tooling'],
+        correctAnswer: 'Rewrite the billing system',
+        explanation: 'Billing causes 38% of tickets — by far the largest slice. Fixing the biggest source kills more tickets than any other project. Always attack the largest cause first.',
+      },
+      {
+        id: 'r4q5',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Possible expansion markets — TAM and competitor density',
+          ylabel: 'Market score (higher = better)',
+          data: [
+            { label: 'Germany — large, crowded', value: 64 },
+            { label: 'Netherlands — small, open', value: 88 },
+            { label: 'Poland — medium, growing', value: 79 },
+            { label: 'France — large, crowded',   value: 62 },
+            { label: 'Spain — medium, neutral',   value: 71 },
+          ],
+        },
+        prompt: 'You want to launch in ONE European country first. Best choice based on this score?',
+        options: ['Germany', 'Netherlands', 'France', 'Poland'],
+        correctAnswer: 'Netherlands',
+        explanation: 'Netherlands scores highest at 88 — smaller market but less crowded, easier to win. Launching where you can establish a foothold beats fighting in a saturated giant.',
+      },
+      {
+        id: 'r4q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'SaaS product — conversion to paid by acquisition channel (%)',
+          ylabel: 'Conversion (%)',
+          data: [
+            { label: 'Direct signup', value: 8  },
+            { label: 'Google ads',    value: 12 },
+            { label: 'Referral',      value: 38 },
+            { label: 'LinkedIn',      value: 22 },
+            { label: 'Cold email',    value: 4  },
+          ],
+        },
+        prompt: 'You have headcount for ONE new acquisition channel. Where should you invest?',
+        options: ['Referral programme', 'Cold email', 'Direct signup', 'Google ads'],
+        correctAnswer: 'Referral programme',
+        explanation: 'Referrals convert at 38% — by far the best. Proven channel; scaling has the highest expected return. Cold email at 4% is the worst by ~8×.',
+      },
+      {
+        id: 'r4q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Mobile app — opens by day of week (millions)',
+          ylabel: 'Opens (m)',
+          data: [
+            { label: 'Mon', value: 12.1 },
+            { label: 'Tue', value: 11.8 },
+            { label: 'Wed', value: 11.2 },
+            { label: 'Thu', value: 11.5 },
+            { label: 'Fri', value: 9.8  },
+            { label: 'Sat', value: 14.3 },
+            { label: 'Sun', value: 15.7 },
+          ],
+        },
+        prompt: 'Best day to send a non-urgent push notification?',
+        options: ['Monday', 'Friday', 'Sunday', 'Wednesday'],
+        correctAnswer: 'Sunday',
+        explanation: 'Sunday peaks at 15.7m opens — users are most receptive. Friday is the worst (9.8m, weekend cliff). Send push when people are actually checking the app.',
+      },
+      {
+        id: 'r4q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Customer Net Promoter Score (NPS) by market',
+          ylabel: 'NPS',
+          data: [
+            { label: 'UK',      value: 48 },
+            { label: 'Germany', value: 42 },
+            { label: 'France',  value: 31 },
+            { label: 'Italy',   value: 12 },
+            { label: 'Spain',   value: 39 },
+          ],
+        },
+        prompt: 'Which market needs the most urgent customer-care attention?',
+        options: ['UK', 'Italy', 'Germany', 'Spain'],
+        correctAnswer: 'Italy',
+        explanation: 'Italy at NPS 12 is well below the others (next-lowest France at 31). That low suggests customers aren\'t recommending you — investigate localisation, support quality, product fit.',
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // ROUND 5 — Insight & Forecast (80% to pass)
+  // ─────────────────────────────────────────────────────────────
+  {
+    number: 5,
+    name: "Insight & Forecast",
+    description: "What's the bigger story? Predict the next move, draw the lesson.",
+    passThreshold: 0.8,
+    questions: [
+      {
+        id: 'r5q1',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK electric-vehicle (EV) sales as % of new cars, 2019–2024',
+          ylabel: '% of new cars',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Battery EV', values: [1.6, 6.6, 11.6, 16.6, 16.5, 19.6] },
+            { label: 'Hybrid',     values: [5.5, 9.0, 11.5, 11.6, 12.5, 13.2] },
+          ],
+        },
+        prompt: 'A car dealership is planning 2026 stock. Most defensible recommendation:',
+        options: [
+          'Stop ordering battery EVs',
+          'Hold steady on petrol / diesel',
+          'Increase battery EV inventory',
+          'Switch entirely to hybrids',
+        ],
+        correctAnswer: 'Increase battery EV inventory',
+        explanation: 'BEV share went from 1.6% to 19.6% in 5 years — a ~12× rise. Hybrids grew too but much more slowly (~2.4×). The defensible call is to lean into BEVs as the market is clearly moving that way.',
+      },
+      {
+        id: 'r5q2',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Daily active users of three social platforms, 2019–2024 (millions)',
+          ylabel: 'DAU (m)',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'TikTok',    values: [200, 350, 600, 850, 1050, 1200] },
+            { label: 'Instagram', values: [500, 580, 650, 720, 780, 820] },
+            { label: 'X/Twitter', values: [330, 350, 360, 370, 245, 220] },
+          ],
+        },
+        prompt: 'A brand has £100k advertising budget for 2026. Most defensible call:',
+        options: [
+          'Pour it all into X / Twitter',
+          'Split equally across all three',
+          'Lean into TikTok',
+          'Spend it on Instagram',
+        ],
+        correctAnswer: 'Lean into TikTok',
+        explanation: 'TikTok 6× in 5 years (200m → 1,200m) — explosive trajectory and now the largest base. Instagram is steady but slowing; X/Twitter is shrinking sharply. TikTok offers the biggest and most rapidly growing audience.',
+      },
+      {
+        id: 'r5q3',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global temperature anomaly vs 1951–1980 average (°C)',
+          ylabel: 'Anomaly (°C)',
+          xlabels: ['1980', '1990', '2000', '2010', '2020', '2024'],
+          series: [
+            { label: 'Anomaly', values: [0.20, 0.34, 0.42, 0.66, 1.01, 1.17] },
+          ],
+        },
+        prompt: 'Most accurate insight from this trend:',
+        options: [
+          'Stable for decades, no real change',
+          'Warming has accelerated since 2000',
+          'Warmed then cooled',
+          'No clear signal — random noise',
+        ],
+        correctAnswer: 'Warming has accelerated since 2000',
+        explanation: '1980→2000 added ~0.22°C (over 20 years). 2000→2024 added ~0.75°C (over 24 years) — roughly 3× faster pace. The slope is steepening, not steady.',
+      },
+      {
+        id: 'r5q4',
+        type: 'multiple_choice',
+        chart: {
+          type: 'bar',
+          title: 'Where new graduates apply for their first job (% of applicants, 2024)',
+          ylabel: 'Share (%)',
+          data: [
+            { label: 'Big Tech',     value: 28 },
+            { label: 'Finance',      value: 22 },
+            { label: 'Consulting',   value: 17 },
+            { label: 'Public sector', value: 12 },
+            { label: 'Startups',     value: 14 },
+            { label: 'NHS / health', value: 7  },
+          ],
+        },
+        prompt: 'If you\'re hiring graduates for a startup, what\'s the strategic insight?',
+        options: [
+          'No competition for talent',
+          'High competition — most grads aim elsewhere',
+          'Easy win — startups are the most popular destination',
+          'Graduates don\'t care about employer brand',
+        ],
+        correctAnswer: 'High competition — most grads aim elsewhere',
+        explanation: '50% of graduates aim at Big Tech (28%) + Finance (22%). Startups get only 14%. To attract talent you\'re competing against those companies\' offers — pay, prestige, training programmes — even though you might be a "more interesting" workplace.',
+      },
+      {
+        id: 'r5q5',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK monthly subscription churn rate by company age (%)',
+          ylabel: 'Monthly churn (%)',
+          xlabels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M9', 'M12', 'M18', 'M24'],
+          series: [
+            { label: 'New subs (joined this year)', values: [12, 9, 8, 7, 6, 6, 5, 4, 3, 3] },
+            { label: 'Old subs (joined 5+ yrs ago)', values: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+          ],
+        },
+        prompt: 'What\'s the most important takeaway for product strategy?',
+        options: [
+          'Accept churn as a fixed cost',
+          'Focus on the first few months',
+          'Long-term subscribers are the problem',
+          'No meaningful pattern',
+        ],
+        correctAnswer: 'Focus on the first few months',
+        explanation: 'New subscribers churn at 6–12% in months 1–6 then stabilise to ~3% by month 24. Long-tenured subs are at 2% (much stickier). Onboarding improvements pay back fastest — once you keep them past month 6, they tend to stay.',
+      },
+      {
+        id: 'r5q6',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Global AI startup funding ($bn per year)',
+          ylabel: 'Funding ($bn)',
+          xlabels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'AI funding', values: [25, 33, 42, 78, 65, 91, 145] },
+          ],
+        },
+        prompt: 'Best forward-looking insight from this trend?',
+        options: [
+          'AI funding is plateauing — 2021 was the peak',
+          'AI funding has accelerated sharply since 2022',
+          'The market is shrinking',
+          'Random noise — no real signal',
+        ],
+        correctAnswer: 'AI funding has accelerated sharply since 2022',
+        explanation: 'Funding more than doubled $65bn (2022) → $145bn (2024). The November 2022 ChatGPT launch reshaped investor enthusiasm — trajectory is steepening, not levelling.',
+      },
+      {
+        id: 'r5q7',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'UK workers reporting hybrid or fully-remote work (%)',
+          ylabel: '% of workers',
+          xlabels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+          series: [
+            { label: 'Hybrid/remote', values: [4, 47, 38, 28, 26, 27] },
+          ],
+        },
+        prompt: 'Most accurate forecast for 2026?',
+        options: [
+          'Will return to pre-pandemic 4% — fully office-based',
+          'Will keep falling rapidly — back to ~10%',
+          'Likely settles around 25–30% — a new normal',
+          'Will spike back to 47%',
+        ],
+        correctAnswer: 'Likely settles around 25–30% — a new normal',
+        explanation: 'The line stabilised at 26–28% for 2022–2024 — 3 consecutive years suggests a new equilibrium. The pre-pandemic 4% baseline isn\'t coming back, but the lockdown peak isn\'t either.',
+      },
+      {
+        id: 'r5q8',
+        type: 'multiple_choice',
+        chart: {
+          type: 'line',
+          title: 'Two streaming services — monthly churn (%) over 12 months',
+          ylabel: 'Monthly churn (%)',
+          xlabels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'],
+          series: [
+            { label: 'Service A', values: [3.2, 3.0, 3.1, 2.9, 2.8, 3.0, 3.1, 3.2, 3.1, 3.0, 2.9, 3.1] },
+            { label: 'Service B', values: [4.5, 5.1, 5.6, 6.0, 6.5, 7.2, 7.8, 8.3, 8.9, 9.5, 10.1, 10.8] },
+          ],
+        },
+        prompt: 'Strategic implication for Service B?',
+        options: [
+          'Doing fine — comparable to Service A',
+          'Slight improvement needed but not urgent',
+          'Existential issue — churn is steadily climbing',
+          'Stop measuring churn — not useful',
+        ],
+        correctAnswer: 'Existential issue — churn is steadily climbing',
+        explanation: 'Service B\'s churn went 4.5% → 10.8% in 12 months — more than doubled, no sign of stopping. At 10% monthly churn you lose half your subscribers every ~7 months. Service A is stable around 3%.',
+      },
+    ],
+  },
+];
+
+// ---------- Per-game randomisation ----------
+
+const QUESTIONS_PER_ROUND = 5;
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Build the round set for one playthrough. Each round picks 5 questions
+ * at random from its pool of 8 (so replays show different subsets), and
+ * shuffles the option order for any multiple-choice question (so even
+ * a repeated question feels new).
+ *
+ * Pure of state — pass through state.rounds to lock the selection for
+ * the duration of one game.
+ */
+function generateGameRounds() {
+  return ROUNDS.map(pool => {
+    const picked = shuffleArray(pool.questions).slice(0, QUESTIONS_PER_ROUND);
+    const finalised = picked.map(q => {
+      if (q.type === 'multiple_choice' && Array.isArray(q.options)) {
+        return { ...q, options: shuffleArray(q.options) };
+      }
+      return q;
+    });
+    return { ...pool, questions: finalised };
+  });
+}
+
+// ---------- Answer checking ----------
+
+/**
+ * Compare a player's raw input to the correct answer for a question.
+ * Returns { correct: boolean, normalisedInput: string }.
+ *
+ * - numeric:         parse as number, accept within ±tolerance
+ * - multiple_choice: exact match against one of the options
+ * - free_text:       case-insensitive, whitespace-tolerant, trimmed,
+ *                    accepts any of correctAnswer + acceptedAnswers[]
+ */
+function checkAnswer(question, rawInput) {
+  const raw = String(rawInput ?? '').trim();
+  if (!raw) return { correct: false, normalisedInput: '' };
+
+  if (question.type === 'numeric') {
+    const cleaned = raw.replace(/[£$€,]/g, '').replace(/[a-z%]+$/i, '').trim();
+    const num = Number.parseFloat(cleaned);
+    if (Number.isNaN(num)) return { correct: false, normalisedInput: raw };
+    const expected = Number(question.correctAnswer);
+    const tolerance = question.tolerance ?? 0;
+    return { correct: Math.abs(num - expected) <= tolerance, normalisedInput: String(num) };
+  }
+
+  if (question.type === 'multiple_choice') {
+    return { correct: raw === String(question.correctAnswer), normalisedInput: raw };
+  }
+
+  if (question.type === 'free_text') {
+    const norm = (s) => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const candidates = [question.correctAnswer, ...(question.acceptedAnswers || [])].map(norm);
+    return { correct: candidates.includes(norm(raw)), normalisedInput: norm(raw) };
+  }
+
+  return { correct: false, normalisedInput: raw };
+}
+
+
+/* ==== state.js ==== */
+// State machine for Decision Lab.
+// Pure functions only — no DOM, no side effects.
+//
+// Phases:
+//   'title'         — intro / play button
+//   'round-intro'   — between rounds, shows the upcoming round's name + threshold
+//   'question'      — chart + question + answer input + ticking timer
+//   'reveal'        — answer locked, showing right/wrong + correct + explanation
+//   'round-end'     — round complete, shows pass/fail vs threshold
+//   'ended'         — game over (either ran out of rounds, or failed a round)
+
+
+const TOTAL_ROUNDS = ROUNDS.length;
+
+/** Create a fresh game state.
+ *
+ * `rounds` is the per-playthrough subset chosen from each round's question
+ * pool. Two consecutive games will see different questions (and shuffled
+ * multiple-choice options), so replays feel fresh.
+ */
+function createGame() {
+  return {
+    phase: 'title',
+    rounds: generateGameRounds(), // per-game pick of 5 questions per round, options shuffled
+    roundIndex: 0,         // 0-based index into state.rounds
+    questionIndex: 0,      // 0-based index into the current round's questions
+    timer: TIMER_SECONDS,
+    typedAnswer: '',
+    lastResult: null,      // { correct, correctAnswer, explanation }
+    roundScores: [],       // array of { round, correct, total, percent, passed } for completed rounds
+    currentRoundCorrect: 0,
+  };
+}
+
+/** Get the current round object (or null if past the last round).
+ *  Reads from state.rounds (the per-game pick) — falls back to the static
+ *  ROUNDS pool defensively if state was constructed without it.
+ */
+function currentRound(state) {
+  return state.rounds?.[state.roundIndex] || ROUNDS[state.roundIndex] || null;
+}
+
+/** Get the current question object (or null). */
+function currentQuestion(state) {
+  const round = currentRound(state);
+  if (!round) return null;
+  return round.questions[state.questionIndex] || null;
+}
+
+/** Move from title → round-intro for round 0. */
+function startGame(state) {
+  return { ...state, phase: 'round-intro', roundIndex: 0 };
+}
+
+/** Move from round-intro → question 0 of current round. */
+function beginRound(state) {
+  return {
+    ...state,
+    phase: 'question',
+    questionIndex: 0,
+    timer: TIMER_SECONDS,
+    typedAnswer: '',
+    lastResult: null,
+    currentRoundCorrect: 0,
+  };
+}
+
+/** User typed a character (we just store the full string, debounced upstream). */
+function setTypedAnswer(state, text) {
+  if (state.phase !== 'question') return state;
+  return { ...state, typedAnswer: text };
+}
+
+/** Decrement timer by one second. Returns same state if not on 'question' phase. */
+function tickTimer(state) {
+  if (state.phase !== 'question') return state;
+  const next = Math.max(0, state.timer - 1);
+  if (next === 0) {
+    // Timeout — auto-submit whatever's typed (or count as wrong if empty)
+    return submitAnswer({ ...state, timer: 0 });
+  }
+  return { ...state, timer: next };
+}
+
+/** Submit the current answer — moves to 'reveal' phase. */
+function submitAnswer(state) {
+  if (state.phase !== 'question') return state;
+  const question = currentQuestion(state);
+  if (!question) return state;
+  const { correct } = checkAnswer(question, state.typedAnswer);
+  return {
+    ...state,
+    phase: 'reveal',
+    lastResult: {
+      correct,
+      submittedAnswer: state.typedAnswer,
+      correctAnswer: question.correctAnswer,
+      explanation: question.explanation,
+    },
+    currentRoundCorrect: state.currentRoundCorrect + (correct ? 1 : 0),
+  };
+}
+
+/** Click Continue after reveal — moves to next question, end of round, or end of game. */
+function continueFromReveal(state) {
+  if (state.phase !== 'reveal') return state;
+  const round = currentRound(state);
+  const isLastQuestionInRound = state.questionIndex >= round.questions.length - 1;
+  if (!isLastQuestionInRound) {
+    return {
+      ...state,
+      phase: 'question',
+      questionIndex: state.questionIndex + 1,
+      timer: TIMER_SECONDS,
+      typedAnswer: '',
+      lastResult: null,
+    };
+  }
+  // End of round — calculate round result
+  const total = round.questions.length;
+  const correct = state.currentRoundCorrect;
+  const percent = correct / total;
+  const passed = percent >= round.passThreshold;
+  const roundResult = { round: round.number, name: round.name, correct, total, percent, passed };
+  return {
+    ...state,
+    phase: 'round-end',
+    roundScores: state.roundScores.concat([roundResult]),
+  };
+}
+
+/** Click Continue after round summary — advances to next round, or to 'ended'. */
+function advanceFromRoundEnd(state) {
+  if (state.phase !== 'round-end') return state;
+  const lastRound = state.roundScores[state.roundScores.length - 1];
+  if (!lastRound.passed) {
+    // Failed the round — game over
+    return { ...state, phase: 'ended' };
+  }
+  const nextRoundIndex = state.roundIndex + 1;
+  if (nextRoundIndex >= TOTAL_ROUNDS) {
+    // Completed all rounds — winner!
+    return { ...state, phase: 'ended' };
+  }
+  return {
+    ...state,
+    phase: 'round-intro',
+    roundIndex: nextRoundIndex,
+    questionIndex: 0,
+    currentRoundCorrect: 0,
+  };
+}
+
+/** Overall % across completed rounds. */
+function overallPercent(state) {
+  if (state.roundScores.length === 0) return 0;
+  const totalCorrect = state.roundScores.reduce((s, r) => s + r.correct, 0);
+  const totalQuestions = state.roundScores.reduce((s, r) => s + r.total, 0);
+  return totalCorrect / totalQuestions;
+}
+
+/** Did the player win (completed all rounds, each passing threshold)? */
+function didWin(state) {
+  return (
+    state.phase === 'ended' &&
+    state.roundScores.length === TOTAL_ROUNDS &&
+    state.roundScores.every(r => r.passed)
+  );
+}
+
+
+/* ==== render.js ==== */
+// Decision Lab — render functions. Each returns an HTML string for #app.
+
+
+function muteButton() {
+  const m = isMuted();
+  return `<button class="mute-btn" data-action="toggle-mute" title="${m ? 'Sound off — click to enable' : 'Sound on — click to mute'}">${m ? '🔇' : '🔊'}</button>`;
+}
+
+// ---------- Top-level dispatch ----------
+
+function render(state) {
+  if (state.phase === 'title')       return renderTitle(state);
+  if (state.phase === 'round-intro') return renderRoundIntro(state);
+  if (state.phase === 'question')    return renderQuestion(state);
+  if (state.phase === 'reveal')      return renderReveal(state);
+  if (state.phase === 'round-end')   return renderRoundEnd(state);
+  if (state.phase === 'ended')       return renderEnd(state);
+  return '<div>Unknown phase</div>';
+}
+
+// ---------- Title screen ----------
+
+function renderTitle() {
+  return `
+    <div class="screen title-screen">
+      <div class="title-card">
+        <svg class="title-logo" viewBox="-40 -32 80 64">${logoMark(1)}</svg>
+        <h1 class="title-heading">BUG-BUG'S<br/>DECISION LAB</h1>
+        <p class="title-subtitle">A data-analysis quiz · DataCruise Arcade</p>
+        <button class="primary-btn" data-action="start">▶ PLAY</button>
+        <details class="title-howto" open>
+          <summary>How to play (click to expand)</summary>
+          <div class="howto-body">
+            <p class="howto-goal"><strong>🎯 Goal:</strong> Survive all <strong>5 rounds</strong>. Each round tests a different data-analysis skill.</p>
+
+            <h4>The 5 rounds</h4>
+            <ol class="howto-rounds">
+              ${ROUNDS.map((r, i) => `
+                <li>
+                  <strong>${r.name}</strong> —
+                  <span class="howto-round-desc">${escapeHtml(r.description)}</span>
+                  <span class="howto-threshold">Pass: ${Math.round(r.passThreshold * 100)}%</span>
+                </li>
+              `).join('')}
+            </ol>
+
+            <h4>How a question works</h4>
+            <ul class="howto-flow">
+              <li>📊 A chart appears on the <strong>left screen</strong>.</li>
+              <li>❓ A question appears beneath it.</li>
+              <li>⏱ You have <strong>30 seconds</strong> to type or pick your answer.</li>
+              <li>✓ / ✗ The answer flashes right or wrong with the correct value + explanation.</li>
+            </ul>
+
+            <p class="howto-tip"><strong>💡 Tip:</strong> Miss the round's pass threshold and Bug-Bug's lab shuts down — the game ends there. Get through all 5 and your overall score (%) is shown at the end.</p>
+          </div>
+        </details>
+      </div>
+    </div>`;
+}
+
+// ---------- Round intro ----------
+
+function renderRoundIntro(state) {
+  const round = currentRound(state);
+  const completed = state.roundScores.length;
+  const overall = completed > 0 ? Math.round(overallPercent(state) * 100) : null;
+  return `
+    <div class="screen round-intro-screen">
+      <div class="round-intro-card">
+        <div class="round-badge">ROUND ${round.number} OF ${TOTAL_ROUNDS}</div>
+        <h1 class="round-name">${escapeHtml(round.name)}</h1>
+        <p class="round-desc">${escapeHtml(round.description)}</p>
+        <div class="round-stats">
+          <div class="round-stat">
+            <span class="label">QUESTIONS</span>
+            <strong>${round.questions.length}</strong>
+          </div>
+          <div class="round-stat">
+            <span class="label">PASS THRESHOLD</span>
+            <strong>${Math.round(round.passThreshold * 100)}%</strong>
+          </div>
+          ${overall !== null ? `<div class="round-stat">
+            <span class="label">YOUR AVERAGE</span>
+            <strong>${overall}%</strong>
+          </div>` : ''}
+        </div>
+        <button class="primary-btn" data-action="begin-round">START ROUND →</button>
+      </div>
+    </div>`;
+}
+
+// ---------- Question screen (the main gameplay layout) ----------
+
+function renderQuestion(state) {
+  const round = currentRound(state);
+  const q = currentQuestion(state);
+  const qIndex = state.questionIndex + 1;
+  const total = round.questions.length;
+  return `
+    <div class="screen game-screen">
+      ${headerBar(state)}
+      <main class="game-main">
+        ${bigScreen(state, round, q, qIndex, total)}
+        ${podPanel(state, q, 'thinking')}
+      </main>
+    </div>`;
+}
+
+function headerBar(state) {
+  const round = currentRound(state);
+  const qNum = state.questionIndex + 1;
+  return `
+    <header class="status-bar">
+      <div class="brand">
+        <svg viewBox="-32 -24 64 48" class="brand-logo">${logoMark(0.6)}</svg>
+        <div>
+          <h1>DECISION LAB</h1>
+          <p>DataCruise Arcade · Series 1</p>
+        </div>
+      </div>
+      <div class="header-stat">
+        <span class="label">ROUND</span>
+        <strong>${round.number} <span class="dim">/ ${TOTAL_ROUNDS}</span></strong>
+      </div>
+      <div class="header-stat">
+        <span class="label">QUESTION</span>
+        <strong>${qNum} <span class="dim">/ ${round.questions.length}</span></strong>
+      </div>
+      <div class="header-stat">
+        <span class="label">SCORE THIS ROUND</span>
+        <strong>${state.currentRoundCorrect} <span class="dim">/ ${state.questionIndex + (state.phase === 'reveal' ? 1 : 0)}</span></strong>
+      </div>
+      <div class="header-stat header-timer ${state.timer <= 5 ? 'urgent' : ''}">
+        <span class="label">TIME</span>
+        <strong>${state.timer}s</strong>
+      </div>
+      ${muteButton()}
+    </header>`;
+}
+
+function bigScreen(state, round, q, qIndex, total) {
+  const phase = state.phase;
+  const showingReveal = phase === 'reveal';
+  return `
+    <section class="big-screen">
+      <div class="screen-bezel">
+        <div class="screen-inner">
+          <div class="chart-area">
+            ${renderChart(q.chart)}
+          </div>
+          <div class="question-area">
+            <div class="question-meta">
+              <span class="question-tag">${escapeHtml(round.name)}</span>
+              <span class="question-counter">Q${qIndex} / ${total}</span>
+            </div>
+            <p class="question-prompt">${escapeHtml(q.prompt)}</p>
+          </div>
+          ${showingReveal ? renderRevealBanner(state.lastResult, q) : ''}
+        </div>
+      </div>
+    </section>`;
+}
+
+function renderRevealBanner(result, q) {
+  // The ✓/✗ + correct answer now live on the right-hand answer-display panel.
+  // The big-screen banner now just shows the educational explanation.
+  return `
+    <div class="reveal-banner ${result.correct ? 'correct' : 'wrong'}">
+      <span class="reveal-banner-label">WHY?</span>
+      <div class="reveal-explanation">${escapeHtml(q.explanation || '')}</div>
+    </div>`;
+}
+
+function podPanel(state, q, mood = 'neutral') {
+  // The right-hand "pod" area: small screen above the capsule + answer entry below.
+  return `
+    <aside class="pod-panel">
+      ${renderAnswerDisplay(state, q)}
+      <div class="capsule-wrap capsule-${mood}">
+        ${capsule(220, 280, mood)}
+      </div>
+      <div class="answer-input-area">
+        ${renderAnswerInput(state, q)}
+      </div>
+    </aside>`;
+}
+
+function renderAnswerDisplay(state, q) {
+  // On reveal: the small screen flips to show ✓/✗ + the final correct answer.
+  if (state.phase === 'reveal' && state.lastResult) {
+    const result = state.lastResult;
+    const correctText = formatAnswerForDisplay(q, q.correctAnswer);
+    return `
+      <div class="answer-display reveal ${result.correct ? 'correct' : 'wrong'}">
+        <span class="label">${result.correct ? '✓ CORRECT' : '✗ WRONG'}</span>
+        <div class="answer-text reveal-answer">
+          ${escapeHtml(correctText)}
+        </div>
+      </div>`;
+  }
+  // Question phase: shows what the player has typed (or the placeholder).
+  return `
+    <div class="answer-display">
+      <span class="label">ANSWER</span>
+      <div class="answer-text ${state.typedAnswer ? '' : 'placeholder'}">
+        ${state.typedAnswer ? escapeHtml(state.typedAnswer) : 'awaiting input...'}
+      </div>
+    </div>`;
+}
+
+function renderAnswerInput(state, q) {
+  if (state.phase !== 'question') {
+    // On reveal, show the Continue button instead of the input
+    return `
+      <button class="primary-btn pod-continue-btn" data-action="continue-from-reveal">
+        Continue →
+      </button>`;
+  }
+
+  if (q.type === 'multiple_choice') {
+    return `
+      <div class="mc-options">
+        <span class="input-label">Enter your answer ↓</span>
+        ${q.options.map((opt) => `
+          <button class="mc-btn ${state.typedAnswer === opt ? 'selected' : ''}"
+                  data-action="pick-mc"
+                  data-value="${escapeAttr(opt)}">
+            ${escapeHtml(opt)}
+          </button>
+        `).join('')}
+        <button class="primary-btn pod-submit-btn"
+                data-action="submit-answer"
+                ${state.typedAnswer ? '' : 'disabled'}>
+          Submit →
+        </button>
+      </div>`;
+  }
+
+  // Numeric or free text
+  const placeholder = q.type === 'numeric'
+    ? (q.unit ? `e.g. 8.4 (${q.unit})` : 'type a number…')
+    : 'type your answer…';
+  return `
+    <form class="answer-form" data-answer-form>
+      <span class="input-label">Enter your answer ↓</span>
+      <input
+        type="text"
+        class="answer-input"
+        data-answer-input
+        value="${escapeAttr(state.typedAnswer)}"
+        placeholder="${escapeAttr(placeholder)}"
+        autocomplete="off"
+        spellcheck="false"
+        autofocus
+      />
+      <button class="primary-btn pod-submit-btn" type="submit"
+              ${state.typedAnswer ? '' : 'disabled'}>
+        Submit →
+      </button>
+    </form>`;
+}
+
+// ---------- Reveal screen (re-uses question screen layout but with reveal-banner) ----------
+
+function renderReveal(state) {
+  const round = currentRound(state);
+  const q = currentQuestion(state);
+  const qIndex = state.questionIndex + 1;
+  const total = round.questions.length;
+  const mood = state.lastResult?.correct ? 'happy' : 'sad';
+  return `
+    <div class="screen game-screen reveal-phase">
+      ${headerBar(state)}
+      <main class="game-main">
+        ${bigScreen(state, round, q, qIndex, total)}
+        ${podPanel(state, q, mood)}
+      </main>
+    </div>`;
+}
+
+// ---------- Round end ----------
+
+function renderRoundEnd(state) {
+  const last = state.roundScores[state.roundScores.length - 1];
+  const round = ROUNDS.find(r => r.number === last.round);
+  const passed = last.passed;
+  return `
+    <div class="screen round-end-screen">
+      <div class="round-end-card ${passed ? 'passed' : 'failed'}">
+        <div class="end-icon">${passed ? '🎉' : '💔'}</div>
+        <h1 class="end-headline">${passed ? 'ROUND COMPLETE' : 'ROUND FAILED'}</h1>
+        <h2 class="end-roundname">Round ${last.round}: ${escapeHtml(last.name)}</h2>
+        <div class="end-score-bar-wrap">
+          <div class="end-score-bar">
+            <div class="end-score-fill ${passed ? 'pass' : 'fail'}" style="width:${Math.round(last.percent * 100)}%"></div>
+            <div class="end-score-threshold" style="left:${Math.round(round.passThreshold * 100)}%" title="Pass threshold"></div>
+          </div>
+          <div class="end-score-labels">
+            <span><strong>${last.correct}</strong> / ${last.total} correct (${Math.round(last.percent * 100)}%)</span>
+            <span class="dim">Threshold: ${Math.round(round.passThreshold * 100)}%</span>
+          </div>
+        </div>
+        <p class="end-message">
+          ${passed
+            ? `Nice work — you met the ${Math.round(round.passThreshold * 100)}% threshold for this round.`
+            : `You needed ${Math.round(round.passThreshold * 100)}% but scored ${Math.round(last.percent * 100)}%. The lab shuts down here.`}
+        </p>
+        <button class="primary-btn" data-action="advance-round">
+          ${passed
+            ? (last.round < TOTAL_ROUNDS ? 'NEXT ROUND →' : 'SEE FINAL SCORE →')
+            : 'SEE FINAL SCORE →'}
+        </button>
+      </div>
+    </div>`;
+}
+
+// ---------- End screen ----------
+
+function renderEnd(state) {
+  const won = didWin(state);
+  const overall = Math.round(overallPercent(state) * 100);
+  return `
+    <div class="screen final-end-screen">
+      <div class="final-end-card">
+        <div class="final-icon">${won ? '🏆' : '📉'}</div>
+        <h1 class="final-headline">${won ? 'LAB COMPLETE' : 'LAB CLOSED'}</h1>
+        <p class="final-sub">
+          ${won
+            ? `You cleared all ${TOTAL_ROUNDS} rounds — that's the full data-analysis arc.`
+            : `You made it to Round ${state.roundScores.length}. Try again — the lab is always open.`}
+        </p>
+
+        <div class="final-overall">
+          <span class="label">OVERALL SCORE</span>
+          <span class="value">${overall}%</span>
+        </div>
+
+        <table class="final-table">
+          <thead><tr><th>Round</th><th>Topic</th><th>Score</th><th>Pass?</th></tr></thead>
+          <tbody>
+            ${state.roundScores.map(r => `
+              <tr>
+                <td>${r.round}</td>
+                <td>${escapeHtml(r.name)}</td>
+                <td>${r.correct}/${r.total} (${Math.round(r.percent * 100)}%)</td>
+                <td>${r.passed ? '✓' : '✗'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="final-actions">
+          <button class="primary-btn" data-action="restart">🔁 PLAY AGAIN</button>
+        </div>
+
+        <p class="final-data-note">
+          📥 Data download coming in the next version — you'll be able to grab the
+          datasets used in the quiz to explore them in Tableau / Excel / your tool
+          of choice.
+        </p>
+      </div>
+    </div>`;
+}
+
+// ---------- Helpers ----------
+
+function formatAnswerForDisplay(q, answer) {
+  if (q.type === 'numeric') {
+    return q.unit ? `${answer} ${q.unit}` : String(answer);
+  }
+  return String(answer);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+
+/* ==== Synthesised namespace objects for `import * as X` ==== */
+const audio = { unlock, setMuted, isMuted, playKey, playTick, playPick, playCorrect, playWrong, playRoundWin, playRoundFail, playGameWin, playGameLose };
+
+/* ==== main.js ==== */
+// Bootstrap. Single state, single render, click + keyboard handlers,
+// a 1-second tick when in 'question' phase.
+
+
+const app = document.getElementById('app');
+
+let state = createGame();
+let timerInterval = null;
+let lastPhase = null;
+
+paint();
+document.addEventListener('click', onClick);
+document.addEventListener('input', onInput);
+document.addEventListener('submit', onSubmit);
+document.addEventListener('keydown', onKeydown);
+
+// ---------- click router ----------
+
+function onClick(e) {
+  const target = e.target.closest('[data-action]');
+  if (!target) return;
+  const action = target.getAttribute('data-action');
+  if (target.hasAttribute('disabled')) return;
+
+  switch (action) {
+    case 'start':
+      // Unlock the AudioContext on the very first user gesture so all
+      // subsequent sounds play reliably (browsers block audio until
+      // they see a click).
+      audio.unlock();
+      state = startGame(state);
+      paint();
+      return;
+    case 'begin-round':
+      audio.unlock(); // belt-and-braces in case the user disables sound at title and re-enables
+      state = beginRound(state);
+      paint();
+      return;
+    case 'pick-mc':
+      state = setTypedAnswer(state, target.getAttribute('data-value') || '');
+      audio.playPick();
+      paint();
+      return;
+    case 'submit-answer':
+      handleSubmit();
+      return;
+    case 'continue-from-reveal':
+      state = continueFromReveal(state);
+      paint();
+      return;
+    case 'advance-round':
+      state = advanceFromRoundEnd(state);
+      if (state.phase === 'ended') {
+        if (didWin(state)) audio.playGameWin();
+        else audio.playGameLose();
+        const _c = state.roundScores.reduce((a, r) => a + r.correct, 0);
+        const _t = state.roundScores.reduce((a, r) => a + r.total, 0) || 1;
+        const _pct = _c / _t;
+        window.DataCruiseResult && DataCruiseResult.ready({
+          slug: 'decision-lab', game: 'Decision Lab',
+          headline: _c + '/' + _t,
+          sub: didWin(state)
+            ? 'cleared every round! 🧪'
+            : state.roundScores.length + '/5 rounds reached',
+          stars: _pct >= 0.9 ? 3 : _pct >= 0.7 ? 2 : _pct > 0 ? 1 : 0, starsMax: 3,
+        });
+      }
+      paint();
+      return;
+    case 'restart':
+      state = createGame();
+      paint();
+      return;
+    case 'toggle-mute':
+      audio.setMuted(!audio.isMuted());
+      paint();
+      return;
+  }
+}
+
+function handleSubmit() {
+  state = submitAnswer(state);
+  if (state.phase === 'reveal') {
+    if (state.lastResult?.correct) audio.playCorrect();
+    else audio.playWrong();
+  }
+  paint();
+}
+
+// ---------- typed input (numeric / free text) ----------
+
+function onInput(e) {
+  if (e.target.matches('[data-answer-input]')) {
+    // Update state without full re-paint to preserve focus + caret position
+    state.typedAnswer = e.target.value;
+    syncMinorState();
+  }
+}
+
+function onSubmit(e) {
+  if (e.target.matches('[data-answer-form]')) {
+    e.preventDefault();
+    handleSubmit();
+  }
+}
+
+function onKeydown(e) {
+  // Enter advances Continue button on reveal
+  if (e.key === 'Enter' && state.phase === 'reveal') {
+    state = continueFromReveal(state);
+    paint();
+  }
+  // Esc closes nothing currently (reserved for future)
+}
+
+// ---------- timer ----------
+
+function ensureTimerRunning() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    if (state.phase === 'question') {
+      const prevTimer = state.timer;
+      state = tickTimer(state);
+      if (state.phase !== 'question') {
+        // submitAnswer fired from timeout — full repaint + reveal sound
+        if (state.lastResult?.correct) audio.playCorrect();
+        else audio.playWrong();
+        paint();
+      } else {
+        // Tick sound for the last 5 seconds
+        if (state.timer <= 5 && state.timer >= 1 && state.timer !== prevTimer) {
+          audio.playTick();
+        }
+        syncTimerOnly();
+      }
+    } else {
+      stopTimer();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (!timerInterval) return;
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+// ---------- render ----------
+
+function paint() {
+  const enteringRoundEnd = state.phase === 'round-end' && lastPhase !== 'round-end';
+  app.innerHTML = render(state);
+  lastPhase = state.phase;
+
+  // Play round-end fanfare on transition
+  if (enteringRoundEnd) {
+    const last = state.roundScores[state.roundScores.length - 1];
+    if (last?.passed) audio.playRoundWin();
+    else audio.playRoundFail();
+    // Animate the score-fill bar into its final width
+    requestAnimationFrame(() => {
+      const fill = app.querySelector('.end-score-fill');
+      if (fill) {
+        const target = fill.style.width;
+        fill.style.width = '0%';
+        requestAnimationFrame(() => { fill.style.width = target; });
+      }
+    });
+  }
+
+  if (state.phase === 'question') {
+    ensureTimerRunning();
+    const input = app.querySelector('[data-answer-input]');
+    if (input) {
+      setTimeout(() => { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 30);
+    }
+  } else {
+    stopTimer();
+  }
+}
+
+/** When the user types into the input, sync the small answer display
+ *  without re-painting the whole screen (loses focus / caret). */
+function syncMinorState() {
+  const display = app.querySelector('.answer-text');
+  if (display) {
+    if (state.typedAnswer) {
+      display.textContent = state.typedAnswer;
+      display.classList.remove('placeholder');
+    } else {
+      display.textContent = 'awaiting input...';
+      display.classList.add('placeholder');
+    }
+  }
+  const submitBtn = app.querySelector('.pod-submit-btn');
+  if (submitBtn) {
+    if (state.typedAnswer) submitBtn.removeAttribute('disabled');
+    else submitBtn.setAttribute('disabled', '');
+  }
+}
+
+/** Sync just the timer display every second instead of re-painting. */
+function syncTimerOnly() {
+  const timer = app.querySelector('.header-timer strong');
+  if (timer) timer.textContent = `${state.timer}s`;
+  const timerWrap = app.querySelector('.header-timer');
+  if (timerWrap) timerWrap.classList.toggle('urgent', state.timer <= 5);
+}
+
+
+
+/* ==== GameMonetize SDK bootstrap ==== */
+const PLATFORM = "site";
+const AD = { enabled: true, gameId: "0hmhteadfq07n01ftax00gzvxhdx99hs" };
+let _gmReady = false, _gmPending = null;
+// Enable GameMonetize test-ad mode on localhost / dev origins so ads actually
+// serve during local verification. Real domains (GameMonetize's player,
+// arcade.datacruise.app, etc.) get the production ad stack instead.
+const _gmIsLocalOrigin = /^(127\.0\.0\.1|localhost|0\.0\.0\.0|::1)$/.test(location.hostname);
+if (PLATFORM === "site" && AD.enabled && AD.gameId) {
+  window.SDK_OPTIONS = {
+    gameId: AD.gameId,
+    testing: _gmIsLocalOrigin,
+    debug: _gmIsLocalOrigin,
+    onEvent: function (a) {
+      switch (a && a.name) {
+        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
+        case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
+        case "SDK_GAME_START":              _gmResolve(true); break;
+        case "SDK_ERROR":                   _gmResolve(false); break;
+      }
+    }
+  };
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://api.gamemonetize.com/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, "script", "gamemonetize-sdk");
+}
+function _gmResolve(ok) {
+  if (!_gmPending) return;
+  const g = _gmPending; _gmPending = null;
+  clearTimeout(g.timer);
+  if (typeof g.done === "function") g.done(!!ok);
+}
+function showRewardedAd(onReward) {
+  const done = (ok) => { if (ok && typeof onReward === "function") onReward(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 25000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  setTimeout(() => done(true), 800);
+}
+
+/* ==== Rewarded-ad hook ==== */
+function _handleWatchAdContinue() {
+  if (!(state && state.phase === 'ended' && typeof didWin === 'function' && !didWin(state))) return;
+  showRewardedAd(() => {
+    if (state.roundScores && state.roundScores.length > 0) state.roundScores.pop();
+            state.phase = 'round-intro';
+            state.questionIndex = 0;
+            state.currentRoundCorrect = 0;
+            state.typedAnswer = '';
+            app.innerHTML = render(state);
+  });
+}
+
+(function () {
+  const seen = new WeakSet();
+  const check = () => {
+    if (!(state && state.phase === 'ended' && typeof didWin === 'function' && !didWin(state))) return;
+    const actions = document.querySelector(".end-actions, .card .actions, .game-over-actions, .actions-row");
+    if (!actions || seen.has(actions)) return;
+    if (actions.querySelector('[data-action="watch-ad-continue"]')) return;
+    seen.add(actions);
+    const btn = document.createElement("button");
+    btn.className = "gold";
+    btn.setAttribute("data-action", "watch-ad-continue");
+    btn.textContent = "▶ WATCH AD → RETRY THIS ROUND";
+    const refNode = actions.firstChild;
+    actions.insertBefore(btn, refNode);
+  };
+  setInterval(check, 400);
+}());
+
+document.addEventListener("click", function (e) {
+  const t = e.target.closest && e.target.closest("[data-action]");
+  if (t && t.getAttribute("data-action") === "watch-ad-continue") {
+    e.preventDefault();
+    _handleWatchAdContinue();
+  }
+}, true);
+
+  </script>
+</body>
+</html>

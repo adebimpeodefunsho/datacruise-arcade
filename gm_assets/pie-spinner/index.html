@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Bug-Bug's Pie Spinner</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMjgiIGZpbGw9IiNGRkY3RTIiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTSAzMiAzMiBMIDMyIDQgQSAyOCAyOCAwIDAgMSA1OC42IDQxLjQgWiIgZmlsbD0iI0ZGNkExQSIgc3Ryb2tlPSIjMUExQTFBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNIDMyIDMyIEwgNTguNiA0MS40IEEgMjggMjggMCAwIDEgMTggNTYuNCBaIiBmaWxsPSIjRkZDNTAwIiBzdHJva2U9IiMxQTFBMUEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjUiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+Cg=="/>
+  <style>
+/* Bug-Bug's Pie Spinner — DataCruise Arcade #3.
+   Bright orange + black arcade palette, matching Block City / Mountain Climb. */
+
+* { box-sizing: border-box; }
+
+:root {
+  --bg-top: #FFE9A8;
+  --bg-bot: #FFB347;
+  --ink: #1A1A1A;
+  --paper: #FFF7E2;
+  --orange: #FF6A1A;
+  --orange-deep: #D44A00;
+  --gold: #FFC500;
+  --green: #2BB673;
+  --sky: #5DC1E8;
+  --sky-deep: #2E9DC9;
+  --shadow: 0 6px 0 0 #1A1A1A;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Fredoka", "Quicksand", "Avenir Next", system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--orange);
+  color: var(--ink);
+  font-weight: 800;
+  padding: 12px 22px;
+  font-size: 18px;
+  box-shadow: 0 4px 0 0 var(--ink);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+}
+button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 0 var(--ink); }
+button:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
+button[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 0 var(--ink); }
+button.ghost { background: var(--paper); color: var(--ink); }
+
+/* ============== TITLE / END SCREENS ============== */
+
+.screen { display: grid; place-items: center; min-height: 80vh; }
+
+.card {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 32px 38px;
+  max-width: 640px;
+  text-align: center;
+}
+.card h1 { font-size: 38px; margin: 12px 0 6px; letter-spacing: 1px; line-height: 1.05; }
+.card .subtitle { margin: 0 0 22px; font-weight: 600; color: #5C2A0F; font-size: 15px; }
+.card .big-bug { width: 130px; height: 110px; display: block; margin: 0 auto 4px; }
+
+.howto {
+  text-align: left;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.howto p { margin: 0 0 6px; }
+.howto p:last-child { margin-bottom: 0; }
+.howto strong { color: var(--orange-deep); }
+
+.prompt { font-weight: 800; letter-spacing: 1.5px; font-size: 13px; color: var(--orange-deep); margin: 0 0 12px; }
+
+.stars { font-size: 46px; letter-spacing: 6px; margin: 12px 0 8px; }
+.stars .dim { opacity: 0.25; }
+
+.end-chart {
+  display: block;
+  margin: 8px auto 8px;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 3px 0 0 var(--ink);
+}
+
+.chart-trophy {
+  margin: 6px 0;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+}
+
+.new-best {
+  margin: 0 0 12px;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 16px;
+  animation: bounce-best 0.6s ease;
+}
+@keyframes bounce-best {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.stats { font-size: 15px; line-height: 1.6; margin: 0 0 16px; }
+.stats b { color: var(--orange-deep); }
+
+.end-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ============== GAME SCREEN ============== */
+
+.game { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-weight: 800;
+  flex-wrap: wrap;
+}
+.topbar .title { font-size: 16px; letter-spacing: 1px; }
+
+.sound-toggle {
+  font-size: 20px;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2A2A2A;
+  color: var(--paper);
+  border: 2px solid var(--paper);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+}
+.sound-toggle:hover { background: #3A3A3A; }
+.sound-toggle:active { transform: scale(0.94); }
+
+.spin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #2A2A2A;
+  border: 2px solid var(--paper);
+  border-radius: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: background 160ms ease, transform 120ms ease;
+}
+.spin-label { opacity: 0.85; font-weight: 800; }
+.spin-num { font-variant-numeric: tabular-nums; font-size: 16px; min-width: 50px; }
+.spin-dots { display: inline-flex; gap: 4px; }
+.spin-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: transparent;
+  transition: background 140ms ease;
+}
+.spin-dot.used { background: var(--orange); border-color: var(--orange-deep); }
+.spin-pill.warn { background: linear-gradient(180deg, #7A4A00 0%, #4A2A00 100%); }
+.spin-pill.danger {
+  background: linear-gradient(180deg, #B33000 0%, #7E1F00 100%);
+  animation: pulse-pill 0.7s ease-in-out infinite;
+}
+@keyframes pulse-pill {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.stage {
+  background: #FFFFFF;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.stage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 110px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============== PIE SLICES ============== */
+
+.slice .slice-path {
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  transition: fill 350ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.slice.dim .slice-path { fill: #DDD2B5; }
+.slice.lit .slice-path { fill: var(--slice-color, #FF6A1A); }
+
+.slice .slice-label {
+  font: 900 22px "Fredoka", sans-serif;
+  fill: var(--ink);
+  pointer-events: none;
+  transition: fill 200ms ease;
+}
+.slice.dim .slice-label { fill: #6F5C2E; }
+.slice.lit .slice-label { fill: var(--ink); }
+
+/* Just-lit pop: scale the whole slice group briefly. */
+.slice {
+  transform-box: fill-box;
+  transform-origin: 290px 320px;
+}
+.slice.just-lit { animation: slice-pop 700ms ease; }
+@keyframes slice-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
+  70%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+/* ============== SPINNER WHEEL ============== */
+
+#wheel { cursor: pointer; pointer-events: bounding-box; }
+#wheel > * { pointer-events: none; }
+#wheel-hub { cursor: pointer; pointer-events: bounding-box; }
+#wheel-hub > * { pointer-events: none; }
+#wheel-hub:hover circle:first-of-type { fill: #FF8035; }
+#wheel-hub:active { transform-origin: center; }
+
+.wedge-num {
+  font: 900 28px "Fredoka", sans-serif;
+  fill: var(--ink);
+  pointer-events: none;
+}
+
+#wheel-pointer { pointer-events: none; }
+
+/* ============== BUG-BUG ============== */
+
+/* Bug-Bug pose is positioned and bobbed by JS (patchGame). CSS only handles fills/strokes. */
+.bug-group { pointer-events: none; }
+.bug-body { fill: var(--orange-deep); stroke: var(--ink); stroke-width: 3; }
+.bug-spot { fill: var(--ink); }
+.bug-head { fill: var(--ink); stroke: var(--ink); stroke-width: 2; }
+.bug-eye { fill: #FFF; }
+.bug-pupil { fill: var(--ink); }
+
+/* Result chip fade */
+#result-chip { transition: opacity 220ms ease; }
+
+  </style>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script>
+/* ==== state.js ==== */
+// Bug-Bug's Pie Spinner — state, constants, simulation tick.
+// Single owner (main.js rAF loop) mutates state in place; render reads only.
+
+const VIEW = { W: 960, H: 700 };
+
+// --- Pie chart (centre-left, the visualisation being filled in) ---
+const PIE = { cx: 290, cy: 320, r: 165 };
+
+// 4 slices, sum = 100, each tagged with its colour for the "alive" state.
+// Order = clockwise from 12 o'clock.
+const SLICE_DEFS = [
+  { value: 45, color: "#FF6A1A", label: "45%" }, // orange
+  { value: 25, color: "#FFC500", label: "25%" }, // gold
+  { value: 20, color: "#2BB673", label: "20%" }, // green
+  { value: 10, color: "#5DC1E8", label: "10%" }, // sky blue
+];
+
+// --- Spinner wheel (right) ---
+const WHEEL = { cx: 700, cy: 320, r: 175 };
+// 8 wedges, 45° each. Order goes clockwise from 12 o'clock.
+// Matches (45, 25, 20, 10) are scattered so adjacent wedges aren't all hits.
+const WEDGES = [45, 10, 60, 25, 90, 20, 75, 30];
+const WEDGE_COUNT = WEDGES.length;
+const WEDGE_DEG = 360 / WEDGE_COUNT;
+
+// Wedge background palette — alternating, with match values getting brighter tints.
+const WEDGE_FILLS = ["#FFF7E2", "#FFE0A8", "#FFF7E2", "#FFE0A8", "#FFF7E2", "#FFE0A8", "#FFF7E2", "#FFE0A8"];
+
+// --- Game rules ---
+const MAX_SPINS = 8;
+
+// --- Spinner physics ---
+const SPIN_DUR_MS_MIN = 2800;
+const SPIN_DUR_MS_VAR = 900;
+const SPIN_REVS_MIN = 3;
+const SPIN_REVS_VAR = 3;
+
+// --- Cheer / feedback timers ---
+const CHEER_MS = 1400;
+const RESULT_FLASH_MS = 1100;
+const RESULT_FLASH_MS_LONG = 1900;   // already-lit and miss linger longer so the message can be read
+
+function createGame() {
+  return {
+    phase: "playing",          // "playing" | "ended"
+    outcome: null,             // "win" | "lose" | null
+
+    // Pie slices — lit flips true when matched.
+    slices: SLICE_DEFS.map((s) => ({ ...s, lit: false, justLitMs: 0 })),
+
+    // Spinner state
+    angle: 0,                  // accumulated rotation, degrees clockwise
+    spinning: false,
+    spinStart: 0,
+    spinDelta: 0,
+    spinElapsed: 0,
+    spinDuration: 0,
+    spinTargetIdx: 0,          // wedge index that will land at pointer
+
+    // Round bookkeeping
+    spinsUsed: 0,
+    lastResult: null,          // { wedgeIdx, value, matchedSliceIdx } | null
+    resultFlashMs: 0,
+    cheerMs: 0,
+
+    // Counters increment to let main.js play sounds on transitions.
+    spinStarts: 0,
+    matchEvents: 0,
+    missEvents: 0,
+    alreadyLitEvents: 0,
+  };
+}
+
+function allLit(state) {
+  for (const s of state.slices) if (!s.lit) return false;
+  return true;
+}
+
+// ---------- Actions ----------
+
+function startSpin(state) {
+  if (state.phase !== "playing") return state;
+  if (state.spinning) return state;
+  if (state.spinsUsed >= MAX_SPINS) return state;
+
+  // Pick where the wheel will land. Pure-random target wedge.
+  const targetIdx = Math.floor(Math.random() * WEDGE_COUNT);
+
+  // Compute total clockwise rotation: a few full revolutions plus the
+  // offset needed to leave wedge[targetIdx] under the pointer.
+  const cur = ((state.angle % 360) + 360) % 360;
+  const targetAngle = ((-targetIdx * WEDGE_DEG) % 360 + 360) % 360;
+  let delta = (targetAngle - cur + 360) % 360;
+  delta += 360 * (SPIN_REVS_MIN + Math.floor(Math.random() * SPIN_REVS_VAR));
+
+  state.spinning = true;
+  state.spinStart = state.angle;
+  state.spinDelta = delta;
+  state.spinElapsed = 0;
+  state.spinDuration = SPIN_DUR_MS_MIN + Math.random() * SPIN_DUR_MS_VAR;
+  state.spinTargetIdx = targetIdx;
+  state.resultFlashMs = 0;
+  state.cheerMs = 0;
+  state.spinStarts += 1;
+  return state;
+}
+
+// ---------- Tick ----------
+
+function tick(state, dtMs) {
+  if (state.phase !== "playing") {
+    decayTimers(state, dtMs);
+    return state;
+  }
+
+  if (state.spinning) {
+    state.spinElapsed += dtMs;
+    const t = Math.min(1, state.spinElapsed / state.spinDuration);
+    // ease-out-cubic
+    const eased = 1 - Math.pow(1 - t, 3);
+    state.angle = state.spinStart + state.spinDelta * eased;
+    if (t >= 1) {
+      state.angle = state.spinStart + state.spinDelta;
+      state.spinning = false;
+      resolveSpin(state);
+    }
+  }
+
+  decayTimers(state, dtMs);
+  return state;
+}
+
+function decayTimers(state, dtMs) {
+  if (state.resultFlashMs > 0) state.resultFlashMs = Math.max(0, state.resultFlashMs - dtMs);
+  if (state.cheerMs > 0) state.cheerMs = Math.max(0, state.cheerMs - dtMs);
+  for (const s of state.slices) {
+    if (s.justLitMs > 0) s.justLitMs = Math.max(0, s.justLitMs - dtMs);
+  }
+}
+
+function resolveSpin(state) {
+  const wedgeIdx = state.spinTargetIdx;
+  const value = WEDGES[wedgeIdx];
+  state.spinsUsed += 1;
+
+  // Find a slice with this value. Distinguish "match" (unlit) from "already lit".
+  let matchedSliceIdx = -1;
+  let alreadyLitSliceIdx = -1;
+  for (let i = 0; i < state.slices.length; i++) {
+    if (state.slices[i].value !== value) continue;
+    if (state.slices[i].lit) alreadyLitSliceIdx = i;
+    else { matchedSliceIdx = i; break; }
+  }
+  const alreadyLit = matchedSliceIdx < 0 && alreadyLitSliceIdx >= 0;
+
+  state.lastResult = { wedgeIdx, value, matchedSliceIdx, alreadyLit };
+  state.resultFlashMs = matchedSliceIdx >= 0 ? RESULT_FLASH_MS : RESULT_FLASH_MS_LONG;
+
+  if (matchedSliceIdx >= 0) {
+    state.slices[matchedSliceIdx].lit = true;
+    state.slices[matchedSliceIdx].justLitMs = 700;
+    state.cheerMs = CHEER_MS;
+    state.matchEvents += 1;
+  } else if (alreadyLit) {
+    state.alreadyLitEvents += 1;
+  } else {
+    state.missEvents += 1;
+  }
+
+  if (allLit(state)) {
+    state.phase = "ended";
+    state.outcome = "win";
+  } else if (state.spinsUsed >= MAX_SPINS) {
+    state.phase = "ended";
+    state.outcome = "lose";
+  }
+}
+
+// ---------- Scoring ----------
+
+/** Stars from spins used in a winning run. 1-3 stars. */
+function starsForWin(spinsUsed) {
+  if (spinsUsed <= 5) return 3;
+  if (spinsUsed <= 6) return 2;
+  return 1;
+}
+
+
+/* ==== sound.js ==== */
+// Web Audio SFX — synthesised, no external assets.
+// AudioContext is created lazily inside the first user gesture (a click), so
+// browsers allow it to start.
+
+let ctx = null;
+let muted = readMuted();
+let spinTickerId = null;
+
+function readMuted() {
+  try { return localStorage.getItem("datacruise.piespinner.muted") === "1"; }
+  catch { return false; }
+}
+
+function writeMuted() {
+  try { localStorage.setItem("datacruise.piespinner.muted", muted ? "1" : "0"); }
+  catch { /* ignore */ }
+}
+
+function getCtx() {
+  if (muted) return null;
+  if (!ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+  }
+  if (ctx.state === "suspended") ctx.resume();
+  return ctx;
+}
+
+function tone({ freq, dur = 0.12, type = "sine", vol = 0.18, slide = 0, attack = 0.005, when = 0 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const t1 = t0 + dur;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slide) {
+    const endFreq = Math.max(20, freq + slide);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, t1);
+  }
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol, t0 + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t1);
+  osc.connect(gain).connect(c.destination);
+  osc.start(t0);
+  osc.stop(t1 + 0.02);
+}
+
+function noise({ dur = 0.12, vol = 0.15, when = 0, cutoff = 1200 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const samples = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, samples, c.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < samples; i++) data[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  const filter = c.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = cutoff;
+  const gain = c.createGain();
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter).connect(gain).connect(c.destination);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+const sfx = {
+  // Quick click for the SPIN button press.
+  press() {
+    tone({ freq: 380, dur: 0.05, type: "square", vol: 0.10 });
+  },
+  // Single tick — fires per wedge passing the pointer while the wheel is spinning.
+  tick() {
+    tone({ freq: 720, dur: 0.025, type: "square", vol: 0.07 });
+  },
+  // Slice came alive — bright major arpeggio.
+  match() {
+    tone({ freq: 659, dur: 0.10, type: "triangle", vol: 0.16 });
+    tone({ freq: 880, dur: 0.10, type: "triangle", vol: 0.16, when: 0.07 });
+    tone({ freq: 1318, dur: 0.16, type: "triangle", vol: 0.14, when: 0.14 });
+  },
+  // Wedge value didn't match any unlit slice.
+  miss() {
+    tone({ freq: 220, dur: 0.18, type: "sawtooth", vol: 0.12, slide: -80 });
+    noise({ dur: 0.10, vol: 0.07, cutoff: 600 });
+  },
+  // Wedge value matched a slice that's already lit — soft "uh-oh" tone.
+  alreadyLit() {
+    tone({ freq: 440, dur: 0.10, type: "sine", vol: 0.13 });
+    tone({ freq: 370, dur: 0.20, type: "sine", vol: 0.12, when: 0.09 });
+  },
+  // Final win — ascending fanfare.
+  win() {
+    [523, 659, 784, 1047, 1319].forEach((freq, i) => {
+      tone({ freq, dur: 0.18, type: "triangle", vol: 0.18, when: i * 0.10 });
+    });
+  },
+  // Final lose — descending sad tones.
+  lose() {
+    [392, 330, 262].forEach((freq, i) => {
+      tone({ freq, dur: 0.22, type: "sawtooth", vol: 0.14, when: i * 0.15 });
+    });
+  },
+};
+
+/** Start the per-wedge tick ticker. Polls the current wedge index and ticks on change. */
+function startSpinTicker(getWedgeIdx) {
+  stopSpinTicker();
+  let last = getWedgeIdx();
+  spinTickerId = setInterval(() => {
+    const cur = getWedgeIdx();
+    if (cur !== last) {
+      sfx.tick();
+      last = cur;
+    }
+  }, 16);
+}
+
+function stopSpinTicker() {
+  if (spinTickerId != null) clearInterval(spinTickerId);
+  spinTickerId = null;
+}
+
+function isMuted() { return muted; }
+
+function toggleMuted() {
+  muted = !muted;
+  writeMuted();
+  return muted;
+}
+
+
+/* ==== render.js ==== */
+// DOM/SVG rendering. innerHTML for title/end screens. For the live game we
+// build the shell once and patch transforms / classes / text per frame.
+
+
+// Bug-Bug rests just below the wheel, his hand reaching up through the wheel onto the SPIN hub.
+const BUG_X = WHEEL.cx;
+const BUG_Y = WHEEL.cy + WHEEL.r + 60;
+
+// ---------- Geometry helpers ----------
+
+function polar(cx, cy, r, deg) {
+  // deg measured clockwise from 12 o'clock (top).
+  const rad = (deg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function slicePath(cx, cy, r, startDeg, endDeg) {
+  const a = polar(cx, cy, r, startDeg);
+  const b = polar(cx, cy, r, endDeg);
+  const large = (endDeg - startDeg) > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${a.x.toFixed(2)} ${a.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)} Z`;
+}
+
+// ---------- TITLE SCREEN ----------
+
+function renderTitle(best) {
+  return `
+  <div class="screen">
+    <div class="card">
+      ${bugSvg(130, 110)}
+      <h1>BUG-BUG'S<br>PIE SPINNER</h1>
+      <p class="subtitle">DATACRUISE ARCADE · GAME 3</p>
+      <div class="howto">
+        <p><strong>Goal:</strong> bring every slice of the pie chart to life. A slice wakes up when the spinner lands on its percentage.</p>
+        <p><strong>Spin:</strong> click the <b>SPIN</b> button at the centre of the wheel (or click anywhere on the wheel). Bug-Bug gives it a push.</p>
+        <p><strong>Match:</strong> the wheel lands on a number. If a still-grey slice has that percentage, it lights up in colour. If the number matches nothing, that's a miss — try again.</p>
+        <p><strong>Eight spins:</strong> you only get <b>${MAX_SPINS} spins</b> to wake up all four slices. Miss too many and the pie stays grey.</p>
+      </div>
+      <p class="prompt">BEST: ${renderStarsInline(best || 0)}</p>
+      <button data-action="start">START SPINNING</button>
+    </div>
+  </div>`;
+}
+
+function renderStarsInline(n) {
+  if (!n) return `<span class="dim">★ ★ ★</span>`;
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return s;
+}
+
+// ---------- END SCREEN ----------
+
+function renderEnd(state, prevBest) {
+  const win = state.outcome === "win";
+  const stars = win ? starsForWin(state.spinsUsed) : 0;
+  const isNewBest = win && stars > prevBest;
+  return `
+  <div class="screen">
+    <div class="card">
+      ${win ? "" : bugSvg(110, 92)}
+      <h1>${win ? "PIE CHART COMPLETE!" : "OUT OF SPINS"}</h1>
+      <p class="subtitle">${win ? "Bug-Bug, master of slices." : "The pie is still mostly grey."}</p>
+      ${renderEndPie(state)}
+      ${win ? `<p class="chart-trophy">🎉 YOU JUST CREATED A PIE CHART! 🎉</p>` : ""}
+      ${renderStarsBig(stars)}
+      ${isNewBest ? `<p class="new-best">NEW BEST!</p>` : ""}
+      <div class="stats">
+        Spins used: <b>${state.spinsUsed}</b> / ${MAX_SPINS}<br>
+        Slices lit: <b>${state.slices.filter((s) => s.lit).length}</b> / ${state.slices.length}
+      </div>
+      <div class="end-actions">
+        <button data-action="replay">PLAY AGAIN</button>
+        <button class="ghost" data-action="back-to-title">TITLE SCREEN</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEndPie(state) {
+  const cx = 80, cy = 80, r = 70;
+  let cursor = 0;
+  let paths = "";
+  for (const s of state.slices) {
+    const sweep = (s.value / 100) * 360;
+    const end = cursor + sweep;
+    const fill = s.lit ? s.color : "#DDD2B5";
+    paths += `<path d="${slicePath(cx, cy, r, cursor, end)}" fill="${fill}" stroke="#1A1A1A" stroke-width="2"/>`;
+    cursor = end;
+  }
+  return `<svg class="end-chart" viewBox="0 0 160 160" width="160" height="160">${paths}</svg>`;
+}
+
+function renderStarsBig(n) {
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return `<div class="stars">${s}</div>`;
+}
+
+// ---------- GAME SCREEN ----------
+
+function renderGameShell(state) {
+  return `
+  <div class="game">
+    <div class="topbar">
+      <div class="title">🥧 PIE SPINNER</div>
+      <div class="spin-pill" id="spin-pill">
+        <span class="spin-label">SPINS LEFT</span>
+        <span class="spin-dots" id="spin-dots">${renderSpinDots(state)}</span>
+        <span class="spin-num" id="spin-num">${MAX_SPINS - state.spinsUsed} / ${MAX_SPINS}</span>
+      </div>
+      <button class="sound-toggle" id="sound-toggle" data-action="toggle-sound" aria-label="Toggle sound">${isMuted() ? "🔇" : "🔊"}</button>
+    </div>
+
+    <div class="stage">
+      <svg viewBox="0 0 ${VIEW.W} ${VIEW.H}" preserveAspectRatio="xMidYMid meet" id="stage-svg">
+        <rect x="0" y="0" width="${VIEW.W}" height="${VIEW.H}" fill="#FFFFFF"/>
+
+        <!-- "Match Me" label above the pie -->
+        <g transform="translate(${PIE.cx}, ${PIE.cy - PIE.r - 28})">
+          <rect x="-90" y="-22" width="180" height="38" rx="14" fill="#1A1A1A"/>
+          <text x="0" y="5" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="20" fill="#FFF7E2" letter-spacing="2">MATCH ME!</text>
+        </g>
+
+        <!-- Pie chart group, slices rendered as stable elements for class toggles. -->
+        <g id="pie">${renderPieSlices(state)}</g>
+
+        <!-- Sparkles & spin-result chip -->
+        <g id="pie-fx"></g>
+
+        <!-- "TRY: 45 / 25 / 20 / 10" hint chip under the pie -->
+        <g transform="translate(${PIE.cx}, ${PIE.cy + PIE.r + 36})">
+          <rect x="-150" y="-20" width="300" height="36" rx="12" fill="#FFF7E2" stroke="#1A1A1A" stroke-width="3"/>
+          <text x="0" y="5" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">LAND ON: 45 · 25 · 20 · 10</text>
+        </g>
+
+        <!-- Spinner: pointer (stationary), wheel (rotates), centre button. -->
+        <g id="wheel-pointer" transform="translate(${WHEEL.cx}, ${WHEEL.cy - WHEEL.r - 4})">
+          <polygon points="-22,-22 22,-22 0,18" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>
+          <polygon points="-14,-18 14,-18 0,10" fill="#FFC500"/>
+        </g>
+
+        <g id="wheel" data-action="spin" transform="translate(${WHEEL.cx}, ${WHEEL.cy}) rotate(0)">
+          <circle r="${WHEEL.r + 8}" fill="#1A1A1A"/>
+          ${renderWedges()}
+          <circle r="${WHEEL.r}" fill="none" stroke="#1A1A1A" stroke-width="4"/>
+        </g>
+
+        <g id="wheel-hub" data-action="spin" transform="translate(${WHEEL.cx}, ${WHEEL.cy})">
+          <circle r="42" fill="#FF6A1A" stroke="#1A1A1A" stroke-width="4"/>
+          <circle r="42" fill="none" stroke="#FFF7E2" stroke-width="2" stroke-dasharray="3 3"/>
+          <text id="hub-text" x="0" y="6" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="20" fill="#1A1A1A" letter-spacing="2">SPIN</text>
+        </g>
+
+        <!-- Bug-Bug sits below the spinner, vertical pose, hand pressing the SPIN button. -->
+        <g id="bug" class="bug-group" transform="translate(${BUG_X}, ${BUG_Y})">
+          <g class="bug-inner">${bugInnerSvg()}</g>
+        </g>
+
+        <!-- Spin result chip — centred at the top of the canvas, dynamic width based on message. -->
+        <g id="result-chip" transform="translate(${VIEW.W / 2}, 50)" opacity="0">
+          <rect id="result-chip-rect" x="-90" y="-26" width="180" height="52" rx="16" fill="#1A1A1A"/>
+          <text id="result-chip-text" x="0" y="8" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="22" fill="#FFC500" letter-spacing="1">—</text>
+        </g>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function renderSpinDots(state) {
+  let s = "";
+  for (let i = 0; i < MAX_SPINS; i++) {
+    s += `<span class="spin-dot${i < state.spinsUsed ? " used" : ""}"></span>`;
+  }
+  return s;
+}
+
+function renderPieSlices(state) {
+  let cursor = 0;
+  let paths = "";
+  for (let i = 0; i < state.slices.length; i++) {
+    const s = state.slices[i];
+    const sweep = (s.value / 100) * 360;
+    const end = cursor + sweep;
+    const midDeg = cursor + sweep / 2;
+    const lbl = polar(PIE.cx, PIE.cy, PIE.r * 0.62, midDeg);
+    paths += `
+      <g class="slice ${s.lit ? "lit" : "dim"}" id="slice-${i}" data-color="${s.color}" style="--slice-color:${s.color}">
+        <path class="slice-path" d="${slicePath(PIE.cx, PIE.cy, PIE.r, cursor, end)}"/>
+        <text class="slice-label" x="${lbl.x.toFixed(2)}" y="${lbl.y.toFixed(2)}" text-anchor="middle" dominant-baseline="central">${s.label}</text>
+      </g>`;
+    cursor = end;
+  }
+  return paths;
+}
+
+function renderWedges() {
+  let g = "";
+  for (let i = 0; i < WEDGE_COUNT; i++) {
+    const start = i * WEDGE_DEG;
+    const end = start + WEDGE_DEG;
+    const mid = start + WEDGE_DEG / 2;
+    // Wedge slice path drawn at origin (wheel group translates).
+    const a = polar(0, 0, WHEEL.r, start);
+    const b = polar(0, 0, WHEEL.r, end);
+    const path = `M 0 0 L ${a.x.toFixed(2)} ${a.y.toFixed(2)} A ${WHEEL.r} ${WHEEL.r} 0 0 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)} Z`;
+    const lblPos = polar(0, 0, WHEEL.r * 0.68, mid);
+    g += `
+      <g class="wedge">
+        <path d="${path}" fill="${WEDGE_FILLS[i]}" stroke="#1A1A1A" stroke-width="3"/>
+        <text class="wedge-num" x="${lblPos.x.toFixed(2)}" y="${lblPos.y.toFixed(2)}" text-anchor="middle" dominant-baseline="central" transform="rotate(${mid.toFixed(2)} ${lblPos.x.toFixed(2)} ${lblPos.y.toFixed(2)})">${WEDGES[i]}</text>
+      </g>`;
+  }
+  return g;
+}
+
+// ---------- LIVE PATCH ----------
+
+function patchGame(state) {
+  // Wheel rotation
+  const wheel = document.getElementById("wheel");
+  if (wheel) {
+    wheel.setAttribute("transform", `translate(${WHEEL.cx}, ${WHEEL.cy}) rotate(${state.angle.toFixed(2)})`);
+  }
+
+  // Hub text — flips to "..." while spinning, back to SPIN at rest.
+  const hubText = document.getElementById("hub-text");
+  if (hubText) hubText.textContent = state.spinning ? "..." : (state.spinsUsed >= MAX_SPINS ? "✕" : "SPIN");
+
+  // Spin counter
+  const num = document.getElementById("spin-num");
+  if (num) num.textContent = `${Math.max(0, MAX_SPINS - state.spinsUsed)} / ${MAX_SPINS}`;
+  const dots = document.getElementById("spin-dots");
+  if (dots) dots.innerHTML = renderSpinDots(state);
+  const pill = document.getElementById("spin-pill");
+  if (pill) {
+    const left = MAX_SPINS - state.spinsUsed;
+    pill.classList.toggle("warn", left <= 3 && left > 1);
+    pill.classList.toggle("danger", left <= 1);
+  }
+
+  // Slice lit/dim + just-lit pop
+  for (let i = 0; i < state.slices.length; i++) {
+    const node = document.getElementById(`slice-${i}`);
+    if (!node) continue;
+    const s = state.slices[i];
+    node.classList.toggle("lit", s.lit);
+    node.classList.toggle("dim", !s.lit);
+    node.classList.toggle("just-lit", s.justLitMs > 0);
+  }
+
+  // Bug-Bug: JS-driven position so cheer / press bobs don't fight the SVG transform attribute.
+  const bug = document.getElementById("bug");
+  if (bug) {
+    let dy = 0;
+    if (state.cheerMs > 0) {
+      const t = 1 - state.cheerMs / CHEER_MS;
+      dy -= 30 * Math.sin(t * Math.PI);
+    }
+    if (state.spinning) {
+      const phase = (state.spinElapsed / 180) * 2 * Math.PI;
+      dy += 3 * Math.sin(phase);
+    }
+    bug.setAttribute("transform", `translate(${BUG_X}, ${(BUG_Y + dy).toFixed(2)})`);
+  }
+
+  // Result chip: three message variants with different widths + colours.
+  const chip = document.getElementById("result-chip");
+  const chipText = document.getElementById("result-chip-text");
+  const chipRect = document.getElementById("result-chip-rect");
+  if (chip && chipText && chipRect) {
+    if (state.resultFlashMs > 0 && state.lastResult) {
+      const r = state.lastResult;
+      let txt, fill, width;
+      if (r.matchedSliceIdx >= 0) {
+        txt = `✓  ${r.value}%`;
+        fill = "#FFC500";
+        width = 180;
+      } else if (r.alreadyLit) {
+        txt = `OOPS — ${r.value}% ALREADY MATCHED`;
+        fill = "#5DC1E8";
+        width = 380;
+      } else {
+        txt = `✕  ${r.value}`;
+        fill = "#FF6A1A";
+        width = 180;
+      }
+      chip.setAttribute("opacity", "1");
+      chipText.textContent = txt;
+      chipText.setAttribute("fill", fill);
+      chipRect.setAttribute("x", String(-width / 2));
+      chipRect.setAttribute("width", String(width));
+    } else {
+      chip.setAttribute("opacity", "0");
+    }
+  }
+}
+
+// ---------- BUG-BUG SVG (reused from arcade series) ----------
+
+// Title/end-screen Bug-Bug uses the upright in-game pose (head up, arm raised).
+function bugSvg(w, h) {
+  return `<svg class="big-bug" viewBox="-50 -70 100 140" width="${w}" height="${h}">${bugInnerSvg(true)}</svg>`;
+}
+
+// Vertical Bug-Bug — head at top, body below, arm reaching straight up.
+// When `mini` (used inside title/end card), the arm is short so it stays inside the small viewBox.
+function bugInnerSvg(mini = false) {
+  // armTipY: rest the hand on the LOWER rim of the SPIN hub so the "SPIN" text above stays readable.
+  // BUG_Y = WHEEL.cy + WHEEL.r + 60; hand absolute Y ends up at WHEEL.cy + 26 (≈ hub bottom rim, below the text baseline).
+  const armTipY = mini ? -64 : -(WHEEL.r + 34);
+  return `
+    <!-- Arm reaches up to press the SPIN hub's lower rim. Thick stroke + chunky hand so it reads as a real arm, not a string. -->
+    <g class="bug-arm">
+      <line x1="0" y1="-24" x2="0" y2="${armTipY + 10}" stroke="#1A1A1A" stroke-width="13" stroke-linecap="round"/>
+      <circle cx="0" cy="${armTipY}" r="13" fill="#FFC500" stroke="#1A1A1A" stroke-width="4"/>
+    </g>
+    <!-- Body: vertical ellipse -->
+    <ellipse class="bug-body" cx="0" cy="14" rx="30" ry="40"/>
+    <!-- Wing divider (horizontal line across the body) -->
+    <line x1="-30" y1="14" x2="30" y2="14" stroke="#1A1A1A" stroke-width="3"/>
+    <!-- Spots -->
+    <circle class="bug-spot" cx="-13" cy="-2" r="4.5"/>
+    <circle class="bug-spot" cx="13" cy="-4" r="4.5"/>
+    <circle class="bug-spot" cx="-13" cy="28" r="4.5"/>
+    <circle class="bug-spot" cx="13" cy="26" r="4.5"/>
+    <!-- Head on top of body -->
+    <circle class="bug-head" cx="0" cy="-32" r="16"/>
+    <!-- Eyes (looking up at the wheel) -->
+    <circle class="bug-eye" cx="-6" cy="-36" r="4"/>
+    <circle class="bug-eye" cx="6" cy="-36" r="4"/>
+    <circle class="bug-pupil" cx="-6" cy="-38" r="2"/>
+    <circle class="bug-pupil" cx="6" cy="-38" r="2"/>
+    <!-- Smile -->
+    <path d="M -5 -26 Q 0 -22 5 -26" stroke="#1A1A1A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <!-- Antennae -->
+    <path d="M -8 -46 Q -16 -54 -14 -62" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="-14" cy="-62" r="3" fill="#1A1A1A"/>
+    <path d="M 8 -46 Q 16 -54 14 -62" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="14" cy="-62" r="3" fill="#1A1A1A"/>
+    <!-- Six little legs hanging down -->
+    <line x1="-24" y1="46" x2="-30" y2="58" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-10" y1="52" x2="-14" y2="64" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="10" y1="52" x2="14" y2="64" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="24" y1="46" x2="30" y2="58" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+  `;
+}
+
+
+/* ==== main.js ==== */
+// Bootstrap, rAF loop, click router.
+
+
+const STORAGE_KEY = "datacruise.piespinner.bestStars.v1";
+const app = document.getElementById("app");
+
+let state = null;
+let bestStars = readBest();
+let rafId = null;
+let lastActionAt = 0;
+let lastActionKey = "";
+
+renderInitial();
+document.addEventListener("click", onClick);
+// pointerup as a click fallback: SVG <g> hit-testing can drop the synthetic
+// `click` when mousedown and mouseup land on different children.
+document.addEventListener("pointerup", onClick);
+
+// ---------- top-level render ----------
+
+function renderInitial() {
+  app.innerHTML = renderTitle(bestStars);
+}
+
+function showGameShell() {
+  app.innerHTML = renderGameShell(state);
+}
+
+function showEnd() {
+  app.innerHTML = renderEnd(state, bestStars);
+}
+
+// ---------- click routing ----------
+
+function onClick(e) {
+  const t = e.target.closest("[data-action]");
+  if (!t) return;
+  const action = t.getAttribute("data-action");
+
+  // Dedup click + pointerup pair from the same gesture.
+  const now = performance.now();
+  if (action === lastActionKey && now - lastActionAt < 250) return;
+  lastActionAt = now;
+  lastActionKey = action;
+
+  if (action === "start" || action === "replay") {
+    state = createGame();
+    showGameShell();
+    startLoop();
+    return;
+  }
+
+  if (action === "back-to-title") {
+    cancelLoop();
+    state = null;
+    renderInitial();
+    return;
+  }
+
+  if (action === "toggle-sound") {
+    const nowMuted = toggleMuted();
+    const btn = document.getElementById("sound-toggle");
+    if (btn) btn.textContent = nowMuted ? "🔇" : "🔊";
+    return;
+  }
+
+  if (action === "spin" && state && state.phase === "playing") {
+    if (state.spinning) return;
+    sfx.press();
+    startSpin(state);
+    startSpinTicker(() => currentWedgeIdx(state));
+    return;
+  }
+}
+
+function currentWedgeIdx(s) {
+  const norm = ((s.angle % 360) + 360) % 360;
+  // Wedge at top: wedge i is at top when angle ≡ -i*WEDGE_DEG (mod 360).
+  // So idx = round(-norm / WEDGE_DEG) mod WEDGE_COUNT.
+  const idx = Math.round((360 - norm) / WEDGE_DEG) % WEDGE_COUNT;
+  return idx;
+}
+
+// ---------- loop ----------
+
+function startLoop() {
+  cancelLoop();
+  let lastFrameMs = performance.now();
+  let snap = snapshotForSfx(state);
+  const step = (nowMs) => {
+    const dt = Math.min(48, nowMs - lastFrameMs);
+    lastFrameMs = nowMs;
+    if (!state) return;
+    tick(state, dt);
+    playSfxForDelta(snap, state);
+    snap = snapshotForSfx(state);
+    patchGame(state);
+    if (state.phase === "ended") {
+      stopSpinTicker();
+      if (state.outcome === "win") {
+        sfx.win();
+        const stars = starsForWin(state.spinsUsed);
+        if (stars > bestStars) {
+          bestStars = stars;
+          writeBest();
+        }
+      } else {
+        sfx.lose();
+      }
+      cancelLoop();
+      const rStars = state.outcome === "win" ? starsForWin(state.spinsUsed) : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "pie-spinner", game: "Pie Spinner",
+        headline: state.outcome === "win" ? state.spinsUsed + " spins" : "Out of spins!",
+        sub: state.outcome === "win" ? "perfect pie 🥧" : "so close",
+        stars: rStars, starsMax: 3,
+      });
+      // Brief delay so the final slice's pop animation is visible before the end card slides in.
+      setTimeout(showEnd, 900);
+      return;
+    }
+    rafId = requestAnimationFrame(step);
+  };
+  rafId = requestAnimationFrame(step);
+}
+
+function snapshotForSfx(s) {
+  return {
+    spinning: s.spinning,
+    matchEvents: s.matchEvents,
+    missEvents: s.missEvents,
+    alreadyLitEvents: s.alreadyLitEvents,
+  };
+}
+
+function playSfxForDelta(prev, cur) {
+  // Spin just resolved (transition spinning -> not spinning).
+  if (prev.spinning && !cur.spinning) {
+    stopSpinTicker();
+    if (cur.matchEvents > prev.matchEvents) sfx.match();
+    else if (cur.alreadyLitEvents > prev.alreadyLitEvents) sfx.alreadyLit();
+    else if (cur.missEvents > prev.missEvents) sfx.miss();
+  }
+}
+
+function cancelLoop() {
+  if (rafId != null) cancelAnimationFrame(rafId);
+  rafId = null;
+  stopSpinTicker();
+}
+
+// ---------- storage ----------
+
+function readBest() {
+  try {
+    const n = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+    return Number.isFinite(n) ? Math.max(0, Math.min(3, n)) : 0;
+  } catch { return 0; }
+}
+
+function writeBest() {
+  try { localStorage.setItem(STORAGE_KEY, String(bestStars)); }
+  catch { /* ignore */ }
+}
+
+
+
+/* ==== GameMonetize SDK bootstrap ==== */
+const PLATFORM = "site";
+const AD = { enabled: true, gameId: "dq2uo18bwk6rs9xqz8uikekel1jes4d7" };
+let _gmReady = false, _gmPending = null;
+// Enable GameMonetize test-ad mode on localhost / dev origins so ads actually
+// serve during local verification. Real domains (GameMonetize's player,
+// arcade.datacruise.app, etc.) get the production ad stack instead.
+const _gmIsLocalOrigin = /^(127\.0\.0\.1|localhost|0\.0\.0\.0|::1)$/.test(location.hostname);
+if (PLATFORM === "site" && AD.enabled && AD.gameId) {
+  window.SDK_OPTIONS = {
+    gameId: AD.gameId,
+    testing: _gmIsLocalOrigin,
+    debug: _gmIsLocalOrigin,
+    onEvent: function (a) {
+      switch (a && a.name) {
+        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
+        case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
+        case "SDK_GAME_START":              _gmResolve(true); break;
+        case "SDK_ERROR":                   _gmResolve(false); break;
+      }
+    }
+  };
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://api.gamemonetize.com/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, "script", "gamemonetize-sdk");
+}
+function _gmResolve(ok) {
+  if (!_gmPending) return;
+  const g = _gmPending; _gmPending = null;
+  clearTimeout(g.timer);
+  if (typeof g.done === "function") g.done(!!ok);
+}
+function showRewardedAd(onReward) {
+  const done = (ok) => { if (ok && typeof onReward === "function") onReward(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 25000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  setTimeout(() => done(true), 800);
+}
+
+/* ==== Rewarded-ad hook ==== */
+function _handleWatchAdContinue() {
+  if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+  showRewardedAd(() => {
+    state.phase = 'playing';
+            state.outcome = null;
+            state.spinsUsed = Math.max(0, (state.spinsUsed || 0) - 2);
+            state.resultFlashMs = 0;
+            state.cheerMs = 0;
+            app.innerHTML = renderGameShell(state);
+            startLoop();
+  });
+}
+
+(function () {
+  const seen = new WeakSet();
+  const check = () => {
+    if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+    const actions = document.querySelector(".end-actions, .card .actions, .game-over-actions, .actions-row");
+    if (!actions || seen.has(actions)) return;
+    if (actions.querySelector('[data-action="watch-ad-continue"]')) return;
+    seen.add(actions);
+    const btn = document.createElement("button");
+    btn.className = "gold";
+    btn.setAttribute("data-action", "watch-ad-continue");
+    btn.textContent = "▶ WATCH AD → +2 SPINS";
+    const refNode = actions.firstChild;
+    actions.insertBefore(btn, refNode);
+  };
+  setInterval(check, 400);
+}());
+
+document.addEventListener("click", function (e) {
+  const t = e.target.closest && e.target.closest("[data-action]");
+  if (t && t.getAttribute("data-action") === "watch-ad-continue") {
+    e.preventDefault();
+    _handleWatchAdContinue();
+  }
+}, true);
+
+  </script>
+</body>
+</html>

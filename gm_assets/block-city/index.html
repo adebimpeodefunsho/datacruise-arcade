@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Bug-Bug's Block City</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3QgeD0iNiIgeT0iMzYiIHdpZHRoPSIxNCIgaGVpZ2h0PSIyMiIgZmlsbD0iI0ZGNkExQSIgc3Ryb2tlPSIjMUExQTFBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIyNiIgeT0iMjAiIHdpZHRoPSIxNCIgaGVpZ2h0PSIzOCIgZmlsbD0iI0ZGQjAyRSIgc3Ryb2tlPSIjMUExQTFBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSI0NiIgeT0iMTAiIHdpZHRoPSIxNCIgaGVpZ2h0PSI0OCIgZmlsbD0iIzJCQjY3MyIgc3Ryb2tlPSIjMUExQTFBIiBzdHJva2Utd2lkdGg9IjMiLz4KPC9zdmc+Cg=="/>
+  <style>
+/* Bug-Bug's Block City — bright orange + black arcade palette. */
+
+* { box-sizing: border-box; }
+
+:root {
+  --bg-top: #FFE9A8;
+  --bg-bot: #FFB347;
+  --ink: #1A1A1A;
+  --paper: #FFF7E2;
+  --orange: #FF6A1A;
+  --orange-deep: #D44A00;
+  --gold: #FFC500;
+  --green: #2BB673;
+  --sky: #5DC1E8;
+  --sky-deep: #2E9DC9;
+  --shadow: 0 6px 0 0 #1A1A1A;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Fredoka", "Quicksand", "Avenir Next", system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--orange);
+  color: var(--ink);
+  font-weight: 800;
+  padding: 12px 22px;
+  font-size: 18px;
+  box-shadow: 0 4px 0 0 var(--ink);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+}
+button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 0 var(--ink); }
+button:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
+button[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 0 var(--ink); }
+button.ghost {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ============== TITLE / END SCREENS ============== */
+
+.screen {
+  display: grid;
+  place-items: center;
+  min-height: 80vh;
+}
+
+.card {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 36px 40px;
+  max-width: 620px;
+  text-align: center;
+}
+
+.card h1 {
+  font-size: 38px;
+  margin: 12px 0 6px;
+  letter-spacing: 1px;
+  line-height: 1.05;
+}
+.card .subtitle {
+  margin: 0 0 22px;
+  font-weight: 600;
+  color: #5C2A0F;
+  font-size: 15px;
+}
+.card .big-bug {
+  width: 130px;
+  height: 110px;
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.howto {
+  text-align: left;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.howto p { margin: 0 0 6px; }
+.howto p:last-child { margin-bottom: 0; }
+.howto strong { color: var(--orange-deep); }
+
+.prompt {
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  font-size: 13px;
+  color: var(--orange-deep);
+  margin: 0 0 10px;
+}
+
+.speed-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0 0 8px;
+}
+.speed-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 14px;
+  min-width: 130px;
+  background: var(--orange);
+  font-size: 16px;
+}
+.speed-btn:hover { background: #FF7F38; }
+.speed-emoji { font-size: 28px; line-height: 1; }
+.speed-name { font-weight: 900; letter-spacing: 1px; }
+.speed-hint { font-size: 11.5px; font-weight: 600; opacity: 0.85; }
+.speed-best { font-size: 14px; letter-spacing: 2px; margin-top: 2px; }
+.speed-best .dim { opacity: 0.35; }
+
+.stars {
+  font-size: 46px;
+  letter-spacing: 6px;
+  margin: 12px 0 8px;
+}
+.stars .dim { opacity: 0.25; }
+
+.end-chart {
+  display: block;
+  margin: 6px auto 8px;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 3px 0 0 var(--ink);
+  max-width: 100%;
+}
+
+.chart-trophy {
+  margin: 6px 0 6px;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.new-best {
+  margin: 0 0 12px;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 16px;
+  animation: bounce-best 0.6s ease;
+}
+@keyframes bounce-best {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.stats {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+.stats b { color: var(--orange-deep); }
+
+.end-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ============== GAME SCREEN ============== */
+
+.game {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-weight: 800;
+  flex-wrap: wrap;
+}
+.topbar .title {
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.topbar .timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  background: var(--orange);
+  color: var(--ink);
+  padding: 4px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--paper);
+}
+
+.sound-toggle {
+  font-size: 20px;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2A2A2A;
+  color: var(--paper);
+  border: 2px solid var(--paper);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 100ms ease, background 140ms ease;
+}
+.sound-toggle:hover { background: #3A3A3A; }
+.sound-toggle:active { transform: scale(0.94); }
+.topbar .timer.warn { background: var(--gold); }
+.topbar .timer.danger { background: #FF3D3D; color: #FFF; animation: pulse-timer 0.6s ease-in-out infinite; }
+@keyframes pulse-timer { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+/* Carry pill — much bigger, with mini-block icons */
+.carry-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #2A2A2A;
+  border: 2px solid var(--paper);
+  border-radius: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: background 160ms ease, transform 120ms ease;
+}
+.carry-pill .carry-label { opacity: 0.9; font-weight: 800; font-size: 12px; }
+.carry-pill .carry-num { font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 900; min-width: 56px; }
+.carry-slots { display: inline-flex; gap: 4px; }
+.carry-slots .slot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--paper);
+  border-radius: 4px;
+  background: transparent;
+  transition: background 140ms ease;
+}
+.carry-slots .slot.filled {
+  background: var(--sky);
+  border-color: var(--sky-deep);
+}
+.carry-pill.has {
+  background: linear-gradient(180deg, #0E5C7A 0%, #08384A 100%);
+}
+.carry-pill.max {
+  background: linear-gradient(180deg, #B33000 0%, #7E1F00 100%);
+  animation: pulse-max 0.7s ease-in-out infinite;
+}
+@keyframes pulse-max {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.stage {
+  background: #FFFFFF;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+.stage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 110px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* SVG element styles via class */
+.gridline { stroke: #E8DDB8; stroke-width: 1; }
+.axis-label { font: 700 14px "Fredoka", sans-serif; fill: var(--ink); }
+.axis-mark { stroke: var(--ink); stroke-width: 2; }
+.ground { stroke: var(--ink); stroke-width: 4; }
+
+/* Plot columns — full-height tint background, only visible when carrying */
+.plot-column {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 2;
+  transition: fill 180ms ease, stroke 180ms ease;
+  pointer-events: none;
+}
+.stage svg.has-carry .plot-column {
+  fill: rgba(93, 193, 232, 0.10);
+  stroke: rgba(46, 157, 201, 0.45);
+  stroke-dasharray: 6 4;
+}
+.stage svg.max-carry .plot-column {
+  fill: rgba(255, 197, 0, 0.18);
+  stroke: rgba(212, 74, 0, 0.7);
+}
+
+.plot-label { font: 800 20px "Fredoka", sans-serif; fill: var(--ink); text-anchor: middle; }
+.plot-target { font: 800 18px "Fredoka", sans-serif; fill: var(--orange-deep); text-anchor: middle; }
+.plot-target-locked { fill: var(--green); }
+
+.block {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  rx: 4;
+}
+.block-built { fill: var(--orange); }
+.block-built.locked { fill: var(--gold); }
+.block-over { fill: #FF3D3D; }
+.block-fall { fill: var(--sky); }
+
+.target-line {
+  stroke: var(--orange-deep);
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+.target-line.locked { stroke: var(--green); }
+
+/* Drop buttons — sit at the bottom of each plot, shown only when carrying > 0.
+   The outer <g class="drop-button"> carries the SVG translate(cx, cy);
+   the inner <g class="drop-bounce"> runs the CSS bounce animation so
+   the two transforms don't fight. */
+.drop-button { cursor: pointer; pointer-events: bounding-box; }
+.drop-button > * { pointer-events: none; }
+.drop-bg { fill: var(--orange); stroke: var(--ink); stroke-width: 3; }
+.drop-button:hover .drop-bg { fill: #FF8035; }
+.drop-glyph { fill: var(--ink); font: 900 14px "Fredoka", sans-serif; text-anchor: middle; letter-spacing: 1px; }
+.stage svg.max-carry .drop-bg { fill: var(--gold); }
+
+/* Max-load warning banner — appears when Bug-Bug is at CARRY_MAX */
+.max-warning {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: linear-gradient(180deg, #FF3030 0%, #B30000 100%);
+  color: #FFFFFF;
+  font: 900 18px "Fredoka", sans-serif;
+  letter-spacing: 1.5px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.max-warning .max-warning-icon { font-size: 22px; }
+.max-warning.show {
+  opacity: 1;
+  animation: max-warning-pulse 0.6s ease-in-out infinite;
+}
+@keyframes max-warning-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.06); }
+}
+
+.demolish-btn { cursor: pointer; }
+.demolish-bg { fill: #FF3D3D; stroke: var(--ink); stroke-width: 2.5; }
+.demolish-glyph { fill: var(--paper); font: 900 26px "Fredoka", sans-serif; text-anchor: middle; }
+
+.bug-group { pointer-events: none; }
+.bug-body { fill: var(--orange-deep); stroke: var(--ink); stroke-width: 3; }
+.bug-spot { fill: var(--ink); }
+.bug-head { fill: var(--ink); stroke: var(--ink); stroke-width: 2; }
+.bug-eye { fill: #FFF; }
+.bug-pupil { fill: var(--ink); }
+
+  </style>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script>
+/* ==== state.js ==== */
+// Bug-Bug's Block City — state shape, constants, and simulation tick.
+// State is mutated in place by tick() since this is a real-time game with
+// a single owner (main.js's rAF loop). Pure-ish: tick() returns the same
+// state reference. Render reads only; never writes.
+
+// ---------- Layout constants (SVG coordinate space) ----------
+
+const VIEW = { W: 900, H: 620 };
+
+// Axis takes the left 80px. Play area starts at x=80.
+const AXIS_W = 80;
+const PLAY_LEFT = AXIS_W;
+const PLAY_RIGHT = VIEW.W - 20;
+const PLAY_W = PLAY_RIGHT - PLAY_LEFT;
+
+// Vertical: ground line at y=540, top of axis (max floor) at y=80.
+const GROUND_Y = 540;
+const TOP_Y = 80;
+const FLOOR_H = (GROUND_Y - TOP_Y) / 10; // 46 px per floor (max 10 floors)
+const FLOOR_W = 64;
+
+const PLOT_COUNT = 4;
+const PLOT_WIDTH = PLAY_W / PLOT_COUNT;
+
+// X-centre of each plot (where its blocks stack and Bug-Bug stands to deliver).
+function plotCenterX(i) {
+  return PLAY_LEFT + PLOT_WIDTH * (i + 0.5);
+}
+
+// Bug-Bug body
+const BUG_W = 78;
+const BUG_H = 60;
+const BUG_Y = GROUND_Y - BUG_H / 2 + 6; // sits on the ground line
+const BUG_SPEED = 540; // px/sec horizontal
+
+// Carry capacity (fixed across difficulties for now).
+const CARRY_MAX = 4;
+const LATE_AT_MS = 30000;
+
+// ---------- Difficulty presets ----------
+
+const DIFFICULTIES = {
+  easy: {
+    key: "easy",
+    label: "EASY",
+    emoji: "🐢",
+    hint: "75s · slow blocks",
+    timeLimitMs: 75000,
+    spawnStartMs: 1500,
+    spawnLateMs: 1000,
+    fallStartPxs: 160,
+    fallLatePxs: 220,
+    star3TimeMs: 60000,
+    star2MaxDemos: 2,
+  },
+  normal: {
+    key: "normal",
+    label: "NORMAL",
+    emoji: "🐞",
+    hint: "60s · balanced",
+    timeLimitMs: 60000,
+    spawnStartMs: 1100,
+    spawnLateMs: 700,
+    fallStartPxs: 220,
+    fallLatePxs: 320,
+    star3TimeMs: 45000,
+    star2MaxDemos: 2,
+  },
+  fast: {
+    key: "fast",
+    label: "FAST",
+    emoji: "⚡",
+    hint: "50s · fast blocks",
+    timeLimitMs: 50000,
+    spawnStartMs: 800,
+    spawnLateMs: 500,
+    fallStartPxs: 280,
+    fallLatePxs: 420,
+    star3TimeMs: 35000,
+    star2MaxDemos: 2,
+  },
+};
+
+const DIFFICULTY_ORDER = ["easy", "normal", "fast"];
+
+// Default level
+const LEVEL_1_TARGETS = [3, 7, 5, 9];
+
+// ---------- State factory ----------
+
+function createGame(difficultyKey = "normal") {
+  const settings = DIFFICULTIES[difficultyKey] || DIFFICULTIES.normal;
+  const targets = LEVEL_1_TARGETS.slice();
+  return {
+    phase: "playing", // "playing" | "ended"
+    outcome: null,    // "win" | "lose"
+    stars: 0,
+
+    difficulty: settings.key,
+    settings,
+
+    targets,
+    built: targets.map(() => 0),
+
+    carried: 0,
+    bugX: PLAY_LEFT + PLAY_W / 2,
+    bugTargetX: PLAY_LEFT + PLAY_W / 2,
+    bugFacing: 1, // 1 right, -1 left
+
+    falling: [],     // {id, x, y, vy}
+    nextSpawnMs: 600,
+
+    elapsedMs: 0,
+    timeLeftMs: settings.timeLimitMs,
+
+    blocksCaught: 0,
+    blocksMissed: 0,
+    demolitions: 0,
+
+    // Keyboard movement state (held by main.js's keydown/keyup listeners)
+    kbDirL: false,
+    kbDirR: false,
+
+    _nextBlockId: 1,
+  };
+}
+
+// ---------- Queries ----------
+
+function plotLocked(state, i) {
+  return state.built[i] === state.targets[i];
+}
+
+function plotOverbuilt(state, i) {
+  return state.built[i] > state.targets[i];
+}
+
+function allDone(state) {
+  for (let i = 0; i < state.targets.length; i++) {
+    if (state.built[i] !== state.targets[i]) return false;
+  }
+  return true;
+}
+
+function currentSpawnInterval(state) {
+  const t = Math.min(1, state.elapsedMs / LATE_AT_MS);
+  const { spawnStartMs, spawnLateMs } = state.settings;
+  return spawnStartMs + (spawnLateMs - spawnStartMs) * t;
+}
+
+function currentFallSpeed(state) {
+  const t = Math.min(1, state.elapsedMs / LATE_AT_MS);
+  const { fallStartPxs, fallLatePxs } = state.settings;
+  return fallStartPxs + (fallLatePxs - fallStartPxs) * t;
+}
+
+// ---------- Actions ----------
+
+/** Click on a plot column: walk Bug-Bug there. Deposit on arrival is in tick(). */
+function walkToPlot(state, i) {
+  if (state.phase !== "playing") return state;
+  state.bugTargetX = plotCenterX(i);
+  state._pendingDeposit = i;
+  return state;
+}
+
+/** Click on bare ground: walk to that X (clamped). No deposit. */
+function walkToX(state, x) {
+  if (state.phase !== "playing") return state;
+  const clamped = Math.max(PLAY_LEFT + BUG_W / 2, Math.min(PLAY_RIGHT - BUG_W / 2, x));
+  state.bugTargetX = clamped;
+  state._pendingDeposit = null;
+  return state;
+}
+
+/** Demolish 1 floor from a plot (only valid when over target). */
+function demolish(state, i) {
+  if (state.phase !== "playing") return state;
+  if (state.built[i] <= state.targets[i]) return state;
+  state.built[i] -= 1;
+  state.demolitions += 1;
+  return state;
+}
+
+/** Drop all carried blocks at plot i immediately. Bug-Bug stays put. */
+function instantDrop(state, i) {
+  if (state.phase !== "playing") return state;
+  if (state.carried <= 0) return state;
+  if (i < 0 || i >= state.targets.length) return state;
+  state.built[i] += state.carried;
+  state.carried = 0;
+  return state;
+}
+
+/** Set keyboard movement flag. dir is "left" or "right". */
+function setKeyboardMove(state, dir, pressed) {
+  if (state.phase !== "playing") return state;
+  if (dir === "left") state.kbDirL = !!pressed;
+  else if (dir === "right") state.kbDirR = !!pressed;
+  // Any keyboard activity cancels a pending click-deposit
+  if (pressed) state._pendingDeposit = null;
+  return state;
+}
+
+// ---------- Tick ----------
+
+/**
+ * Advance the simulation by dtMs.
+ * Mutates and returns the same state object.
+ */
+function tick(state, dtMs) {
+  if (state.phase !== "playing") return state;
+  const dt = dtMs / 1000;
+
+  // Time
+  state.elapsedMs += dtMs;
+  state.timeLeftMs = Math.max(0, state.settings.timeLimitMs - state.elapsedMs);
+
+  // Move Bug-Bug. Keyboard movement (if any) overrides click-targeting.
+  const kbDir = (state.kbDirR ? 1 : 0) - (state.kbDirL ? 1 : 0);
+  if (kbDir !== 0) {
+    const step = BUG_SPEED * dt * kbDir;
+    const minX = PLAY_LEFT + BUG_W / 2;
+    const maxX = PLAY_RIGHT - BUG_W / 2;
+    state.bugX = Math.max(minX, Math.min(maxX, state.bugX + step));
+    state.bugTargetX = state.bugX;
+    state._pendingDeposit = null;
+    state.bugFacing = kbDir > 0 ? 1 : -1;
+  } else {
+    const dx = state.bugTargetX - state.bugX;
+    const stepX = BUG_SPEED * dt;
+    if (Math.abs(dx) <= stepX) {
+      state.bugX = state.bugTargetX;
+      if (state._pendingDeposit != null) {
+        deliverTo(state, state._pendingDeposit);
+        state._pendingDeposit = null;
+      }
+    } else {
+      state.bugX += Math.sign(dx) * stepX;
+      state.bugFacing = Math.sign(dx) || state.bugFacing;
+    }
+  }
+
+  // Spawn falling blocks
+  state.nextSpawnMs -= dtMs;
+  if (state.nextSpawnMs <= 0) {
+    spawnBlock(state);
+    state.nextSpawnMs = currentSpawnInterval(state);
+  }
+
+  // Advance falling blocks
+  const fallSpeed = currentFallSpeed(state);
+  const survivors = [];
+  for (const b of state.falling) {
+    b.y += fallSpeed * dt;
+    // Catch check: block bottom reaches bug's vertical band AND x overlaps bug body.
+    const blockBottom = b.y + 40;
+    if (
+      blockBottom >= BUG_Y - BUG_H / 2 + 8 &&
+      blockBottom <= BUG_Y + BUG_H / 2 + 6 &&
+      Math.abs(b.x - state.bugX) < BUG_W / 2 + 4
+    ) {
+      // Caught (or dropped if over capacity)
+      if (state.carried < CARRY_MAX) {
+        state.carried += 1;
+        state.blocksCaught += 1;
+      }
+      continue; // remove
+    }
+    // Missed (hit ground)
+    if (b.y > GROUND_Y + 20) {
+      state.blocksMissed += 1;
+      continue;
+    }
+    survivors.push(b);
+  }
+  state.falling = survivors;
+
+  // End conditions
+  if (allDone(state)) endGame(state, "win");
+  else if (state.timeLeftMs === 0) endGame(state, "lose");
+
+  return state;
+}
+
+function spawnBlock(state) {
+  // Spawn within the plot zone so blocks always land where the bug can reach.
+  const margin = 30;
+  const x = PLAY_LEFT + margin + Math.random() * (PLAY_W - margin * 2);
+  state.falling.push({ id: state._nextBlockId++, x, y: -40, vy: 0 });
+}
+
+function deliverTo(state, i) {
+  if (state.carried <= 0) return;
+  // Deposit ALL carried blocks (can overshoot target).
+  state.built[i] += state.carried;
+  state.carried = 0;
+}
+
+function endGame(state, outcome) {
+  state.phase = "ended";
+  state.outcome = outcome;
+  if (outcome !== "win") {
+    state.stars = 0;
+    return;
+  }
+  const { star3TimeMs, star2MaxDemos } = state.settings;
+  if (state.demolitions === 0 && state.elapsedMs <= star3TimeMs) state.stars = 3;
+  else if (state.demolitions <= star2MaxDemos) state.stars = 2;
+  else state.stars = 1;
+}
+
+
+/* ==== sound.js ==== */
+// Web Audio SFX — synthesized, no external assets.
+// First call to any sfx.* lazily creates the AudioContext, so it must happen
+// from inside a user gesture (handled because the first sound fires after a
+// click — start game or catch block during a started game).
+
+let ctx = null;
+let muted = readMuted();
+
+function readMuted() {
+  try { return localStorage.getItem("datacruise.blockcity.muted") === "1"; }
+  catch { return false; }
+}
+
+function writeMuted() {
+  try { localStorage.setItem("datacruise.blockcity.muted", muted ? "1" : "0"); }
+  catch { /* ignore */ }
+}
+
+function getCtx() {
+  if (muted) return null;
+  if (!ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+  }
+  if (ctx.state === "suspended") ctx.resume();
+  return ctx;
+}
+
+function tone({ freq, dur = 0.12, type = "sine", vol = 0.18, slide = 0, attack = 0.005, when = 0 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const t1 = t0 + dur;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slide) {
+    const endFreq = Math.max(20, freq + slide);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, t1);
+  }
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol, t0 + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t1);
+  osc.connect(gain).connect(c.destination);
+  osc.start(t0);
+  osc.stop(t1 + 0.02);
+}
+
+function noise({ dur = 0.12, vol = 0.15, when = 0, cutoff = 1200 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const samples = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, samples, c.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < samples; i++) data[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  const filter = c.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = cutoff;
+  const gain = c.createGain();
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter).connect(gain).connect(c.destination);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+const sfx = {
+  // Bright upward pop when Bug-Bug catches a block.
+  catch() {
+    tone({ freq: 520, dur: 0.07, type: "triangle", vol: 0.14, slide: 240 });
+  },
+  // Heavier "block lands" — used per-block when dropping a stack.
+  dropOne(index = 0) {
+    const base = 200 - index * 6;
+    tone({ freq: base, dur: 0.09, type: "square", vol: 0.16, slide: -40, when: index * 0.04 });
+    noise({ dur: 0.06, vol: 0.08, when: index * 0.04, cutoff: 800 });
+  },
+  // Plot reaches its target — short major arpeggio sparkle.
+  lock() {
+    tone({ freq: 659, dur: 0.10, type: "triangle", vol: 0.15 });
+    tone({ freq: 880, dur: 0.10, type: "triangle", vol: 0.15, when: 0.07 });
+    tone({ freq: 1318, dur: 0.14, type: "triangle", vol: 0.13, when: 0.14 });
+  },
+  // Single floor removed.
+  demolish() {
+    tone({ freq: 180, dur: 0.16, type: "sawtooth", vol: 0.16, slide: -90 });
+    noise({ dur: 0.10, vol: 0.10, cutoff: 600 });
+  },
+  // Block hits ground without being caught — muted thud.
+  miss() {
+    tone({ freq: 130, dur: 0.14, type: "sine", vol: 0.10, slide: -40 });
+    noise({ dur: 0.08, vol: 0.06, cutoff: 400 });
+  },
+  // Carrying capacity just hit max — gentle nudge.
+  carryMax() {
+    tone({ freq: 980, dur: 0.05, type: "square", vol: 0.10 });
+  },
+  // Final win fanfare — quick ascending arpeggio.
+  win() {
+    [523, 659, 784, 1047].forEach((freq, i) => {
+      tone({ freq, dur: 0.16, type: "triangle", vol: 0.18, when: i * 0.10 });
+    });
+  },
+  // Final lose — descending sad tones.
+  lose() {
+    [392, 330, 262].forEach((freq, i) => {
+      tone({ freq, dur: 0.22, type: "sawtooth", vol: 0.14, when: i * 0.15 });
+    });
+  },
+};
+
+function isMuted() { return muted; }
+
+function toggleMuted() {
+  muted = !muted;
+  writeMuted();
+  return muted;
+}
+
+
+/* ==== render.js ==== */
+// DOM/SVG rendering. Reads state, writes innerHTML for title/end screens
+// and patches transforms/text for the live game stage.
+
+
+/* dedup */ // const PLOT_WIDTH = (VIEW.W - AXIS_W - 20) / PLOT_COUNT;
+const PLOT_LABELS = ["Bar 1", "Bar 2", "Bar 3", "Bar 4"];
+
+// ---------- TITLE SCREEN ----------
+
+function renderTitle(bestByDifficulty) {
+  return `
+  <div class="screen">
+    <div class="card">
+      ${bugSvg(130, 110)}
+      <h1>BUG-BUG'S<br>BLOCK CITY</h1>
+      <p class="subtitle">DATACRUISE ARCADE · GAME 2</p>
+      <div class="howto">
+        <p><strong>Goal:</strong> match every building's target height EXACTLY before the timer runs out — that's how you finish your bar chart.</p>
+        <p><strong>Walk:</strong> click the ground or hold <b>←</b> / <b>→</b> arrow keys. Bug-Bug catches any falling block that lands on him.</p>
+        <p><strong>Carry max 4:</strong> Bug-Bug can only hold <b>4 blocks</b> at a time. When the tracker shows <b>4/4</b>, drop them right away — Bug-Bug can't catch any more until you do, so you'd just be wasting time.</p>
+        <p><strong>Drop:</strong> click the orange <b>CLICK TO DROP</b> button at the base of a plot, or press <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b> for Bar 1, Bar 2, Bar 3, Bar 4. Drops are instant.</p>
+        <p><strong>Demolish to win:</strong> each plot must end <em>exactly</em> on its target. If you overshoot, click the red <b>−</b> to remove a floor — overbuilt plots can't lock, so you must demolish to complete the bar chart.</p>
+      </div>
+      <p class="prompt">CHOOSE YOUR SPEED</p>
+      <div class="speed-row">
+        ${DIFFICULTY_ORDER.map((k) => renderSpeedButton(DIFFICULTIES[k], bestByDifficulty[k] || 0)).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSpeedButton(d, best) {
+  return `
+    <button class="speed-btn" data-action="start:${d.key}">
+      <span class="speed-emoji">${d.emoji}</span>
+      <span class="speed-name">${d.label}</span>
+      <span class="speed-hint">${d.hint}</span>
+      <span class="speed-best">${renderStarsInline(best)}</span>
+    </button>`;
+}
+
+function renderStarsInline(n) {
+  if (!n) return `<span class="dim">— — —</span>`;
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return s;
+}
+
+// ---------- END SCREEN ----------
+
+function renderEnd(state, bestForThisDifficulty) {
+  const win = state.outcome === "win";
+  const timeUsed = Math.round(state.elapsedMs / 100) / 10;
+  const d = state.settings;
+  const isPersonalBest = win && state.stars > bestForThisDifficulty;
+  return `
+  <div class="screen">
+    <div class="card">
+      ${win ? "" : bugSvg(110, 92)}
+      <h1>${win ? "CITY BUILT!" : "TIME'S UP"}</h1>
+      <p class="subtitle">${d.emoji} ${d.label} · ${win ? "Bug-Bug, the master architect." : "The skyline is unfinished."}</p>
+      ${win ? renderEndChart(state) : ""}
+      ${win ? `<p class="chart-trophy">🎉 YOU JUST PLOTTED A BAR CHART! 🎉</p>` : ""}
+      ${renderStarsBig(state.stars)}
+      ${isPersonalBest ? `<p class="new-best">NEW BEST!</p>` : ""}
+      <div class="stats">
+        Time used: <b>${timeUsed}s</b><br>
+        Demolitions: <b>${state.demolitions}</b><br>
+        Blocks caught: <b>${state.blocksCaught}</b> &nbsp; · &nbsp; missed: <b>${state.blocksMissed}</b>
+      </div>
+      <div class="end-actions">
+        <button data-action="replay:${state.difficulty}">PLAY AGAIN (${d.label})</button>
+        <button class="ghost" data-action="back-to-title">CHANGE SPEED</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEndChart(state) {
+  const w = 320, h = 150;
+  const padX = 18, padTop = 14, padBot = 28;
+  const innerH = h - padTop - padBot;
+  const maxVal = Math.max(...state.targets, 1);
+  const n = state.targets.length;
+  const bw = 44;
+  const gap = (w - padX * 2 - bw * n) / (n - 1);
+  let bars = "";
+  for (let i = 0; i < n; i++) {
+    const bh = (state.built[i] / maxVal) * innerH;
+    const x = padX + i * (bw + gap);
+    const y = padTop + innerH - bh;
+    bars += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="#FFC500" stroke="#1A1A1A" stroke-width="2.5" rx="3"/>`;
+    bars += `<text x="${x + bw / 2}" y="${y - 5}" text-anchor="middle" font-family="Fredoka" font-size="13" font-weight="800" fill="#5C2A0F">${state.built[i]}</text>`;
+    bars += `<text x="${x + bw / 2}" y="${padTop + innerH + 18}" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="800" fill="#1A1A1A">${PLOT_LABELS[i]}</text>`;
+  }
+  return `<svg class="end-chart" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+    <line x1="${padX - 8}" y1="${padTop + innerH}" x2="${w - padX + 8}" y2="${padTop + innerH}" stroke="#1A1A1A" stroke-width="3"/>
+    ${bars}
+  </svg>`;
+}
+
+function renderStarsBig(n) {
+  const cap = 3;
+  let s = "";
+  for (let i = 0; i < cap; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return `<div class="stars">${s}</div>`;
+}
+
+// ---------- GAME SCREEN ----------
+
+function renderGameShell(state) {
+  const d = state.settings;
+  return `
+  <div class="game">
+    <div class="topbar">
+      <div class="title">${d.emoji} ${d.label}</div>
+      <div class="carry-pill" id="carry-pill">
+        <span class="carry-label">BUG-BUG CARRYING</span>
+        <span class="carry-slots" id="carry-slots">
+          ${Array.from({length: CARRY_MAX}).map(() => `<span class="slot"></span>`).join("")}
+        </span>
+        <span class="carry-num" id="carry-num">0 / ${CARRY_MAX}</span>
+      </div>
+      <button class="sound-toggle" id="sound-toggle" data-action="toggle-sound" aria-label="Toggle sound">${isMuted() ? "🔇" : "🔊"}</button>
+      <div class="timer" id="timer">0:${String(Math.floor(d.timeLimitMs/1000)).padStart(2,"0")}</div>
+    </div>
+    <div class="stage">
+      <div class="max-warning" id="max-warning" aria-live="polite">
+        <span class="max-warning-icon">⚠</span>
+        BUG-BUG IS FULL (${CARRY_MAX} / ${CARRY_MAX}) — DROP NOW!
+      </div>
+      <svg viewBox="0 0 ${VIEW.W} ${VIEW.H}" preserveAspectRatio="xMidYMid meet" id="stage-svg">
+        <rect x="0" y="0" width="${VIEW.W}" height="${VIEW.H}" fill="#FFFFFF"/>
+        <rect x="${AXIS_W}" y="${TOP_Y - 40}" width="${VIEW.W - AXIS_W - 20}" height="${GROUND_Y - TOP_Y + 60}" fill="#FAF4D6"/>
+
+        <g id="plot-columns">${renderPlotColumns()}</g>
+
+        <g id="axis-grid">${renderAxisGrid()}</g>
+
+        <g id="targets">${renderTargets(state.targets, state.built)}</g>
+
+        <g id="stacks">${renderStacks(state.targets, state.built)}</g>
+
+        <g id="plot-labels">${renderPlotLabels()}</g>
+
+        <g id="demolish">${renderDemolish(state.targets, state.built)}</g>
+
+        <line class="ground" x1="${AXIS_W}" y1="${GROUND_Y}" x2="${VIEW.W - 20}" y2="${GROUND_Y}"/>
+
+        <g id="falling"></g>
+
+        <g id="bug" class="bug-group" transform="translate(${VIEW.W / 2}, ${BUG_Y})">${bugInnerSvg()}</g>
+
+        <g id="drop-hints"></g>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function renderAxisGrid() {
+  let g = "";
+  for (let i = 0; i <= 10; i++) {
+    const y = GROUND_Y - i * FLOOR_H;
+    if (i > 0) {
+      g += `<line class="gridline" x1="${AXIS_W}" y1="${y}" x2="${VIEW.W - 20}" y2="${y}"/>`;
+    }
+    g += `<line class="axis-mark" x1="${AXIS_W - 8}" y1="${y}" x2="${AXIS_W}" y2="${y}"/>`;
+    g += `<text class="axis-label" x="${AXIS_W - 14}" y="${y + 5}" text-anchor="end">${i}</text>`;
+  }
+  g += `<line class="axis-mark" x1="${AXIS_W}" y1="${TOP_Y}" x2="${AXIS_W}" y2="${GROUND_Y}"/>`;
+  return g;
+}
+
+function renderPlotColumns() {
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    const cx = plotCenterX(i);
+    const x = cx - PLOT_WIDTH / 2 + 4;
+    const w = PLOT_WIDTH - 8;
+    g += `<rect class="plot-column" x="${x}" y="${TOP_Y}" width="${w}" height="${GROUND_Y - TOP_Y}" rx="8"/>`;
+  }
+  return g;
+}
+
+function renderPlotLabels() {
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    const cx = plotCenterX(i);
+    g += `<text class="plot-label" x="${cx}" y="${GROUND_Y + 68}">${PLOT_LABELS[i]}</text>`;
+  }
+  return g;
+}
+
+function renderTargets(targets, built) {
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    const cx = plotCenterX(i);
+    const t = targets[i];
+    const y = GROUND_Y - t * FLOOR_H;
+    const locked = built[i] === t;
+    const lockClass = locked ? " locked" : "";
+    const half = PLOT_WIDTH / 2 - 4;
+    g += `<line class="target-line${lockClass}" x1="${cx - half}" y1="${y}" x2="${cx + half}" y2="${y}"/>`;
+    g += `<text class="plot-target${locked ? " plot-target-locked" : ""}" x="${cx}" y="${y - 8}">${locked ? "✓" : "🎯" + t}</text>`;
+  }
+  return g;
+}
+
+function renderStacks(targets, built) {
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    const cx = plotCenterX(i);
+    const t = targets[i];
+    const cur = built[i];
+    const locked = cur === t;
+    for (let f = 0; f < cur; f++) {
+      const y = GROUND_Y - (f + 1) * FLOOR_H;
+      const isOver = f >= t;
+      const cls = isOver ? "block block-over" : `block block-built${locked ? " locked" : ""}`;
+      g += `<rect class="${cls}" x="${cx - FLOOR_W / 2}" y="${y + 2}" width="${FLOOR_W}" height="${FLOOR_H - 4}"/>`;
+    }
+  }
+  return g;
+}
+
+function renderDemolish(targets, built) {
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    if (built[i] <= targets[i]) continue;
+    const cx = plotCenterX(i);
+    const cy = GROUND_Y - (built[i]) * FLOOR_H - FLOOR_H / 2;
+    g += `<g class="demolish-btn" data-action="demolish:${i}" transform="translate(${cx + FLOOR_W / 2 + 14}, ${cy})">
+      <circle class="demolish-bg" cx="0" cy="0" r="18"/>
+      <text class="demolish-glyph" x="0" y="7">−</text>
+    </g>`;
+  }
+  return g;
+}
+
+function renderDropButtons(state) {
+  if (state.carried === 0) return "";
+  let g = "";
+  for (let i = 0; i < PLOT_COUNT; i++) {
+    if (state.built[i] === state.targets[i]) continue;     // locked plot
+    if (state.built[i] > state.targets[i]) continue;       // overbuilt — must demolish first
+    const cx = plotCenterX(i);
+    const cy = GROUND_Y + 28;
+    // Nested group: outer holds the SVG translate, inner runs the bounce
+    // animation so the CSS transform doesn't override the position.
+    // data-action="drop:N" — INSTANT drop (Bug-Bug stays put).
+    g += `<g class="drop-button" data-action="drop:${i}" transform="translate(${cx}, ${cy})">
+      <g class="drop-bounce">
+        <rect class="drop-bg" x="-82" y="-18" width="164" height="36" rx="14"/>
+        <text class="drop-glyph" x="0" y="6">CLICK TO DROP</text>
+      </g>
+    </g>`;
+  }
+  return g;
+}
+
+// ---------- LIVE PATCH ----------
+
+function patchGame(state) {
+  // Timer
+  const timer = document.getElementById("timer");
+  if (timer) {
+    const s = Math.ceil(state.timeLeftMs / 1000);
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    timer.textContent = `${m}:${String(r).padStart(2, "0")}`;
+    timer.classList.toggle("warn", state.timeLeftMs < 20000 && state.timeLeftMs >= 8000);
+    timer.classList.toggle("danger", state.timeLeftMs < 8000);
+  }
+
+  // Carry indicator
+  const pill = document.getElementById("carry-pill");
+  const slots = document.getElementById("carry-slots");
+  const carryNum = document.getElementById("carry-num");
+  if (pill && slots && carryNum) {
+    const children = slots.children;
+    for (let i = 0; i < CARRY_MAX; i++) {
+      if (children[i]) children[i].classList.toggle("filled", i < state.carried);
+    }
+    carryNum.textContent = `${state.carried} / ${CARRY_MAX}`;
+    pill.classList.toggle("has", state.carried > 0);
+    pill.classList.toggle("max", state.carried >= CARRY_MAX);
+  }
+
+  // Bug
+  const bug = document.getElementById("bug");
+  if (bug) {
+    const sx = state.bugFacing < 0 ? -1 : 1;
+    bug.setAttribute("transform", `translate(${state.bugX}, ${BUG_Y}) scale(${sx}, 1)`);
+  }
+
+  patchFalling(state);
+
+  // Stage classes for plot-column tint when carrying
+  const svg = document.getElementById("stage-svg");
+  if (svg) {
+    svg.classList.toggle("has-carry", state.carried > 0);
+    svg.classList.toggle("max-carry", state.carried >= CARRY_MAX);
+  }
+
+  // Banner warning when Bug-Bug is at max load
+  const maxWarn = document.getElementById("max-warning");
+  if (maxWarn) maxWarn.classList.toggle("show", state.carried >= CARRY_MAX);
+
+  patchGroup("stacks", renderStacks(state.targets, state.built));
+  patchGroup("targets", renderTargets(state.targets, state.built));
+  patchGroup("demolish", renderDemolish(state.targets, state.built));
+  patchGroup("drop-hints", renderDropButtons(state));
+}
+
+function patchGroup(id, html) {
+  const node = document.getElementById(id);
+  if (node && node.innerHTML !== html) node.innerHTML = html;
+}
+
+function patchFalling(state) {
+  const layer = document.getElementById("falling");
+  if (!layer) return;
+  const present = new Set();
+  for (const b of state.falling) {
+    present.add(String(b.id));
+    let el = layer.querySelector(`[data-id="${b.id}"]`);
+    if (!el) {
+      el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      el.setAttribute("data-id", String(b.id));
+      el.setAttribute("class", "block block-fall");
+      el.setAttribute("width", String(FLOOR_W - 8));
+      el.setAttribute("height", String(FLOOR_H - 8));
+      layer.appendChild(el);
+    }
+    el.setAttribute("x", String(b.x - (FLOOR_W - 8) / 2));
+    el.setAttribute("y", String(b.y));
+  }
+  for (const el of Array.from(layer.children)) {
+    if (!present.has(el.getAttribute("data-id"))) el.remove();
+  }
+}
+
+// ---------- BUG-BUG SVG (a friendly ladybug) ----------
+
+function bugSvg(w, h) {
+  return `<svg class="big-bug" viewBox="-60 -50 120 100" width="${w}" height="${h}">${bugInnerSvg()}</svg>`;
+}
+
+function bugInnerSvg() {
+  return `
+    <ellipse class="bug-body" cx="-2" cy="0" rx="38" ry="28"/>
+    <line x1="-2" y1="-28" x2="-2" y2="28" stroke="#1A1A1A" stroke-width="3"/>
+    <circle class="bug-spot" cx="-18" cy="-8" r="5"/>
+    <circle class="bug-spot" cx="-12" cy="10" r="4"/>
+    <circle class="bug-spot" cx="14" cy="-10" r="5"/>
+    <circle class="bug-spot" cx="18" cy="8" r="4"/>
+    <circle class="bug-head" cx="32" cy="0" r="14"/>
+    <circle class="bug-eye" cx="36" cy="-4" r="4"/>
+    <circle class="bug-pupil" cx="37" cy="-4" r="2"/>
+    <path d="M 36 -14 Q 44 -22 48 -16" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="48" cy="-16" r="2.5" fill="#1A1A1A"/>
+    <path d="M 28 -14 Q 30 -24 36 -22" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="36" cy="-22" r="2.5" fill="#1A1A1A"/>
+  `;
+}
+
+
+/* ==== main.js ==== */
+// Bootstrap, rAF loop, click router.
+
+
+const STORAGE_KEY = "datacruise.blockcity.v2";
+const app = document.getElementById("app");
+
+let state = null;
+let bestByDifficulty = readBest();
+let rafId = null;
+
+renderInitial();
+document.addEventListener("click", onClick);
+// pointerup as a click fallback: SVG <g> hit-testing can drop the synthetic
+// `click` when mousedown and mouseup land on different child elements.
+// Pointerup fires reliably even in that case.
+document.addEventListener("pointerup", onClick);
+document.addEventListener("keydown", onKeyDown);
+document.addEventListener("keyup", onKeyUp);
+
+let lastActionAt = 0;
+let lastActionKey = "";
+
+// ---------- top-level render ----------
+
+function renderInitial() {
+  app.innerHTML = renderTitle(bestByDifficulty);
+}
+
+function showGameShell() {
+  app.innerHTML = renderGameShell(state);
+  bindStageClicks();
+}
+
+function showEnd() {
+  const best = bestByDifficulty[state.difficulty] || 0;
+  app.innerHTML = renderEnd(state, best);
+}
+
+// ---------- click routing ----------
+
+function onClick(e) {
+  const t = e.target.closest("[data-action]");
+  if (!t) return;
+  const action = t.getAttribute("data-action");
+
+  // Dedup so the click + pointerup pair (same gesture) only runs once.
+  const now = performance.now();
+  if (action === lastActionKey && now - lastActionAt < 250) return;
+  lastActionAt = now;
+  lastActionKey = action;
+
+  // Start a new game at a specific difficulty
+  if (action.startsWith("start:") || action.startsWith("replay:")) {
+    const difficulty = action.split(":")[1];
+    if (!DIFFICULTIES[difficulty]) return;
+    state = createGame(difficulty);
+    showGameShell();
+    startLoop();
+    return;
+  }
+
+  if (action === "back-to-title") {
+    cancelLoop();
+    state = null;
+    renderInitial();
+    return;
+  }
+
+  if (action === "toggle-sound") {
+    const nowMuted = toggleMuted();
+    const btn = document.getElementById("sound-toggle");
+    if (btn) btn.textContent = nowMuted ? "🔇" : "🔊";
+    return;
+  }
+
+  if (state && state.phase === "playing") {
+    if (action.startsWith("drop:")) {
+      instantDrop(state, parseInt(action.slice(5), 10));
+      return;
+    }
+    if (action.startsWith("plot:")) {
+      walkToPlot(state, parseInt(action.slice(5), 10));
+      return;
+    }
+    if (action.startsWith("demolish:")) {
+      demolish(state, parseInt(action.slice(9), 10));
+      return;
+    }
+  }
+}
+
+// ---------- keyboard ----------
+
+function onKeyDown(e) {
+  if (!state || state.phase !== "playing") return;
+  if (e.repeat) {
+    // Suppress key-repeat for digit drops so holding "1" doesn't fire repeatedly.
+    if (e.key >= "1" && e.key <= "4") { e.preventDefault(); return; }
+    // Arrow/A/D held: the flag is already set, no need to do anything.
+    return;
+  }
+  const k = e.key;
+  if (k === "ArrowLeft" || k === "a" || k === "A") {
+    setKeyboardMove(state, "left", true);
+    e.preventDefault();
+  } else if (k === "ArrowRight" || k === "d" || k === "D") {
+    setKeyboardMove(state, "right", true);
+    e.preventDefault();
+  } else if (k >= "1" && k <= "4") {
+    instantDrop(state, parseInt(k, 10) - 1);
+    e.preventDefault();
+  }
+}
+
+function onKeyUp(e) {
+  if (!state) return;
+  const k = e.key;
+  if (k === "ArrowLeft" || k === "a" || k === "A") {
+    setKeyboardMove(state, "left", false);
+  } else if (k === "ArrowRight" || k === "d" || k === "D") {
+    setKeyboardMove(state, "right", false);
+  }
+}
+
+// Click on the empty stage area (not a plot/button) walks Bug-Bug there.
+function bindStageClicks() {
+  const svg = document.getElementById("stage-svg");
+  if (!svg) return;
+  svg.addEventListener("click", (e) => {
+    if (!state || state.phase !== "playing") return;
+    if (e.target.closest("[data-action]")) return; // handled by router
+    const pt = svgPoint(svg, e);
+    if (!pt) return;
+    if (pt.x < PLAY_LEFT || pt.x > PLAY_RIGHT) return;
+    walkToX(state, pt.x);
+  });
+}
+
+function svgPoint(svg, evt) {
+  const rect = svg.getBoundingClientRect();
+  const x = ((evt.clientX - rect.left) / rect.width) * VIEW.W;
+  const y = ((evt.clientY - rect.top) / rect.height) * VIEW.H;
+  return { x, y };
+}
+
+// ---------- loop ----------
+
+function startLoop() {
+  cancelLoop();
+  let lastFrameMs = performance.now();
+  let snap = snapshotForSfx(state);
+  const step = (nowMs) => {
+    const dt = Math.min(48, nowMs - lastFrameMs);
+    lastFrameMs = nowMs;
+    if (!state || state.phase !== "playing") return;
+    tick(state, dt);
+    playSfxForDelta(snap, state);
+    snap = snapshotForSfx(state);
+    patchGame(state);
+    if (state.phase === "ended") {
+      if (state.outcome === "win") {
+        sfx.win();
+        const prev = bestByDifficulty[state.difficulty] || 0;
+        if (state.stars > prev) {
+          bestByDifficulty[state.difficulty] = state.stars;
+          writeBest();
+        }
+      } else {
+        sfx.lose();
+      }
+      cancelLoop();
+      showEnd();
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "block-city", game: "Block City",
+        headline: state.outcome === "win" ? (state.elapsedMs / 1000).toFixed(1) + "s" : "City fell!",
+        sub: state.outcome === "win" ? "skyline complete 🏙️" : "rebuild it next time",
+        stars: state.stars, starsMax: 3,
+      });
+      return;
+    }
+    rafId = requestAnimationFrame(step);
+  };
+  rafId = requestAnimationFrame(step);
+}
+
+function snapshotForSfx(s) {
+  return {
+    carried: s.carried,
+    built: s.built.slice(),
+    blocksCaught: s.blocksCaught,
+    blocksMissed: s.blocksMissed,
+    demolitions: s.demolitions,
+  };
+}
+
+function playSfxForDelta(prev, cur) {
+  if (cur.blocksCaught > prev.blocksCaught) {
+    sfx.catch();
+    if (cur.carried >= CARRY_MAX && prev.carried < CARRY_MAX) sfx.carryMax();
+  }
+  if (cur.blocksMissed > prev.blocksMissed) sfx.miss();
+  if (cur.demolitions > prev.demolitions) sfx.demolish();
+
+  // Drop: carried went down (instantDrop emptied it). Find which plot grew.
+  if (cur.carried < prev.carried) {
+    for (let i = 0; i < cur.built.length; i++) {
+      const delta = cur.built[i] - prev.built[i];
+      if (delta > 0) {
+        for (let n = 0; n < delta; n++) sfx.dropOne(n);
+        if (cur.built[i] === cur.targets[i] && prev.built[i] !== cur.targets[i]) {
+          setTimeout(() => sfx.lock(), delta * 50 + 80);
+        }
+        break;
+      }
+    }
+  }
+}
+
+function cancelLoop() {
+  if (rafId != null) cancelAnimationFrame(rafId);
+  rafId = null;
+}
+
+// ---------- storage ----------
+
+function readBest() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    const out = {};
+    for (const k of Object.keys(DIFFICULTIES)) {
+      const n = parseInt(parsed[k], 10);
+      if (Number.isFinite(n)) out[k] = Math.max(0, Math.min(3, n));
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+function writeBest() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bestByDifficulty));
+  } catch {
+    // ignore
+  }
+}
+
+
+
+/* ==== GameMonetize SDK bootstrap ==== */
+const PLATFORM = "site";
+const AD = { enabled: true, gameId: "uz7nkp9xrxkuypcmpbxpnwy2x4mc3bcq" };
+let _gmReady = false, _gmPending = null;
+// Enable GameMonetize test-ad mode on localhost / dev origins so ads actually
+// serve during local verification. Real domains (GameMonetize's player,
+// arcade.datacruise.app, etc.) get the production ad stack instead.
+const _gmIsLocalOrigin = /^(127\.0\.0\.1|localhost|0\.0\.0\.0|::1)$/.test(location.hostname);
+if (PLATFORM === "site" && AD.enabled && AD.gameId) {
+  window.SDK_OPTIONS = {
+    gameId: AD.gameId,
+    testing: _gmIsLocalOrigin,
+    debug: _gmIsLocalOrigin,
+    onEvent: function (a) {
+      switch (a && a.name) {
+        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
+        case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
+        case "SDK_GAME_START":              _gmResolve(true); break;
+        case "SDK_ERROR":                   _gmResolve(false); break;
+      }
+    }
+  };
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://api.gamemonetize.com/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, "script", "gamemonetize-sdk");
+}
+function _gmResolve(ok) {
+  if (!_gmPending) return;
+  const g = _gmPending; _gmPending = null;
+  clearTimeout(g.timer);
+  if (typeof g.done === "function") g.done(!!ok);
+}
+function showRewardedAd(onReward) {
+  const done = (ok) => { if (ok && typeof onReward === "function") onReward(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 25000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  setTimeout(() => done(true), 800);
+}
+
+/* ==== Rewarded-ad hook ==== */
+function _handleWatchAdContinue() {
+  if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+  showRewardedAd(() => {
+    state.phase = 'playing';
+            state.outcome = null;
+            if (state.settings) state.settings.timeLimitMs = (state.settings.timeLimitMs || 0) + 20000;
+            state.timeLeftMs = 20000;
+            app.innerHTML = renderGameShell(state);
+            startLoop();
+  });
+}
+
+(function () {
+  const seen = new WeakSet();
+  const check = () => {
+    if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+    const actions = document.querySelector(".end-actions, .card .actions, .game-over-actions, .actions-row");
+    if (!actions || seen.has(actions)) return;
+    if (actions.querySelector('[data-action="watch-ad-continue"]')) return;
+    seen.add(actions);
+    const btn = document.createElement("button");
+    btn.className = "gold";
+    btn.setAttribute("data-action", "watch-ad-continue");
+    btn.textContent = "▶ WATCH AD → +20 SECONDS";
+    const refNode = actions.firstChild;
+    actions.insertBefore(btn, refNode);
+  };
+  setInterval(check, 400);
+}());
+
+document.addEventListener("click", function (e) {
+  const t = e.target.closest && e.target.closest("[data-action]");
+  if (t && t.getAttribute("data-action") === "watch-ad-continue") {
+    e.preventDefault();
+    _handleWatchAdContinue();
+  }
+}, true);
+
+  </script>
+</body>
+</html>

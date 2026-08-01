@@ -1,0 +1,2698 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Derive the Data Jargon</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiMwYTBlMTQiLz4KICA8Y2lyY2xlIGN4PSIyNiIgY3k9IjI2IiByPSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBmZjljIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8Y2lyY2xlIGN4PSIyNiIgY3k9IjI2IiByPSI5IiBmaWxsPSIjMGEwZTE0IiBzdHJva2U9IiMwMGYwZmYiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHRleHQgeD0iMjYiIHk9IjMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEwIiBmaWxsPSIjMDBmZjljIiBmb250LXdlaWdodD0iYm9sZCI+PzwvdGV4dD4KICA8bGluZSB4MT0iMzciIHkxPSIzNyIgeDI9IjUyIiB5Mj0iNTIiIHN0cm9rZT0iI2ZmMmU5MiIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg=="/>
+  <style>
+/* ============================================================
+   DataCruise Word Games — Derive the Data Jargon
+   Terminal / hacker aesthetic
+   ============================================================ */
+
+:root {
+  --bg-0: #06080c;
+  --bg-1: #0a0e14;
+  --bg-2: #11161f;
+  --bg-3: #1a212e;
+  --border: #1f2937;
+  --border-hi: #2a3445;
+
+  --neon-green: #00ff9c;
+  --neon-cyan:  #00f0ff;
+  --neon-magenta: #ff2e92;
+  --neon-yellow: #ffd700;
+
+  --text:   #c9d1d9;
+  --text-dim: #8b949e;
+  --text-faint: #4a5260;
+
+  --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Menlo', 'Consolas', monospace;
+
+  --shadow-glow-green: 0 0 12px rgba(0, 255, 156, 0.45), 0 0 30px rgba(0, 255, 156, 0.15);
+  --shadow-glow-cyan:  0 0 12px rgba(0, 240, 255, 0.45), 0 0 30px rgba(0, 240, 255, 0.15);
+  --shadow-glow-mag:   0 0 12px rgba(255, 46, 146, 0.45), 0 0 30px rgba(255, 46, 146, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at top, rgba(0, 240, 255, 0.06), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(255, 46, 146, 0.05), transparent 60%),
+    var(--bg-0);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ---- CRT scanline overlay ---- */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.12) 3px,
+    rgba(0, 0, 0, 0) 4px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ============================================================
+   Terminal window frame
+   ============================================================ */
+
+.term {
+  width: 100%;
+  max-width: 720px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-hi);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.08),
+    0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.term-bar {
+  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.term-bar .dots {
+  display: flex;
+  gap: 6px;
+}
+.term-bar .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #2a3445;
+}
+.term-bar .dot.r { background: #ff5f56; }
+.term-bar .dot.y { background: #ffbd2e; }
+.term-bar .dot.g { background: #27c93f; }
+
+.term-bar .path {
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+.term-bar .path .prompt { color: var(--neon-green); }
+.term-bar .path .sep    { color: var(--text-faint); }
+.term-bar .path .cmd    { color: var(--neon-cyan); }
+
+.term-bar .path { flex: 1; }
+
+.mute-btn {
+  background: transparent;
+  border: 1px solid var(--border-hi);
+  color: var(--text-dim);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+  margin-left: auto;
+  transition: all 0.15s ease;
+}
+.mute-btn:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.term-body {
+  padding: 26px 22px 28px;
+}
+
+/* ============================================================
+   Title / brand line
+   ============================================================ */
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-title {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+}
+
+.brand-title .pipe { color: var(--text-faint); margin: 0 8px; }
+
+.brand-meta {
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   Splash screen
+   ============================================================ */
+
+.splash {
+  text-align: center;
+  padding: 14px 4px 4px;
+}
+
+.splash h1 {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(28px, 6vw, 44px);
+  margin: 14px 0 8px;
+  color: var(--neon-green);
+  text-shadow: var(--shadow-glow-green);
+  letter-spacing: 0.02em;
+}
+
+.splash h1 .punc { color: var(--neon-magenta); }
+.splash h1 .cursor { display: inline-block; animation: blink 1s steps(1) infinite; color: var(--neon-cyan); margin-left: 4px; }
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.splash .tagline {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin: 0 auto 24px;
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+.splash .tagline .hl { color: var(--neon-cyan); }
+
+.splash .mascot {
+  margin: 18px auto 8px;
+  width: 160px;
+  height: 160px;
+  filter: drop-shadow(0 0 18px rgba(255, 196, 60, 0.4));
+}
+
+.how-to {
+  text-align: left;
+  background: var(--bg-2);
+  border: 1px dashed var(--border-hi);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 18px auto;
+  max-width: 520px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.how-to .head {
+  color: var(--neon-cyan);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.how-to ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.how-to li {
+  padding: 3px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.how-to li::before {
+  content: ">";
+  color: var(--neon-green);
+  font-weight: 700;
+}
+
+.how-to .key {
+  color: var(--neon-yellow);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 26px;
+  background: transparent;
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-shadow: 0 0 8px rgba(0, 255, 156, 0.4);
+}
+
+.btn:hover, .btn:focus-visible {
+  background: rgba(0, 255, 156, 0.1);
+  box-shadow: var(--shadow-glow-green);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.btn:active { transform: translateY(0); }
+
+.btn.cyan {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+.btn.cyan:hover, .btn.cyan:focus-visible {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.btn.mag {
+  border-color: var(--neon-magenta);
+  color: var(--neon-magenta);
+  text-shadow: 0 0 8px rgba(255, 46, 146, 0.4);
+}
+.btn.mag:hover, .btn.mag:focus-visible {
+  background: rgba(255, 46, 146, 0.1);
+  box-shadow: var(--shadow-glow-mag);
+}
+
+.btn.ghost {
+  border-color: var(--border-hi);
+  color: var(--text-dim);
+  text-shadow: none;
+}
+.btn.ghost:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+/* Splash: two-button start row */
+.start-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 18px 0 6px;
+}
+
+.daily-num {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 11px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.daily-tag {
+  margin: 6px 0 12px;
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Share block on daily result */
+.share-block {
+  margin: 20px auto 18px;
+  max-width: 520px;
+  padding: 16px 18px;
+  border: 1px dashed var(--border-hi);
+  border-radius: 6px;
+  background: var(--bg-2);
+  text-align: center;
+}
+
+.share-head {
+  font-size: 11px;
+  color: var(--neon-cyan);
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.share-text {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin: 0 0 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.share-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+}
+
+.reveal-term.big {
+  font-size: clamp(28px, 6vw, 40px);
+  margin: 10px 0 14px;
+}
+
+.over h2.correct {
+  color: var(--neon-green);
+  text-shadow: var(--shadow-glow-green);
+}
+
+.over h2.wrong {
+  color: var(--neon-magenta);
+  text-shadow: var(--shadow-glow-mag);
+}
+
+.daily-over { padding-top: 4px; }
+
+.hud-cell .val.small {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.hud.daily {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ============================================================
+   HUD (score, streak, lives, timer)
+   ============================================================ */
+
+.hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.hud-cell {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 11px;
+}
+
+.hud-cell .lbl {
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+}
+
+.hud-cell .val {
+  color: var(--neon-cyan);
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.35);
+}
+
+.hud-cell.score .val { color: var(--neon-green); text-shadow: 0 0 6px rgba(0, 255, 156, 0.35); }
+.hud-cell.streak .val { color: var(--neon-yellow); text-shadow: 0 0 6px rgba(255, 215, 0, 0.35); }
+.hud-cell.lives .val  { color: var(--neon-magenta); text-shadow: 0 0 6px rgba(255, 46, 146, 0.35); }
+
+.hud-cell.lives .val.warn { animation: pulse 0.6s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Timer bar */
+.timer-row {
+  margin: 0 0 16px;
+}
+
+.timer-bar {
+  height: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+  transition: width 0.1s linear, background 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.timer-bar-fill.warn {
+  background: linear-gradient(90deg, var(--neon-yellow), var(--neon-magenta));
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   Rebus puzzle area
+   ============================================================ */
+
+.prompt-line {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+.prompt-line .gp { color: var(--neon-green); }
+.prompt-line .gc { color: var(--neon-cyan); }
+
+.rebus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: stretch;
+  margin: 8px 0 22px;
+}
+
+.rebus-icon {
+  background: var(--bg-2);
+  border: 1px solid var(--border-hi);
+  border-radius: 6px;
+  padding: 14px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 170px;
+}
+
+.rebus-icon::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rebus-icon pre {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.15;
+  margin: 0;
+  text-align: center;
+  white-space: pre;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+  letter-spacing: 0;
+}
+
+.rebus-icon.b pre {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 6px rgba(255, 46, 146, 0.4);
+}
+
+.rebus-plus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--neon-green);
+  font-weight: 700;
+  text-shadow: var(--shadow-glow-green);
+}
+
+/* ============================================================
+   Typed answer input + Hint
+   ============================================================ */
+
+.hint {
+  margin: 4px 0 10px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  border: 1px dashed var(--border-hi);
+  font-size: 13px;
+  color: var(--text-dim);
+  background: rgba(255, 215, 0, 0.03);
+  line-height: 1.45;
+}
+
+.hint.placeholder {
+  font-style: italic;
+  color: var(--text-faint);
+  background: transparent;
+}
+
+.hint.show {
+  border-style: solid;
+  border-color: rgba(255, 215, 0, 0.4);
+  color: var(--text);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.08);
+}
+
+.hint .hint-label {
+  color: var(--neon-yellow);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-right: 6px;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border-hi);
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--neon-yellow);
+  background: var(--bg-2);
+}
+
+.answer-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 4px 0 12px;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.18);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.answer-form:focus-within {
+  border-color: var(--neon-green);
+  box-shadow: var(--shadow-glow-green);
+}
+
+.input-prompt {
+  color: var(--neon-green);
+  font-weight: 700;
+  font-size: 18px;
+  text-shadow: 0 0 6px rgba(0, 255, 156, 0.5);
+  flex-shrink: 0;
+}
+
+.answer-input {
+  flex: 1 1 auto;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--neon-cyan);
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 4px 0;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.35);
+  letter-spacing: 0.02em;
+  min-width: 0;
+}
+
+.answer-input::placeholder {
+  color: var(--text-faint);
+  font-weight: 400;
+  text-shadow: none;
+  font-style: italic;
+}
+
+.answer-form .caret {
+  color: var(--neon-cyan);
+  font-size: 18px;
+  animation: blink 1s steps(1) infinite;
+  flex-shrink: 0;
+}
+
+.quit-row {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn.tiny {
+  padding: 6px 14px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+/* ============================================================
+   Reveal block (after submit / timeout)
+   ============================================================ */
+
+.reveal {
+  margin: 6px 0 4px;
+  padding: 18px 18px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-hi);
+  background: var(--bg-2);
+  text-align: center;
+}
+
+.reveal.correct {
+  border-color: var(--neon-green);
+  box-shadow: var(--shadow-glow-green);
+  background:
+    linear-gradient(180deg, rgba(0, 255, 156, 0.08), rgba(0, 255, 156, 0.02)),
+    var(--bg-2);
+  animation: pop-in 0.35s ease-out;
+}
+
+.reveal.wrong {
+  border-color: var(--neon-magenta);
+  box-shadow: var(--shadow-glow-mag);
+  background:
+    linear-gradient(180deg, rgba(255, 46, 146, 0.08), rgba(255, 46, 146, 0.02)),
+    var(--bg-2);
+  animation: pop-in 0.35s ease-out;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.97); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.reveal-head {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.reveal.correct .reveal-head {
+  color: var(--neon-green);
+  text-shadow: 0 0 6px rgba(0, 255, 156, 0.35);
+}
+
+.reveal.wrong .reveal-head {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 6px rgba(255, 46, 146, 0.35);
+}
+
+.reveal .user-ans {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--neon-magenta);
+  border-radius: 3px;
+  color: var(--neon-magenta);
+  font-family: var(--mono);
+  font-weight: 700;
+  margin: 0 4px;
+  text-transform: none;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+.reveal-term {
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 700;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.5);
+  letter-spacing: 0.04em;
+  margin: 2px 0 10px;
+}
+
+.reveal-meaning {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.55;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   Answer tiles (legacy — kept for compatibility, no longer used)
+   ============================================================ */
+
+.answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ans {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  padding: 14px 14px 14px 38px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-hi);
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.12s ease;
+  letter-spacing: 0.02em;
+}
+
+.ans::before {
+  content: attr(data-key);
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neon-cyan);
+  font-weight: 700;
+  font-size: 13px;
+  width: 18px;
+  text-align: center;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 3px;
+  line-height: 16px;
+  padding: 0;
+}
+
+.ans:hover, .ans:focus-visible {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.06);
+  outline: none;
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.ans.correct {
+  border-color: var(--neon-green);
+  background: rgba(0, 255, 156, 0.12);
+  color: var(--neon-green);
+  box-shadow: var(--shadow-glow-green);
+  animation: flash-correct 0.5s ease-out;
+}
+.ans.correct::before {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+}
+
+.ans.wrong {
+  border-color: var(--neon-magenta);
+  background: rgba(255, 46, 146, 0.12);
+  color: var(--neon-magenta);
+  box-shadow: var(--shadow-glow-mag);
+  animation: shake 0.45s ease-out;
+}
+.ans.wrong::before {
+  border-color: var(--neon-magenta);
+  color: var(--neon-magenta);
+}
+
+.ans.dim {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ans:disabled {
+  cursor: default;
+}
+
+@keyframes flash-correct {
+  0%   { background: rgba(0, 255, 156, 0.45); }
+  100% { background: rgba(0, 255, 156, 0.12); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* ============================================================
+   Feedback strip
+   ============================================================ */
+
+.feedback {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  min-height: 44px;
+  color: var(--text-dim);
+}
+
+.feedback.show-correct {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  text-shadow: 0 0 6px rgba(0, 255, 156, 0.3);
+}
+.feedback.show-wrong {
+  border-color: var(--neon-magenta);
+  color: var(--neon-magenta);
+}
+
+.feedback .term {
+  color: var(--neon-yellow);
+  font-weight: 700;
+}
+
+.feedback .meaning {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-dim);
+  font-size: 12px;
+  text-shadow: none;
+}
+
+.actions-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   Game over screen
+   ============================================================ */
+
+.over {
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.over h2 {
+  font-size: 30px;
+  color: var(--neon-magenta);
+  text-shadow: var(--shadow-glow-mag);
+  letter-spacing: 0.04em;
+  margin: 6px 0 4px;
+}
+
+.over .subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 22px;
+}
+
+.over .final-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px auto 22px;
+  max-width: 480px;
+}
+
+.over .stat {
+  background: var(--bg-2);
+  border: 1px solid var(--border-hi);
+  border-radius: 6px;
+  padding: 14px 8px;
+}
+
+.over .stat .num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--neon-green);
+  text-shadow: var(--shadow-glow-green);
+}
+.over .stat.cyan .num   { color: var(--neon-cyan);   text-shadow: var(--shadow-glow-cyan); }
+.over .stat.yellow .num { color: var(--neon-yellow); text-shadow: 0 0 12px rgba(255, 215, 0, 0.45); }
+
+.over .stat .lbl {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+
+.over .rank {
+  font-size: 15px;
+  color: var(--neon-cyan);
+  margin-bottom: 18px;
+  letter-spacing: 0.04em;
+}
+.over .rank .badge {
+  color: var(--neon-yellow);
+  font-weight: 700;
+}
+
+/* ============================================================
+   Small / mobile
+   ============================================================ */
+
+@media (max-width: 540px) {
+  body { font-size: 14px; }
+  .term-body { padding: 18px 14px 22px; }
+
+  .hud { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .hud-cell { padding: 6px 6px; }
+  .hud-cell .val { font-size: 15px; }
+  .hud-cell .lbl { font-size: 9px; }
+
+  .rebus { grid-template-columns: 1fr auto 1fr; gap: 6px; }
+  .rebus-icon { min-height: 150px; padding: 22px 4px 8px; }
+  .rebus-icon pre { font-size: 12px; }
+  .rebus-plus { font-size: 22px; }
+
+  .answers { grid-template-columns: 1fr; }
+  .ans { font-size: 13px; padding: 12px 12px 12px 36px; }
+
+  .answer-input { font-size: 16px; }
+  .input-prompt { font-size: 16px; }
+  .answer-form .caret { font-size: 16px; }
+  .reveal { padding: 14px 12px 12px; }
+  .reveal-term { font-size: 22px; }
+  .reveal-meaning { font-size: 12px; }
+
+  .splash h1 { font-size: 30px; }
+  .splash .mascot { width: 130px; height: 130px; }
+
+  .over .final-stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .scanlines { display: none; }
+}
+
+/* Mobile fit — trim padding so the whole round fits without scrolling */
+@media (max-width: 820px) {
+  html, body { overflow-x: hidden; }
+  #app { padding: 6px; align-items: flex-start; }
+  .term-body { padding: 12px 14px 14px; }
+  .splash .mascot { margin: 8px auto 4px; width: 116px; height: 116px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script>
+/* ==== jargon.js ==== */
+// Term bank for "Derive the Data Jargon"
+// Each puzzle is a two-icon compound-word rebus, matching the
+// format of the original Data Cruise gallery puzzles.
+//
+//   iconA  +  iconB  =  TERM
+//
+// Each icon is an ASCII-art glyph rendered in <pre> with a monospace font.
+// Keep each glyph ~5–7 lines × 9–12 chars so it fits the mobile card.
+//
+// `answers` lists accepted spellings (canonical + aliases). Matching is
+// lenient — see normalizeAnswer() / checkAnswer() below.
+
+const TERMS = [
+  {
+    term: 'Data Profiling',
+    answers: ['Data Profiling', 'Profile Data', 'Data Profile', 'Profiling'],
+    iconA: '  .────.\n ╱  1%  ╲\n │  ◔   │\n  ╲    ╱\n   ────',
+    iconB: ' ┌──────┐\n │ ╭─╮   │\n │ │•│ ─ │\n │ ╰─╯ ─ │\n │     ─ │\n └──────┘',
+    labelA: 'distribution',
+    labelB: 'profile',
+    clue: 'Getting an understanding of a dataset.',
+    meaning: 'Examining a dataset to summarize its structure, content, and quality before analysis.'
+  },
+  {
+    term: 'A/B Testing',
+    answers: ['A/B Testing', 'AB Testing', 'A B Testing', 'A/B Test', 'AB Test', 'Split Testing'],
+    iconA: '┌───┐┌───┐\n│ A ││ B │\n└───┘└───┘\n  ───────\n  vs.',
+    iconB: '   ╱─╲\n   │ │\n  ╱   ╲\n ╱  ~  ╲\n ╲─────╱',
+    labelA: 'variants',
+    labelB: 'experiment',
+    clue: 'Two-sample hypothesis testing to compare a control and variant.',
+    meaning: 'Splitting users into two groups to compare which version performs better on a metric.'
+  },
+  {
+    term: 'Big Data',
+    answers: ['Big Data'],
+    iconA: '██████\n██  ██\n██████\n██  ██\n██████',
+    iconB: '╔═════╗\n║ 0101║\n╠═════╣\n║ 1010║\n╠═════╣\n║ 0110║\n╚═════╝',
+    labelA: 'huge',
+    labelB: 'binary store',
+    clue: 'Datasets so large that traditional tools struggle to process them.',
+    meaning: 'Extremely high-volume, high-velocity, or high-variety information assets.'
+  },
+  {
+    term: 'Data Lake',
+    answers: ['Data Lake'],
+    iconA: ' 0 1 0 1\n 1 0 1 1\n 0 1 1 0\n 1 0 0 1\n binary',
+    iconB: '  ~~~~~~\n ~ ≈≈≈≈ ~\n ≈      ≈\n  ~≈≈≈≈~\n   ~~~~',
+    labelA: 'data',
+    labelB: 'large body of water',
+    clue: 'A central repository for raw data, structured or not.',
+    meaning: 'A storage repository that holds vast raw data in its native format until needed.'
+  },
+  {
+    term: 'Data Warehouse',
+    answers: ['Data Warehouse'],
+    iconA: '┌───┬───┐\n│010│101│\n├───┼───┤\n│101│010│\n└───┴───┘',
+    iconB: ' ╱──────╲\n╱        ╲\n│ ┌┐ ┌┐  │\n│ └┘ └┘  │\n│________│',
+    labelA: 'data',
+    labelB: 'storage building',
+    clue: 'A central, integrated store of curated data for analytics.',
+    meaning: 'A system that aggregates data from multiple sources into a unified store for reporting and analysis.'
+  },
+  {
+    term: 'Data Pipeline',
+    answers: ['Data Pipeline', 'Pipeline'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data→',
+    iconB: ' ═══╗\n    ║\n    ╚══════\n         →',
+    labelA: 'flow',
+    labelB: 'pipe',
+    clue: 'A series of steps that move and transform data from source to sink.',
+    meaning: 'An automated chain of processes that ingests, transforms, and delivers data downstream.'
+  },
+  {
+    term: 'Data Mining',
+    answers: ['Data Mining', 'Mining Data'],
+    iconA: ' 0 1 0 1\n 1 0 1 1\n 0 1 1 0\n   ░░░',
+    iconB: '   ╱╲╲\n  ╱  ╲╲\n ╱    ╲╲\n‾‾‾‾‾‾‾╲╲\n  pickaxe',
+    labelA: 'raw data',
+    labelB: 'extract',
+    clue: 'Discovering patterns and insights from large datasets.',
+    meaning: 'The process of analyzing large datasets to uncover patterns, trends, and useful relationships.'
+  },
+  {
+    term: 'Data Cleansing',
+    answers: ['Data Cleansing', 'Data Cleaning', 'Cleansing Data', 'Cleaning Data'],
+    iconA: ' ✗  ╳  ?\n ░  ?  ✗\n null ▒ ✗\n  messy',
+    iconB: '   ╭───╮\n  │ ◯◯◯ │\n   ╰─┬─╯\n     │\n   ░░░░░',
+    labelA: 'dirty data',
+    labelB: 'soap & water',
+    clue: 'Removing or correcting inaccurate, corrupt, or duplicate records.',
+    meaning: 'Detecting and fixing or removing errors and inconsistencies from data to improve its quality.'
+  },
+  {
+    term: 'Pivot Table',
+    answers: ['Pivot Table'],
+    iconA: '    ↻\n   ╱ ╲\n  ↓   ↑\n   ╲ ╱\n    ↺',
+    iconB: ' ┌─┬─┬─┐\n ├─┼─┼─┤\n ├─┼─┼─┤\n ├─┼─┼─┤\n └─┴─┴─┘',
+    labelA: 'rotate',
+    labelB: 'grid',
+    clue: 'A table that summarizes data by rotating fields into rows and columns.',
+    meaning: 'A data summarization tool that lets you reorient rows and columns to view aggregates across dimensions.'
+  },
+  {
+    term: 'Heat Map',
+    answers: ['Heat Map', 'Heatmap'],
+    iconA: '   ▲▲▲\n  ▲ ║ ▲\n    ║\n   ═╧═\n  100°F',
+    iconB: ' ╔═════╗\n ║▓▒░▒▓║\n ║░▓▒▓░║\n ║▒░▓░▒║\n ╚═════╝',
+    labelA: 'temperature',
+    labelB: 'colored grid',
+    clue: 'A 2-D plot where values are encoded as color intensity.',
+    meaning: 'A visualization where individual values in a matrix are represented as colors, revealing patterns at a glance.'
+  },
+  {
+    term: 'Time Series',
+    answers: ['Time Series', 'Timeseries'],
+    iconA: '   ╭──╮\n  │ 12 │\n  │ ╲│ │\n  │  ●─│\n   ╰──╯',
+    iconB: '     ╱╲\n    ╱  ╲╱╲\n   ╱      ╲\n  ╱        ╲\n ╱──────────',
+    labelA: 'clock',
+    labelB: 'sequence',
+    clue: 'A sequence of data points indexed in time order.',
+    meaning: 'A series of observations collected at regular time intervals — used for trend, seasonality, and forecasting.'
+  },
+  {
+    term: 'Bar Chart',
+    answers: ['Bar Chart', 'Bar Graph'],
+    iconA: ' ┌─────┐\n │ ╔═╗ │\n │ ║▓║ │\n │ ╚═╝ │\n └─────┘\n   bar',
+    iconB: '  █\n  █ █\n  █ █ █\n  █ █ █ █\n  ────────',
+    labelA: 'bar',
+    labelB: 'plotted columns',
+    clue: 'A chart that uses rectangular bars to compare values across categories.',
+    meaning: 'A chart that represents categorical data with rectangular bars whose lengths are proportional to the values.'
+  },
+  {
+    term: 'Scatter Plot',
+    answers: ['Scatter Plot', 'Scatterplot', 'Scatter Graph'],
+    iconA: '  •     •\n     •\n •       •\n     •  •\n •   •',
+    iconB: '  ╔═══════╗\n  ║       ║\n  ║   ◾   ║\n  ║       ║\n  ╚═══════╝',
+    labelA: 'scattered',
+    labelB: 'plot of land',
+    clue: 'A chart that uses Cartesian coordinates to show two variables for a set of data.',
+    meaning: 'A chart that plots points on x/y axes to show the relationship between two numeric variables.'
+  },
+  {
+    term: 'Decision Tree',
+    answers: ['Decision Tree'],
+    iconA: '   ┌───┐\n   │ ? │\n   └─┬─┘\n  ╱   ╲\n YES   NO',
+    iconB: '    ▲▲▲\n   ▲▲▲▲▲\n  ▲▲▲▲▲▲▲\n     │\n     │',
+    labelA: 'choice',
+    labelB: 'branching tree',
+    clue: 'A flowchart-like model where branches represent decisions and outcomes.',
+    meaning: 'A model that uses a tree of yes/no questions to classify data or predict an outcome.'
+  },
+  {
+    term: 'Neural Network',
+    answers: ['Neural Network', 'Neural Net'],
+    iconA: '   ╭───╮\n  ╱ ◕ ◕ ╲\n │ ── ── │\n  ╲ ─── ╱\n   brain',
+    iconB: '  ●─●─●\n  │╳│╳│\n  ●─●─●\n  │╳│╳│\n  ●─●─●',
+    labelA: 'brain',
+    labelB: 'connected nodes',
+    clue: 'A computing system inspired by biological neural connections.',
+    meaning: 'A set of interconnected layers of nodes that learn to map inputs to outputs from examples.'
+  },
+  {
+    term: 'Cold Start',
+    answers: ['Cold Start'],
+    iconA: '   *  *\n  * ❄ *\n   *  *\n  ──────\n  freezing',
+    iconB: '     ▶\n    ▶▶\n   ▶▶▶\n    ▶▶\n     ▶',
+    labelA: 'cold',
+    labelB: 'play/begin',
+    clue: "A system's first run with no prior data, history, or warm cache.",
+    meaning: 'The problem of giving useful recommendations or responses when there is no historical data yet.'
+  },
+  {
+    term: 'Drill Down',
+    answers: ['Drill Down', 'Drilldown'],
+    iconA: '    ╔╗\n    ║║\n   ╔╩╩╗\n   ║▼▼║\n   ╚══╝',
+    iconB: '    │\n    │\n    ▼\n  ──────\n  deeper',
+    labelA: 'drill',
+    labelB: 'down arrow',
+    clue: 'To navigate from summary data into greater levels of detail.',
+    meaning: 'Moving from aggregated views into finer-grained, more detailed levels of the same dataset.'
+  },
+  {
+    term: 'Master Data',
+    answers: ['Master Data'],
+    iconA: '   ╔═══╗\n  ╱  ◆  ╲\n ╱       ╲\n ╲───────╱\n  crown',
+    iconB: '   ╔═════╗\n   ║ 010 ║\n   ╠═════╣\n   ║ 101 ║\n   ╚═════╝',
+    labelA: 'master',
+    labelB: 'data store',
+    clue: 'Core business entities (customers, products, etc.) shared across systems.',
+    meaning: 'The single authoritative version of critical business data used consistently across an organization.'
+  },
+  {
+    term: 'Raw Data',
+    answers: ['Raw Data'],
+    iconA: '   ╭─╮\n  ╱ 🥚 ╲\n  │ ── │\n  ╲────╱\n  unbaked',
+    iconB: '   ┌────┐\n   │ 010│\n   │ 110│\n   │ 001│\n   └────┘',
+    labelA: 'raw',
+    labelB: 'data',
+    clue: 'Data in its original, unprocessed form.',
+    meaning: 'Data that has not been cleaned, transformed, or aggregated — captured as it was first collected.'
+  },
+  {
+    term: 'Cross Validation',
+    answers: ['Cross Validation', 'Cross-Validation', 'K-Fold Cross Validation', 'K Fold Cross Validation'],
+    iconA: '   ╲   ╱\n    ╲ ╱\n     ╳\n    ╱ ╲\n   ╱   ╲',
+    iconB: '     ╱\n    ╱\n   ╱\n  ╱\n ✓ valid',
+    labelA: 'cross',
+    labelB: 'check / validate',
+    clue: 'A model-evaluation technique that rotates training and test partitions.',
+    meaning: 'A resampling technique that splits data into folds, training on some and testing on others, to estimate model skill.'
+  },
+  {
+    term: 'Outlier',
+    answers: ['Outlier'],
+    iconA: ' • • • • •\n •••••••\n •••••••\n • • • •\n    cluster',
+    iconB: '\n\n              *\n\n      far away',
+    labelA: 'group',
+    labelB: 'odd one out',
+    clue: 'A data point that differs significantly from other observations.',
+    meaning: 'An observation that lies an abnormal distance from other values in a sample — often worth investigating.'
+  },
+  {
+    term: 'Confusion Matrix',
+    answers: ['Confusion Matrix'],
+    iconA: '   ╭───╮\n  │ @_@ │\n  │  ?  │\n   ╰───╯\n   huh?',
+    iconB: '  ┌─┬─┐\n  │TP│FP│\n  ├─┼─┤\n  │FN│TN│\n  └─┴─┘',
+    labelA: 'confused',
+    labelB: 'grid',
+    clue: 'A table showing predicted vs. actual classifications.',
+    meaning: 'A table that summarizes a classifierʼs performance by comparing predicted labels to true labels.'
+  },
+  // ---------- Expansion bank (v1.2) ----------
+  {
+    term: 'Roll Up',
+    answers: ['Roll Up', 'Rollup'],
+    iconA: ' ╭─◉─╮\n │═══│\n │═══│\n │═══│\n ╰─◉─╯',
+    iconB: '    ▲\n   ╱│╲\n  ╱ │ ╲\n    │\n    │',
+    labelA: 'scroll',
+    labelB: 'up arrow',
+    clue: 'Aggregating detail data into higher-level summaries.',
+    meaning: 'Moving from finer detail to a higher-level aggregate view — the opposite of drill-down.'
+  },
+  {
+    term: 'Dark Data',
+    answers: ['Dark Data'],
+    iconA: '   ╭───╮\n  ╱     ╲\n │   ●   │\n  ╲     ╱\n   ╰───╯\n    moon',
+    iconB: ' ╔═════╗\n ║ ░░░ ║\n ╠═════╣\n ║ ▒▒▒ ║\n ╚═════╝',
+    labelA: 'dark / hidden',
+    labelB: 'data store',
+    clue: 'Collected information that is never analyzed or used.',
+    meaning: 'Data an organization collects but does not analyze — often log, sensor, or archived data sitting unused.'
+  },
+  {
+    term: 'Data Silo',
+    answers: ['Data Silo'],
+    iconA: ' 0101010\n 1010101\n 0110110\n 1011001\n  data',
+    iconB: '  ┌───┐\n  │ ╲ │\n  ├───┤\n  │ S │\n  │   │\n  └───┘',
+    labelA: 'data',
+    labelB: 'isolated tower',
+    clue: 'A data repository that is not shared with the rest of an organization.',
+    meaning: 'An isolated collection of data controlled by one department and not easily accessible to the wider organization.'
+  },
+  {
+    term: 'Data Mart',
+    answers: ['Data Mart', 'Datamart'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: ' ╔═══════╗\n ║  MART ║\n ║▣ ▣ ▣ ▣║\n ╠═══════╣\n ╰─o───o─╯',
+    labelA: 'data',
+    labelB: 'small store',
+    clue: 'A subject-oriented subset of a data warehouse.',
+    meaning: 'A focused subset of a data warehouse targeted at a specific business line or team.'
+  },
+  {
+    term: 'Data Lineage',
+    answers: ['Data Lineage', 'Lineage'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '     ●\n    ╱│╲\n   ● ● ●\n  ╱│ │ │╲\n  ● ● ● ●',
+    labelA: 'data',
+    labelB: 'ancestry tree',
+    clue: 'The journey of data from source to destination.',
+    meaning: 'A traceable record of where data comes from, how it moves through pipelines, and where it is used.'
+  },
+  {
+    term: 'Data Steward',
+    answers: ['Data Steward', 'Steward'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '   ╭───╮\n  │ ◕ ◕ │\n   ╰─┬─╯\n   ╱ │ ╲\n  ─  │  ─\n     │',
+    labelA: 'data',
+    labelB: 'caretaker',
+    clue: 'A person responsible for the quality and use of a data asset.',
+    meaning: 'A role accountable for the accuracy, accessibility, and proper use of a defined set of data.'
+  },
+  {
+    term: 'Data Catalog',
+    answers: ['Data Catalog', 'Catalog', 'Data Catalogue'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '  ┌──────┐\n ╱│ ━━━━ │\n╱ │ ━━━━ │\n╲ │ ━━━━ │\n └─┘──────┘',
+    labelA: 'data',
+    labelB: 'index book',
+    clue: 'An organized inventory of an organization’s data assets.',
+    meaning: 'A searchable inventory of datasets — what they are, where they live, who owns them, and how to use them.'
+  },
+  {
+    term: 'Data Quality',
+    answers: ['Data Quality'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '   ╭───╮\n  ╱  ★  ╲\n │  ━━━  │\n  ╲     ╱\n   ═╧═\n   medal',
+    labelA: 'data',
+    labelB: 'gold standard',
+    clue: 'A measure of the condition of data based on accuracy, completeness, and reliability.',
+    meaning: 'The degree to which data is accurate, complete, consistent, timely, and fit for its intended use.'
+  },
+  {
+    term: 'Data Governance',
+    answers: ['Data Governance', 'Governance'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '   ╱══╲\n  ╱    ╲\n ╱══════╲\n ────────\n   ║║║\n   ║║║\n   gavel',
+    labelA: 'data',
+    labelB: 'rule of law',
+    clue: 'Policies and roles for managing data assets across an organization.',
+    meaning: 'The framework of policies, roles, and processes that ensures data is managed properly across an organization.'
+  },
+  {
+    term: 'Data Modeling',
+    answers: ['Data Modeling', 'Data Modelling', 'Data Model'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: ' ┌╌╌╌╌╌╌┐\n │ ╱──╲ │\n │╱ E─R ╲│\n │  ──  │\n └╌╌╌╌╌╌┘',
+    labelA: 'data',
+    labelB: 'blueprint',
+    clue: 'Designing the structure of data: entities, attributes, and relationships.',
+    meaning: 'The process of designing how data is organized — typically as entities, attributes, and relationships.'
+  },
+  {
+    term: 'Data Visualization',
+    answers: ['Data Visualization', 'Data Visualisation', 'Data Viz', 'DataViz'],
+    iconA: ' 0101010\n 1010101\n 0110110\n  data',
+    iconB: '   ╭───╮\n  ╱     ╲\n │  ◉ ◉  │\n  ╲ ─── ╱\n   ╰───╯\n    eye',
+    labelA: 'data',
+    labelB: 'see / view',
+    clue: 'Representing data graphically to reveal insights.',
+    meaning: 'The use of charts, graphs, and visual encodings to make patterns and insights in data easier to perceive.'
+  },
+  {
+    term: 'Schema Mapping',
+    answers: ['Schema Mapping', 'Schema Mapper'],
+    iconA: ' ┌─┐ ┌─┐\n │A│─│B│\n └┬┘ └┬┘\n  │   │\n  └─┬─┘\n   schema',
+    iconB: ' ╭──────╮\n │ ▓░  ▒ │\n │   ▼   │\n │ ░  ▓  │\n ╰──────╯',
+    labelA: 'schema',
+    labelB: 'map',
+    clue: 'Defining how fields in one data structure correspond to those in another.',
+    meaning: 'The process of matching fields and types between two different schemas so data can be transferred or transformed.'
+  },
+  {
+    term: 'Real Time',
+    answers: ['Real Time', 'Realtime', 'Real-time'],
+    iconA: '    ⚡\n   ╱\n  ⚡\n ╱\n⚡\n live',
+    iconB: '   ╭──╮\n  │ 12 │\n  │ ╲│ │\n  │  ●─│\n   ╰──╯\n   clock',
+    labelA: 'live / instant',
+    labelB: 'clock',
+    clue: 'Processing data immediately as it arrives.',
+    meaning: 'Processing or analyzing data within milliseconds of it being generated — no batching or delay.'
+  },
+  {
+    term: 'Batch Processing',
+    answers: ['Batch Processing', 'Batch Process'],
+    iconA: ' ┌─────┐\n ├─────┤\n ├─────┤\n ├─────┤\n └─────┘\n  stack',
+    iconB: '   ⚙ ⚙\n  ╱   ╲\n ⚙     ⚙\n  ╲   ╱\n   ⚙ ⚙\n   gears',
+    labelA: 'group of jobs',
+    labelB: 'machinery',
+    clue: 'Running data jobs in groups at scheduled intervals.',
+    meaning: 'A method of processing data in large groups (batches) at scheduled times, instead of one record at a time.'
+  },
+  {
+    term: 'Machine Learning',
+    answers: ['Machine Learning', 'ML'],
+    iconA: '   ┌─┬─┐\n   │◕│◕│\n   ├─┴─┤\n   │═══│\n    ║ ║\n   robot',
+    iconB: '  ┌──────┐\n ╱│ ━━━━ │\n╱ │ ━━━━ │\n╲ │ ━━━━ │\n └─┘──────┘',
+    labelA: 'machine',
+    labelB: 'study / learn',
+    clue: 'Algorithms that improve through experience with data.',
+    meaning: 'Computer systems that learn patterns from data and improve at a task without being explicitly programmed for it.'
+  },
+  {
+    term: 'Deep Learning',
+    answers: ['Deep Learning', 'DL'],
+    iconA: ' ≈≈≈≈≈\n  ↓\n   ↓\n    ↓\n     ↓\n  deep ▼',
+    iconB: '  ┌──────┐\n ╱│ ━━━━ │\n╱ │ ━━━━ │\n╲ │ ━━━━ │\n └─┘──────┘',
+    labelA: 'depth',
+    labelB: 'study / learn',
+    clue: 'Neural networks with many hidden layers.',
+    meaning: 'A subset of machine learning that uses many-layered neural networks to learn complex patterns from large datasets.'
+  },
+  {
+    term: 'Sentiment Analysis',
+    answers: ['Sentiment Analysis'],
+    iconA: '   ╭───╮\n  │ ◕ ◕ │\n  │  ‿  │\n   ╰───╯\n    ♥\n  emotion',
+    iconB: '    ╱══╲\n   │ +- │\n    ╲══╱\n      ╲\n       ╲\n   inspect',
+    labelA: 'feeling',
+    labelB: 'inspect',
+    clue: 'Detecting opinion or emotion in text.',
+    meaning: 'Using NLP to classify the emotional tone of text — positive, negative, or neutral.'
+  },
+  {
+    term: 'Standard Deviation',
+    answers: ['Standard Deviation', 'Std Dev', 'StdDev', 'Sigma'],
+    iconA: ' ┌────────┐\n │1·2·3·4·│\n │5·6·7·8·│\n └────────┘\n  ruler',
+    iconB: '   ╱╲    ╱╲\n  ╱  ╲╱╲ ╱  ╲\n ╱       ╲    ╲\n away from norm',
+    labelA: 'standard',
+    labelB: 'departure',
+    clue: 'A measure of how spread out values are from the mean.',
+    meaning: 'A statistic that quantifies how much values in a dataset vary from their average.'
+  },
+  {
+    term: 'Bell Curve',
+    answers: ['Bell Curve', 'Normal Distribution', 'Gaussian'],
+    iconA: '   ╭───╮\n  ╱     ╲\n │   ●   │\n  ╲_____╱\n    ▔\n   bell',
+    iconB: '       ╱╲\n      ╱  ╲\n    ╱      ╲\n  ╱          ╲\n___            ___',
+    labelA: 'bell',
+    labelB: 'curve',
+    clue: 'The classic symmetric distribution shape.',
+    meaning: 'The graph of a normal distribution — symmetric, with most values clustered near the mean.'
+  },
+  {
+    term: 'Feature Engineering',
+    answers: ['Feature Engineering'],
+    iconA: '  ┌┐┌─┐\n  ├┘└┤ │\n  │  └┐│\n  └───┘\n  puzzle',
+    iconB: '   ⚙ ⚙\n  ╱   ╲\n ⚙     ⚙\n  ╲   ╱\n   ⚙ ⚙',
+    labelA: 'piece',
+    labelB: 'crafted gears',
+    clue: 'Creating useful input variables for ML models.',
+    meaning: 'The craft of transforming raw data into informative variables (features) that improve model performance.'
+  },
+  {
+    term: 'Random Forest',
+    answers: ['Random Forest'],
+    iconA: ' ┌───┐\n │● ●│\n │ ● │\n │● ●│\n └───┘\n  dice',
+    iconB: '   ▲ ▲ ▲\n  ▲▲▲▲▲\n ▲▲▲▲▲▲▲\n   │ │ │\n  forest',
+    labelA: 'random',
+    labelB: 'many trees',
+    clue: 'An ensemble of decision trees, each trained on a random subset.',
+    meaning: 'An ensemble ML model that aggregates many decision trees built on random samples and features.'
+  },
+  {
+    term: 'Gradient Descent',
+    answers: ['Gradient Descent'],
+    iconA: ' ░▒▓█\n ░▒▓█\n ░▒▓█\n ░▒▓█\n gradient',
+    iconB: ' ─┐\n   └─┐\n     └─┐\n       └─┐\n         └─▼',
+    labelA: 'slope',
+    labelB: 'step down',
+    clue: 'An optimization method that follows the slope toward a minimum.',
+    meaning: 'An iterative algorithm that tweaks parameters in the direction that most reduces a loss function.'
+  },
+  {
+    term: 'Anomaly Detection',
+    answers: ['Anomaly Detection'],
+    iconA: '   ◉ ◉\n  ╭─⊥─╮\n  │ ?? │\n   ╲▽╱\n    !\n   weird',
+    iconB: '    ╱══╲\n   │ Q  │\n    ╲══╱\n      ╲\n       ╲\n     detect',
+    labelA: 'odd thing',
+    labelB: 'inspect',
+    clue: 'Identifying rare items that deviate from the norm.',
+    meaning: 'The technique of identifying observations that depart significantly from expected patterns.'
+  },
+  {
+    term: 'Star Schema',
+    answers: ['Star Schema'],
+    iconA: '    ★\n   ★★★\n  ★★★★★\n   ★★★\n    ★',
+    iconB: '  ┌───┐\n  ├───┤\n  │ E │\n  │─R─│\n  └───┘\n  schema',
+    labelA: 'star',
+    labelB: 'blueprint',
+    clue: 'A warehouse design with one fact table linked to dimension tables.',
+    meaning: 'A simple warehouse model where a central fact table connects directly to surrounding dimension tables, like a star.'
+  },
+  {
+    term: 'Snowflake Schema',
+    answers: ['Snowflake Schema'],
+    iconA: '    *\n  *─❅─*\n   *|*\n   *|*\n  snow',
+    iconB: '  ┌───┐\n  ├───┤\n  │ E │\n  │─R─│\n  └───┘\n  schema',
+    labelA: 'snowflake',
+    labelB: 'blueprint',
+    clue: 'A normalized warehouse design with dimensions broken into sub-tables.',
+    meaning: 'A warehouse model that normalizes dimension tables into multiple related tables, branching out like a snowflake.'
+  },
+  {
+    term: 'Primary Key',
+    answers: ['Primary Key', 'PK'],
+    iconA: '  ┌─────┐\n  │ #1  │\n  │ ★★★ │\n  │ pri │\n  └─────┘',
+    iconB: '   ╭─╮\n  │ ◯ │\n   ╲─╱\n    │\n   ╳╳╳\n   key',
+    labelA: 'number one',
+    labelB: 'key',
+    clue: 'The column that uniquely identifies each row in a table.',
+    meaning: 'A column (or set of columns) whose value uniquely identifies every row in a database table.'
+  },
+  {
+    term: 'Foreign Key',
+    answers: ['Foreign Key', 'FK'],
+    iconA: '  ┌─────┐\n  │ ▤ ▤ │\n  │ PSP │\n  │ ✈ ✈ │\n  └─────┘\n passport',
+    iconB: '   ╭─╮\n  │ ◯ │\n   ╲─╱\n    │\n   ╳╳╳\n   key',
+    labelA: 'foreign / other',
+    labelB: 'key',
+    clue: 'A column that references the primary key of another table.',
+    meaning: 'A column whose values must match the primary key of another table — the basis of relational joins.'
+  },
+  {
+    term: 'Inner Join',
+    answers: ['Inner Join'],
+    iconA: '  ┌──┐┌──┐\n  │  ┼┤  │\n  └──┘└──┘\n  ╱╲ ╳ ╱╲\n  fit inside',
+    iconB: '  ╭───╮╭───╮\n  │   ╳   │\n  ╰───╯╰───╯\n   linked\n   rings',
+    labelA: 'inside',
+    labelB: 'connect',
+    clue: 'A SQL join that returns only rows with matches in both tables.',
+    meaning: 'A relational operation returning only the rows where the join key exists in both tables being joined.'
+  }
+];
+
+// Shuffle a small array (Fisher–Yates).
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Normalize an answer for comparison — strip everything but a–z and 0–9.
+//   "A/B Testing!"  →  "abtesting"
+//   "HEAT MAP"      →  "heatmap"
+function normalizeAnswer(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Returns true if `input` matches any acceptable spelling of `term`.
+function checkAnswer(input, term) {
+  const norm = normalizeAnswer(input);
+  if (!norm) return false;
+  const accepted = (term.answers && term.answers.length ? term.answers : [term.term]);
+  return accepted.some(a => normalizeAnswer(a) === norm);
+}
+
+
+/* ==== sound.js ==== */
+// Derive the Data Jargon — synthesized SFX (Web Audio, no assets).
+// Terminal/chiptune feel — square + triangle waves, short envelopes.
+// Mute state persists in localStorage.
+
+let ctx = null;
+let muted = readMuted();
+
+function readMuted() {
+  try { return localStorage.getItem('datacruise.jargon.muted') === '1'; }
+  catch { return false; }
+}
+
+function writeMuted() {
+  try { localStorage.setItem('datacruise.jargon.muted', muted ? '1' : '0'); }
+  catch { /* ignore */ }
+}
+
+function getCtx() {
+  if (muted) return null;
+  if (!ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+  }
+  if (ctx.state === 'suspended') ctx.resume();
+  return ctx;
+}
+
+function tone({ freq, dur = 0.10, type = 'square', vol = 0.14, slide = 0, attack = 0.004, when = 0 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const t1 = t0 + dur;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slide) {
+    const endFreq = Math.max(20, freq + slide);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, t1);
+  }
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol, t0 + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t1);
+  osc.connect(gain).connect(c.destination);
+  osc.start(t0);
+  osc.stop(t1 + 0.02);
+}
+
+function noiseBurst({ dur = 0.08, vol = 0.10, when = 0, cutoff = 1500 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const samples = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, samples, c.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < samples; i++) data[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  const filter = c.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = cutoff;
+  const gain = c.createGain();
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter).connect(gain).connect(c.destination);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+// Pick a slightly randomized "tick" frequency so typing doesn't sound monotone.
+function keyFreq() {
+  // Around 1.4–1.8 kHz, like a soft mechanical keyboard
+  return 1400 + Math.floor(Math.random() * 400);
+}
+
+const sfx = {
+  // Per-character key click
+  key() {
+    tone({ freq: keyFreq(), dur: 0.018, type: 'square', vol: 0.05 });
+  },
+  // Hint reveal — short ascending arpeggio
+  hint() {
+    tone({ freq: 660, dur: 0.10, type: 'triangle', vol: 0.14 });
+    tone({ freq: 880, dur: 0.12, type: 'triangle', vol: 0.13, when: 0.06 });
+  },
+  // Submit press
+  submit() {
+    tone({ freq: 520, dur: 0.05, type: 'square', vol: 0.10 });
+  },
+  // Correct — bright triumphant arpeggio
+  correct() {
+    [659, 880, 1175, 1568].forEach((f, i) => {
+      tone({ freq: f, dur: 0.14, type: 'triangle', vol: 0.16, when: i * 0.06 });
+    });
+  },
+  // Wrong — descending sawtooth + soft noise
+  wrong() {
+    tone({ freq: 280, dur: 0.20, type: 'sawtooth', vol: 0.14, slide: -120 });
+    noiseBurst({ dur: 0.10, vol: 0.05, cutoff: 700, when: 0.04 });
+  },
+  // Timeout — slower descending wail
+  timeout() {
+    [440, 370, 294, 220].forEach((f, i) => {
+      tone({ freq: f, dur: 0.18, type: 'sawtooth', vol: 0.13, when: i * 0.10 });
+    });
+  },
+  // Game over — short minor cadence
+  gameover() {
+    [523, 466, 392, 294].forEach((f, i) => {
+      tone({ freq: f, dur: 0.22, type: 'triangle', vol: 0.15, when: i * 0.13 });
+    });
+  },
+  // Win run — bright fanfare
+  win() {
+    [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => {
+      tone({ freq: f, dur: 0.18, type: 'triangle', vol: 0.18, when: i * 0.09 });
+    });
+  },
+  // Streak milestone
+  streak() {
+    tone({ freq: 988, dur: 0.08, type: 'square', vol: 0.13 });
+    tone({ freq: 1318, dur: 0.10, type: 'square', vol: 0.13, when: 0.05 });
+  }
+};
+
+function isMuted() { return muted; }
+
+function toggleMuted() {
+  muted = !muted;
+  writeMuted();
+  if (muted && ctx) {
+    // Silence anything currently scheduled by suspending immediately.
+    try { ctx.suspend(); } catch {}
+  } else if (!muted && ctx) {
+    try { ctx.resume(); } catch {}
+  }
+  return muted;
+}
+
+
+/* ==== mascot.js ==== */
+// Buzz — the brown-faced bee mascot for the DataCruise Word Games series.
+// Returns an inline SVG string. Sized to the host container (100% width/height).
+// Supports { blink } and { mood: 'smirk' | 'cheer' | 'frown' }.
+
+function beeSvg({ blink = false, mood = 'smirk' } = {}) {
+  const eyes = blink
+    ? `<path d="M74 83 Q82 88 90 83" fill="none" stroke="#241a0f" stroke-width="3.5" stroke-linecap="round"/>
+       <path d="M110 83 Q118 88 126 83" fill="none" stroke="#241a0f" stroke-width="3.5" stroke-linecap="round"/>`
+    : mood === 'cheer'
+    ? `<path d="M73 86 Q82 76 91 86" fill="none" stroke="#241a0f" stroke-width="4" stroke-linecap="round"/>
+       <path d="M109 86 Q118 76 127 86" fill="none" stroke="#241a0f" stroke-width="4" stroke-linecap="round"/>`
+    : `<circle cx="82" cy="82" r="11" fill="#fff"/>
+       <circle cx="118" cy="82" r="11" fill="#fff"/>
+       <circle cx="84" cy="84" r="6" fill="#241a0f"/>
+       <circle cx="120" cy="84" r="6" fill="#241a0f"/>
+       <circle cx="86.5" cy="81" r="2" fill="#fff"/>
+       <circle cx="122.5" cy="81" r="2" fill="#fff"/>`;
+
+  const mouth = mood === 'cheer'
+    ? `<path d="M80 106 Q100 132 120 106 Q100 118 80 106 Z" fill="#8a3b3b" stroke="#3a2a19" stroke-width="3" stroke-linejoin="round"/>`
+    : mood === 'frown'
+    ? `<path d="M84 119 Q100 104 116 119" fill="none" stroke="#3a2a19" stroke-width="4" stroke-linecap="round"/>`
+    : `<path d="M84 107 Q100 123 116 107" fill="none" stroke="#3a2a19" stroke-width="4" stroke-linecap="round"/>`;
+
+  return `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Buzz the bee">
+  <defs>
+    <linearGradient id="beeBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd54a"/>
+      <stop offset="100%" stop-color="#f3ad00"/>
+    </linearGradient>
+    <radialGradient id="beeFace" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#e2ab77"/>
+      <stop offset="100%" stop-color="#c6875a"/>
+    </radialGradient>
+    <linearGradient id="beeWing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e2fbff"/>
+      <stop offset="100%" stop-color="#a6e6ff"/>
+    </linearGradient>
+    <clipPath id="beeBodyClip"><ellipse cx="100" cy="152" rx="48" ry="36"/></clipPath>
+  </defs>
+
+  <g opacity="0.8">
+    <ellipse cx="58" cy="64" rx="24" ry="40" transform="rotate(-30 58 64)" fill="url(#beeWing)" stroke="#7fd6ef" stroke-width="2"/>
+    <ellipse cx="142" cy="64" rx="24" ry="40" transform="rotate(30 142 64)" fill="url(#beeWing)" stroke="#7fd6ef" stroke-width="2"/>
+  </g>
+
+  <ellipse cx="100" cy="152" rx="48" ry="36" fill="url(#beeBody)" stroke="#c8891a" stroke-width="2.5"/>
+  <g clip-path="url(#beeBodyClip)" fill="#2e2417">
+    <rect x="50" y="149" width="100" height="13"/>
+    <rect x="50" y="176" width="100" height="13"/>
+  </g>
+
+  <circle cx="100" cy="86" r="56" fill="url(#beeFace)" stroke="#a9713f" stroke-width="2.5"/>
+
+  <path d="M82 40 Q74 16 62 12" fill="none" stroke="#2e2417" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="61" cy="11" r="6.5" fill="#2e2417"/>
+  <path d="M118 40 Q126 16 138 12" fill="none" stroke="#2e2417" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="139" cy="11" r="6.5" fill="#2e2417"/>
+
+  <circle cx="70" cy="101" r="11" fill="#ff8f8f" opacity="0.72"/>
+  <circle cx="130" cy="101" r="11" fill="#ff8f8f" opacity="0.72"/>
+
+  ${eyes}
+  ${mouth}
+  <circle cx="78" cy="62" r="7" fill="#fff" opacity="0.18"/>
+</svg>`.trim();
+}
+
+
+/* ==== daily.js ==== */
+// Daily Puzzle helpers — one puzzle per day, deterministic, shareable.
+
+
+const STORAGE_KEY = 'datacruise.jargon.daily';
+const DAILY_EPOCH = new Date('2026-05-12T00:00:00Z'); // launch day → puzzle #1
+
+// Today as YYYY-MM-DD in local time
+function todayKey(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Puzzle number since launch (1-indexed, never repeats until bank exhausts).
+function puzzleNumberFor(date = new Date()) {
+  const oneDay = 24 * 60 * 60 * 1000;
+  const days = Math.floor((date.getTime() - DAILY_EPOCH.getTime()) / oneDay);
+  return Math.max(1, days + 1);
+}
+
+// Deterministic puzzle for the given date.
+function puzzleFor(date = new Date()) {
+  const n = puzzleNumberFor(date);
+  const idx = (n - 1) % TERMS.length;
+  return { puzzle: TERMS[idx], number: n, dateKey: todayKey(date) };
+}
+
+// Read any saved record of today's attempt.
+function readSavedAttempt(dateKey) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (obj && obj.dateKey === dateKey) return obj;
+  } catch { /* ignore */ }
+  return null;
+}
+
+function writeSavedAttempt(record) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+  } catch { /* ignore */ }
+}
+
+// Build the share string the player can copy/paste anywhere.
+// Single-attempt daily — one row: 🟩 solved, 🟥 missed.
+function buildShareText({ number, dateKey, result, hintUsed }) {
+  const head = `Derive the Data Jargon #${number} — ${dateKey}`;
+  const row = result === 'correct' ? '🟩' : '🟥';
+  const status = result === 'correct'
+    ? (hintUsed ? 'solved (with hint 💡)' : 'solved ✓')
+    : (hintUsed ? 'missed (used 💡)' : 'missed ✗');
+  return [
+    head,
+    row,
+    status,
+    'datacruise.wordpress.com/data-quizzes'
+  ].join('\n');
+}
+
+// Re-export the matcher so render/main can stay in one direction.
+{ checkAnswer };
+
+
+/* ==== state.js ==== */
+// Game state for Derive the Data Jargon.
+// Two modes:
+//   - 'classic'   : 10 rounds, 3 lives, score + streak (original game)
+//   - 'daily'     : one curated puzzle, deterministic by date, one attempt
+
+
+const CONFIG = {
+  roundsPerGame: 10,
+  startingLives: 3,
+  roundSeconds: 25,
+  dailySeconds: 60,
+  basePoints: 100,
+  speedBonusPerSecond: 6,
+  streakBonus: 25,
+  hintPenalty: 50,
+  tickMs: 100,
+  revealMsCorrect: 2200,
+  revealMsWrong: 3200
+};
+
+function createState() {
+  return {
+    screen: 'splash',
+    mode: 'classic',            // 'classic' | 'daily'
+    score: 0,
+    streak: 0,
+    bestStreak: 0,
+    lives: CONFIG.startingLives,
+    roundIndex: 0,
+    deck: [],
+    current: null,
+    revealMeaning: false,
+    lastResult: null,           // 'correct' | 'wrong' | 'timeout'
+    lastPointsEarned: 0,
+    correctCount: 0,
+    hintsUsedTotal: 0,
+    dailyMeta: null             // { number, dateKey, result, attempted, hintUsed, shareText }
+  };
+}
+
+function startGame(s) {
+  s.mode = 'classic';
+  s.score = 0;
+  s.streak = 0;
+  s.bestStreak = 0;
+  s.lives = CONFIG.startingLives;
+  s.roundIndex = 0;
+  s.correctCount = 0;
+  s.hintsUsedTotal = 0;
+  s.lastResult = null;
+  s.lastPointsEarned = 0;
+  s.dailyMeta = null;
+  s.deck = shuffle(TERMS).slice(0, CONFIG.roundsPerGame);
+  s.screen = 'round';
+  nextRound(s);
+}
+
+function startDailyGame(s, now = new Date()) {
+  const { puzzle, number, dateKey } = puzzleFor(now);
+  const saved = readSavedAttempt(dateKey);
+  s.mode = 'daily';
+  s.score = 0;
+  s.streak = 0;
+  s.bestStreak = 0;
+  s.lives = 1;
+  s.roundIndex = 0;
+  s.correctCount = 0;
+  s.hintsUsedTotal = 0;
+  s.lastResult = null;
+  s.lastPointsEarned = 0;
+  s.deck = [puzzle];
+  s.dailyMeta = { number, dateKey, puzzle: puzzle.term };
+
+  if (saved) {
+    // Already played today — jump straight to the result screen.
+    s.dailyMeta = {
+      number: saved.number || number,
+      dateKey,
+      puzzle: puzzle.term,
+      result: saved.result,
+      attempted: saved.attempted || '',
+      hintUsed: !!saved.hintUsed,
+      shareText: saved.shareText || buildShareText({
+        number, dateKey, result: saved.result,
+        hintUsed: !!saved.hintUsed
+      })
+    };
+    s.lastResult = saved.result;
+    s.current = null;
+    s.screen = 'gameover';
+    return;
+  }
+
+  s.screen = 'round';
+  nextRound(s);
+}
+
+function nextRound(s) {
+  if (s.mode === 'classic' && (s.lives <= 0 || s.roundIndex >= s.deck.length)) {
+    s.screen = 'gameover';
+    s.current = null;
+    return;
+  }
+  if (s.mode === 'daily' && s.roundIndex >= s.deck.length) {
+    s.screen = 'gameover';
+    s.current = null;
+    return;
+  }
+  const puzzle = s.deck[s.roundIndex];
+  const seconds = s.mode === 'daily' ? CONFIG.dailySeconds : CONFIG.roundSeconds;
+  s.current = {
+    puzzle,
+    timeLeftMs: seconds * 1000,
+    locked: false,
+    inputValue: '',
+    hintUsed: false,
+    submittedValue: ''
+  };
+  s.lastResult = null;
+  s.lastPointsEarned = 0;
+  s.revealMeaning = false;
+}
+
+function useHint(s) {
+  const c = s.current;
+  if (!c || c.locked || c.hintUsed) return;
+  c.hintUsed = true;
+  s.hintsUsedTotal += 1;
+}
+
+function submitAnswer(s, raw) {
+  const c = s.current;
+  if (!c || c.locked) return;
+  const text = String(raw || '').trim();
+  c.locked = true;
+  c.submittedValue = text;
+  const correct = !!text && checkAnswer(text, c.puzzle);
+  if (correct) {
+    const secondsLeft = Math.max(0, c.timeLeftMs / 1000);
+    const speedBonus = Math.round(secondsLeft * CONFIG.speedBonusPerSecond);
+    s.streak += 1;
+    if (s.streak > s.bestStreak) s.bestStreak = s.streak;
+    const streakBonus = (s.streak >= 2 ? (s.streak - 1) * CONFIG.streakBonus : 0);
+    let earned = CONFIG.basePoints + speedBonus + streakBonus;
+    if (c.hintUsed) earned = Math.max(0, earned - CONFIG.hintPenalty);
+    s.score += earned;
+    s.lastPointsEarned = earned;
+    s.lastResult = 'correct';
+    s.correctCount += 1;
+  } else {
+    s.streak = 0;
+    s.lives -= 1;
+    s.lastResult = 'wrong';
+    s.lastPointsEarned = 0;
+  }
+  s.revealMeaning = true;
+
+  if (s.mode === 'daily') persistDailyResult(s);
+}
+
+function timeout(s) {
+  const c = s.current;
+  if (!c || c.locked) return;
+  c.locked = true;
+  c.submittedValue = c.inputValue || '';
+  s.streak = 0;
+  s.lives -= 1;
+  s.lastResult = 'timeout';
+  s.lastPointsEarned = 0;
+  s.revealMeaning = true;
+
+  if (s.mode === 'daily') persistDailyResult(s);
+}
+
+function persistDailyResult(s) {
+  const meta = s.dailyMeta;
+  const c = s.current;
+  if (!meta || !c) return;
+  const result = (s.lastResult === 'correct') ? 'correct' : 'wrong';
+  const shareText = buildShareText({
+    number: meta.number,
+    dateKey: meta.dateKey,
+    result,
+    hintUsed: !!c.hintUsed
+  });
+  const record = {
+    dateKey: meta.dateKey,
+    number: meta.number,
+    result,
+    attempted: c.submittedValue || '',
+    hintUsed: !!c.hintUsed,
+    shareText,
+    savedAt: Date.now()
+  };
+  writeSavedAttempt(record);
+  s.dailyMeta = {
+    ...meta,
+    result,
+    attempted: record.attempted,
+    hintUsed: record.hintUsed,
+    shareText
+  };
+}
+
+function advance(s) {
+  s.roundIndex += 1;
+  nextRound(s);
+}
+
+function rankFor(score) {
+  if (score >= 1500) return { name: 'CHIEF DATA WIZARD',    color: 'yellow' };
+  if (score >= 1100) return { name: 'SENIOR ANALYST',        color: 'green'  };
+  if (score >= 700)  return { name: 'DATA APPRENTICE',       color: 'cyan'   };
+  if (score >= 400)  return { name: 'JUNIOR DECODER',        color: 'cyan'   };
+  return { name: 'ROOKIE — keep cruising', color: 'green' };
+}
+
+{ todayKey };
+
+
+/* ==== render.js ==== */
+// Rendering for Derive the Data Jargon (typed-input flow + daily mode).
+
+
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+function termFrame(inner, { cmd = 'play' } = {}) {
+  const muteIcon = isMuted() ? '🔇' : '🔊';
+  return `
+    <div class="term">
+      <div class="term-bar">
+        <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+        <div class="path">
+          <span class="prompt">datacruise</span><span class="sep">@</span><span class="prompt">word-games</span><span class="sep">:</span><span class="cmd">~/${esc(cmd)}</span><span class="prompt">$</span>
+        </div>
+        <button class="mute-btn" id="btn-mute" type="button" aria-label="Toggle sound">${muteIcon}</button>
+      </div>
+      <div class="term-body">
+        <div class="brand">
+          <div class="brand-title">DataCruise <span class="pipe">|</span> Word Games <span class="pipe">|</span> Game #01</div>
+          <div class="brand-meta">v1.2</div>
+        </div>
+        ${inner}
+      </div>
+    </div>
+  `;
+}
+
+function renderSplash(s, handlers) {
+  const today = puzzleFor(new Date());
+  const html = termFrame(`
+    <div class="splash">
+      <div class="mascot">${beeSvg()}</div>
+      <h1>Derive the Data Jargon<span class="punc">.</span><span class="cursor">█</span></h1>
+      <p class="tagline">
+        Two cryptic icons. One <span class="hl">data term</span>.
+        Type your answer, beat the timer, earn your rank.
+      </p>
+      <div class="how-to">
+        <div class="head">// How to play</div>
+        <ul>
+          <li>Each round shows two ASCII icons. Together they spell a data jargon term.</li>
+          <li>Type your answer and press <span class="key">Enter</span>.</li>
+          <li>Stuck? Tap <span class="key">Hint</span> to reveal the definition — costs ${CONFIG.hintPenalty} pts.</li>
+          <li>One guess per round. Wrong? The answer reveals and the next round loads.</li>
+          <li>${CONFIG.startingLives} lives. Faster + streaks = more points.</li>
+        </ul>
+      </div>
+
+      <div class="start-buttons">
+        <button class="btn" id="btn-start">▶ Start ${CONFIG.roundsPerGame} rounds</button>
+        <button class="btn mag" id="btn-daily">★ Daily Puzzle <span class="daily-num">#${today.number}</span></button>
+      </div>
+      <p class="daily-tag">Daily Puzzle · ${esc(today.dateKey)} · same puzzle for everyone, today only</p>
+    </div>
+  `, { cmd: 'splash' });
+
+  setHTML(html);
+  document.getElementById('btn-start').addEventListener('click', handlers.onStart);
+  document.getElementById('btn-daily').addEventListener('click', handlers.onStartDaily);
+  bindMute(handlers);
+}
+
+function renderRound(s, handlers) {
+  const c = s.current;
+  if (!c) return;
+  const isDaily = s.mode === 'daily';
+  const livesWarn = s.lives === 1 && !isDaily ? ' warn' : '';
+  const roundN = s.roundIndex + 1;
+  const total = s.deck.length;
+
+  // HUD: classic shows score/streak/lives/round; daily shows daily-#/attempts/timer-only
+  let hudHtml;
+  if (isDaily) {
+    hudHtml = `
+      <div class="hud daily">
+        <div class="hud-cell score"><span class="lbl">DAILY</span><span class="val">#${s.dailyMeta?.number ?? '?'}</span></div>
+        <div class="hud-cell round"><span class="lbl">DATE</span><span class="val small">${esc(s.dailyMeta?.dateKey ?? '')}</span></div>
+        <div class="hud-cell lives"><span class="lbl">ATTEMPT</span><span class="val">1/1</span></div>
+      </div>`;
+  } else {
+    hudHtml = `
+      <div class="hud">
+        <div class="hud-cell score"><span class="lbl">SCORE</span><span class="val">${s.score}</span></div>
+        <div class="hud-cell streak"><span class="lbl">STREAK</span><span class="val">${s.streak}×</span></div>
+        <div class="hud-cell lives"><span class="lbl">LIVES</span><span class="val${livesWarn}">${'♥'.repeat(s.lives)}${'·'.repeat(Math.max(0, CONFIG.startingLives - s.lives))}</span></div>
+        <div class="hud-cell round"><span class="lbl">ROUND</span><span class="val">${roundN}/${total}</span></div>
+      </div>`;
+  }
+
+  // Hint area
+  let hintHtml = '';
+  if (c.hintUsed) {
+    hintHtml = `<div class="hint show"><span class="hint-label">// HINT</span> ${esc(c.puzzle.clue)}</div>`;
+  } else if (!c.locked) {
+    const cost = isDaily ? 'free in daily mode' : `−${CONFIG.hintPenalty} pts`;
+    hintHtml = `<div class="hint placeholder">stuck? tap <span class="kbd">Hint</span> for the definition (${cost})</div>`;
+  }
+
+  // Input vs locked reveal
+  let inputAreaHtml;
+  if (!c.locked) {
+    const hintLabel = c.hintUsed ? '✓ Hint used' : (isDaily ? '? Hint' : `? Hint (−${CONFIG.hintPenalty})`);
+    inputAreaHtml = `
+      <form id="answer-form" class="answer-form" autocomplete="off">
+        <span class="input-prompt">$</span>
+        <input
+          id="answer-input"
+          class="answer-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="words"
+          spellcheck="false"
+          placeholder="type the data jargon..."
+          value="${esc(c.inputValue || '')}"
+          aria-label="Your answer"
+        />
+        <span class="caret">█</span>
+      </form>
+      <div class="actions-row">
+        <button type="button" class="btn ghost" id="btn-hint" ${c.hintUsed ? 'disabled' : ''}>${hintLabel}</button>
+        <button type="button" class="btn cyan" id="btn-submit">→ Submit (Enter)</button>
+      </div>
+    `;
+  } else {
+    inputAreaHtml = '';
+  }
+
+  // Feedback / reveal area
+  let feedbackHtml = '<div class="feedback" id="feedback">&nbsp;</div>';
+  let actionsLockedHtml = '';
+  if (c.locked) {
+    const term = esc(c.puzzle.term);
+    const meaning = esc(c.puzzle.meaning);
+    const userAnswer = c.submittedValue ? esc(c.submittedValue) : '(no answer)';
+
+    if (s.lastResult === 'correct') {
+      const pts = isDaily ? '' : ` · +${s.lastPointsEarned} pts`;
+      feedbackHtml = `
+        <div class="reveal correct">
+          <div class="reveal-head">✓ CORRECT${pts}</div>
+          <div class="reveal-term">${term}</div>
+          <div class="reveal-meaning">${meaning}</div>
+        </div>`;
+    } else if (s.lastResult === 'timeout') {
+      feedbackHtml = `
+        <div class="reveal wrong">
+          <div class="reveal-head">⏱ TIME UP — the answer was</div>
+          <div class="reveal-term">${term}</div>
+          <div class="reveal-meaning">${meaning}</div>
+        </div>`;
+    } else {
+      feedbackHtml = `
+        <div class="reveal wrong">
+          <div class="reveal-head">✗ You typed <span class="user-ans">${userAnswer}</span> — the answer was</div>
+          <div class="reveal-term">${term}</div>
+          <div class="reveal-meaning">${meaning}</div>
+        </div>`;
+    }
+    let nextLabel;
+    if (isDaily) {
+      nextLabel = '⏹ See results';
+    } else {
+      nextLabel = (s.lives <= 0 || roundN >= total) ? '⏹ Skip to results' : '→ Next round';
+    }
+    actionsLockedHtml = `
+      <div class="actions-row">
+        <button class="btn ghost" id="btn-quit">⏏ Quit</button>
+        <button class="btn cyan" id="btn-next">${nextLabel}</button>
+      </div>
+    `;
+  }
+
+  const totalSeconds = isDaily ? CONFIG.dailySeconds : CONFIG.roundSeconds;
+  const pctLeft = Math.max(0, c.timeLeftMs / (totalSeconds * 1000)) * 100;
+  const warn = c.timeLeftMs <= 6000 ? ' warn' : '';
+
+  const cmd = isDaily ? `daily/${s.dailyMeta?.number ?? ''}` : `round/${roundN}`;
+  const promptText = isDaily ? 'today\'s puzzle' : 'the two clues';
+
+  const html = termFrame(`
+    ${hudHtml}
+
+    <div class="timer-row">
+      <div class="timer-bar"><div class="timer-bar-fill${warn}" id="timer-fill" style="width:${pctLeft}%"></div></div>
+    </div>
+
+    <div class="prompt-line"><span class="gp">&gt;</span> <span class="gc">decode</span> ${promptText} → type the data term</div>
+
+    <div class="rebus" aria-label="Rebus puzzle">
+      <div class="rebus-icon a" data-label="${esc(c.puzzle.labelA)}"><pre>${esc(c.puzzle.iconA)}</pre></div>
+      <div class="rebus-plus">+</div>
+      <div class="rebus-icon b" data-label="${esc(c.puzzle.labelB)}"><pre>${esc(c.puzzle.iconB)}</pre></div>
+    </div>
+
+    ${hintHtml}
+    ${inputAreaHtml}
+    ${feedbackHtml}
+    ${actionsLockedHtml}
+
+    ${!c.locked ? `<div class="quit-row"><button class="btn ghost tiny" id="btn-quit">⏏ Quit ${isDaily ? 'daily' : 'run'}</button></div>` : ''}
+  `, { cmd });
+
+  setHTML(html);
+  bindMute(handlers);
+
+  if (!c.locked) {
+    const form = document.getElementById('answer-form');
+    const input = document.getElementById('answer-input');
+    const hintBtn = document.getElementById('btn-hint');
+    const submitBtn = document.getElementById('btn-submit');
+
+    input.addEventListener('input', () => {
+      c.inputValue = input.value;
+      if (handlers.onKeyTick) handlers.onKeyTick();
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handlers.onSubmit(input.value);
+    });
+    submitBtn.addEventListener('click', () => handlers.onSubmit(input.value));
+    if (hintBtn && !c.hintUsed) hintBtn.addEventListener('click', handlers.onHint);
+    setTimeout(() => input.focus(), 0);
+  } else {
+    const next = document.getElementById('btn-next');
+    if (next) next.addEventListener('click', handlers.onNext);
+  }
+
+  const quit = document.getElementById('btn-quit');
+  if (quit) quit.addEventListener('click', handlers.onQuit);
+}
+
+function updateTimerBar(timeLeftMs, totalSeconds) {
+  const fill = document.getElementById('timer-fill');
+  if (!fill) return;
+  const totalMs = (totalSeconds || CONFIG.roundSeconds) * 1000;
+  const pct = Math.max(0, timeLeftMs / totalMs) * 100;
+  fill.style.width = pct + '%';
+  if (timeLeftMs <= 6000) fill.classList.add('warn');
+  else fill.classList.remove('warn');
+}
+
+function renderGameOver(s, handlers) {
+  if (s.mode === 'daily') return renderDailyResult(s, handlers);
+
+  const rank = rankFor(s.score);
+  const html = termFrame(`
+    <div class="over">
+      <h2>// GAME OVER</h2>
+      <div class="subtitle">Run complete. The terminal logs you out.</div>
+
+      <div class="final-stats">
+        <div class="stat"><div class="num">${s.score}</div><div class="lbl">FINAL SCORE</div></div>
+        <div class="stat cyan"><div class="num">${s.correctCount}/${s.deck.length}</div><div class="lbl">CORRECT</div></div>
+        <div class="stat yellow"><div class="num">${s.bestStreak}×</div><div class="lbl">BEST STREAK</div></div>
+      </div>
+
+      <div class="rank">RANK ▸ <span class="badge">${esc(rank.name)}</span></div>
+
+      <div class="actions-row" style="justify-content:center;">
+        <button class="btn ghost" id="btn-home">⌂ Home</button>
+        <button class="btn" id="btn-again">↻ Play again</button>
+      </div>
+    </div>
+  `, { cmd: 'results' });
+
+  setHTML(html);
+  bindMute(handlers);
+  document.getElementById('btn-again').addEventListener('click', handlers.onStart);
+  document.getElementById('btn-home').addEventListener('click', handlers.onHome);
+}
+
+function renderDailyResult(s, handlers) {
+  const meta = s.dailyMeta || {};
+  const solved = meta.result === 'correct';
+  const heading = solved ? '✓ SOLVED' : '✗ MISSED';
+  const headingClass = solved ? 'correct' : 'wrong';
+  const term = esc(meta.puzzle || '');
+  const share = esc(meta.shareText || '');
+
+  const html = termFrame(`
+    <div class="over daily-over">
+      <h2 class="${headingClass}">// ${heading}</h2>
+      <div class="subtitle">Daily Puzzle <strong>#${meta.number ?? '?'}</strong> · ${esc(meta.dateKey || '')}</div>
+
+      <div class="reveal-term big">${term}</div>
+      <div class="reveal-meaning" style="margin: 0 auto 18px; max-width: 520px;">${esc(s.deck[0]?.meaning || '')}</div>
+
+      ${meta.hintUsed ? '<div class="hint show" style="margin: 0 auto 14px; max-width: 520px;"><span class="hint-label">// HINT USED</span></div>' : ''}
+
+      <div class="share-block">
+        <div class="share-head">// SHARE YOUR RESULT</div>
+        <pre id="share-text" class="share-text">${share}</pre>
+        <button class="btn cyan" id="btn-share">⧉ Copy result</button>
+        <div class="share-hint">tomorrow's puzzle unlocks at midnight (local time)</div>
+      </div>
+
+      <div class="actions-row" style="justify-content:center;">
+        <button class="btn ghost" id="btn-home">⌂ Home</button>
+        <button class="btn" id="btn-classic">▶ Play classic mode</button>
+      </div>
+    </div>
+  `, { cmd: 'daily/results' });
+
+  setHTML(html);
+  bindMute(handlers);
+  document.getElementById('btn-home').addEventListener('click', handlers.onHome);
+  document.getElementById('btn-classic').addEventListener('click', handlers.onStart);
+  const shareBtn = document.getElementById('btn-share');
+  shareBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(meta.shareText || '');
+      shareBtn.textContent = '✓ Copied!';
+      setTimeout(() => { shareBtn.textContent = '⧉ Copy result'; }, 1800);
+    } catch {
+      shareBtn.textContent = '⚠ Copy failed — select text manually';
+    }
+  });
+}
+
+function bindMute(handlers) {
+  const btn = document.getElementById('btn-mute');
+  if (btn && handlers.onToggleMute) {
+    btn.addEventListener('click', handlers.onToggleMute);
+  }
+}
+
+function setHTML(html) {
+  const root = document.getElementById('app');
+  root.innerHTML = html;
+}
+
+
+/* ==== main.js ==== */
+// Derive the Data Jargon — entry point.
+// Typed-input flow + classic / daily modes + sound effects.
+
+
+const state = createState();
+let timerHandle = null;
+let advanceHandle = null;
+
+function clearTimer() {
+  if (timerHandle) {
+    clearInterval(timerHandle);
+    timerHandle = null;
+  }
+}
+
+function clearAdvance() {
+  if (advanceHandle) {
+    clearTimeout(advanceHandle);
+    advanceHandle = null;
+  }
+}
+
+function totalSecondsForCurrent() {
+  return state.mode === 'daily' ? CONFIG.dailySeconds : CONFIG.roundSeconds;
+}
+
+function startTimer() {
+  clearTimer();
+  const tick = CONFIG.tickMs;
+  const total = totalSecondsForCurrent();
+  timerHandle = setInterval(() => {
+    if (!state.current || state.current.locked) return;
+    state.current.timeLeftMs -= tick;
+    if (state.current.timeLeftMs <= 0) {
+      state.current.timeLeftMs = 0;
+      clearTimer();
+      timeout(state);
+      sfx.timeout();
+      draw();
+      scheduleAutoAdvance();
+    } else {
+      updateTimerBar(state.current.timeLeftMs, total);
+    }
+  }, tick);
+}
+
+function scheduleAutoAdvance() {
+  clearAdvance();
+  // Daily mode: don't auto-advance — show result screen via explicit Next click.
+  if (state.mode === 'daily') return;
+  const ms = (state.lastResult === 'correct')
+    ? CONFIG.revealMsCorrect
+    : CONFIG.revealMsWrong;
+  advanceHandle = setTimeout(() => {
+    advanceHandle = null;
+    if (state.screen === 'round') {
+      advance(state);
+      draw();
+      if (state.screen === 'round') startTimer();
+      else if (state.screen === 'gameover') {
+        if (state.lives <= 0 || state.correctCount < state.deck.length / 2) sfx.gameover();
+        else sfx.win();
+      }
+    }
+  }, ms);
+}
+
+const handlers = {
+  onStart: () => {
+    clearAdvance();
+    startGame(state);
+    draw();
+    startTimer();
+  },
+  onStartDaily: () => {
+    clearAdvance();
+    startDailyGame(state);
+    draw();
+    // If we jumped straight to result (already played today), no timer needed.
+    if (state.screen === 'round') startTimer();
+  },
+  onSubmit: (text) => {
+    if (!state.current || state.current.locked) return;
+    clearTimer();
+    sfx.submit();
+    submitAnswer(state, text);
+    if (state.lastResult === 'correct') sfx.correct();
+    else sfx.wrong();
+    draw();
+    scheduleAutoAdvance();
+  },
+  onHint: () => {
+    if (!state.current || state.current.locked || state.current.hintUsed) return;
+    sfx.hint();
+    useHint(state);
+    draw();
+  },
+  onNext: () => {
+    clearAdvance();
+    advance(state);
+    draw();
+    if (state.screen === 'round') startTimer();
+    else if (state.screen === 'gameover' && state.mode === 'classic') {
+      if (state.lives <= 0 || state.correctCount < state.deck.length / 2) sfx.gameover();
+      else sfx.win();
+    }
+  },
+  onKeyTick: () => {
+    sfx.key();
+  },
+  onQuit: () => {
+    clearTimer();
+    clearAdvance();
+    state.screen = 'gameover';
+    state.current = null;
+    draw();
+  },
+  onHome: () => {
+    clearTimer();
+    clearAdvance();
+    state.screen = 'splash';
+    state.mode = 'classic';
+    draw();
+  },
+  onToggleMute: () => {
+    toggleMuted();
+    // Update the mute icon without a full re-render by toggling text content.
+    const btn = document.getElementById('btn-mute');
+    if (btn) btn.textContent = isMuted() ? '🔇' : '🔊';
+  }
+};
+
+function draw() {
+  if (state.screen === 'splash') renderSplash(state, handlers);
+  else if (state.screen === 'round') renderRound(state, handlers);
+  else if (state.screen === 'gameover') renderGameOver(state, handlers);
+
+  // Fire the shareable result once, the first draw after entering game-over.
+  if (state.screen === 'gameover') {
+    if (!draw._over) {
+      draw._over = true;
+      const solved = state.correctCount, totalQ = (state.deck && state.deck.length) || 10;
+      const pct = totalQ ? solved / totalQ : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: 'derive-jargon', game: 'Derive the Data Jargon',
+        headline: state.score + ' pts',
+        sub: solved + '/' + totalQ + ' words decoded 🔍',
+        stars: pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : pct > 0 ? 1 : 0, starsMax: 3,
+      });
+    }
+  } else {
+    draw._over = false;
+  }
+}
+
+// Keyboard:
+//   - Splash / GameOver: Enter or Space → start (unless focus is in an input)
+//   - Round (unlocked): Enter is handled by the form submit
+//   - Round (locked):   Enter or Space → next round immediately
+window.addEventListener('keydown', (e) => {
+  if (state.screen === 'round' && state.current && state.current.locked) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handlers.onNext();
+    }
+  } else if (state.screen === 'splash' && (e.key === 'Enter' || e.key === ' ')) {
+    if (!isTextInputFocused()) {
+      e.preventDefault();
+      handlers.onStart();
+    }
+  } else if (state.screen === 'gameover' && (e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault();
+    handlers.onStart();
+  }
+});
+
+function isTextInputFocused() {
+  const el = document.activeElement;
+  return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
+}
+
+draw();
+
+
+
+/* ==== GameMonetize SDK bootstrap ==== */
+const PLATFORM = "site";
+const AD = { enabled: true, gameId: "e3aevp2szk3m32whkqqkbu6ab52g0q1r" };
+let _gmReady = false, _gmPending = null;
+// Enable GameMonetize test-ad mode on localhost / dev origins so ads actually
+// serve during local verification. Real domains (GameMonetize's player,
+// arcade.datacruise.app, etc.) get the production ad stack instead.
+const _gmIsLocalOrigin = /^(127\.0\.0\.1|localhost|0\.0\.0\.0|::1)$/.test(location.hostname);
+if (PLATFORM === "site" && AD.enabled && AD.gameId) {
+  window.SDK_OPTIONS = {
+    gameId: AD.gameId,
+    testing: _gmIsLocalOrigin,
+    debug: _gmIsLocalOrigin,
+    onEvent: function (a) {
+      switch (a && a.name) {
+        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
+        case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
+        case "SDK_GAME_START":              _gmResolve(true); break;
+        case "SDK_ERROR":                   _gmResolve(false); break;
+      }
+    }
+  };
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://api.gamemonetize.com/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, "script", "gamemonetize-sdk");
+}
+function _gmResolve(ok) {
+  if (!_gmPending) return;
+  const g = _gmPending; _gmPending = null;
+  clearTimeout(g.timer);
+  if (typeof g.done === "function") g.done(!!ok);
+}
+function showRewardedAd(onReward) {
+  const done = (ok) => { if (ok && typeof onReward === "function") onReward(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 25000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  setTimeout(() => done(true), 800);
+}
+
+/* ==== Rewarded-ad hook ==== */
+function _handleWatchAdContinue() {
+  if (!(state && state.screen === 'gameover' && state.mode === 'classic' && (state.lives || 0) <= 0)) return;
+  showRewardedAd(() => {
+    state.lives = 1;
+            state.screen = 'round';
+            draw._over = false;
+            draw();
+            startTimer();
+  });
+}
+
+(function () {
+  const seen = new WeakSet();
+  const check = () => {
+    if (!(state && state.screen === 'gameover' && state.mode === 'classic' && (state.lives || 0) <= 0)) return;
+    const actions = document.querySelector(".end-actions, .card .actions, .game-over-actions, .actions-row");
+    if (!actions || seen.has(actions)) return;
+    if (actions.querySelector('[data-action="watch-ad-continue"]')) return;
+    seen.add(actions);
+    const btn = document.createElement("button");
+    btn.className = "gold";
+    btn.setAttribute("data-action", "watch-ad-continue");
+    btn.textContent = "▶ WATCH AD → +1 LIFE";
+    const refNode = actions.firstChild;
+    actions.insertBefore(btn, refNode);
+  };
+  setInterval(check, 400);
+}());
+
+document.addEventListener("click", function (e) {
+  const t = e.target.closest && e.target.closest("[data-action]");
+  if (t && t.getAttribute("data-action") === "watch-ad-continue") {
+    e.preventDefault();
+    _handleWatchAdContinue();
+  }
+}, true);
+
+  </script>
+</body>
+</html>

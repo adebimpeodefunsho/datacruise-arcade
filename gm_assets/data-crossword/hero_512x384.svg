@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B78FE8"/>
+      <stop offset="0.55" stop-color="#9265D8"/>
+      <stop offset="1" stop-color="#6B3EB0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="384" fill="url(#sky)"/>
+
+  <g fill="#FFF7E2" opacity="0.85">
+    <circle cx="70" cy="60" r="2"/>
+    <circle cx="140" cy="42" r="1.5"/>
+    <circle cx="380" cy="52" r="2.4"/>
+    <circle cx="450" cy="82" r="2"/>
+    <circle cx="60" cy="140" r="1.8"/>
+    <circle cx="470" cy="160" r="1.4"/>
+    <circle cx="30" cy="220" r="1.4"/>
+    <circle cx="490" cy="240" r="2"/>
+  </g>
+
+  <!-- Grid — 5 rows × 8 cols × 28px -->
+  <g transform="translate(272, 232)">
+    <rect x="-124" y="-80" width="248" height="160" rx="10" fill="#FFF7E2" stroke="#1A1A1A" stroke-width="2.5"/>
+    <g transform="translate(-116, -72)" font-family="Impact, Helvetica, sans-serif" font-weight="900" font-size="18" fill="#1A1A1A">
+      <rect x="0" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="28" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="56" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="84" y="0" width="28" height="28" fill="#FFF" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="98" y="22" text-anchor="middle">D</text>
+      <rect x="112" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="140" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="168" y="0" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="196" y="0" width="28" height="28" fill="#1A1A1A"/>
+
+      <rect x="0" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="28" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="56" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="84" y="28" width="28" height="28" fill="#FFF" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="98" y="50" text-anchor="middle">A</text>
+      <rect x="112" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="140" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="168" y="28" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="196" y="28" width="28" height="28" fill="#1A1A1A"/>
+
+      <rect x="0" y="56" width="28" height="28" fill="#FFF7E2" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="14" y="78" text-anchor="middle">M</text>
+      <rect x="28" y="56" width="28" height="28" fill="#FFF7E2" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="42" y="78" text-anchor="middle">E</text>
+      <rect x="56" y="56" width="28" height="28" fill="#FFC500" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="70" y="78" text-anchor="middle">D</text>
+      <rect x="84" y="56" width="28" height="28" fill="#FFC500" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="98" y="78" text-anchor="middle">I</text>
+      <rect x="112" y="56" width="28" height="28" fill="#FFC500" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="126" y="78" text-anchor="middle">A</text>
+      <rect x="140" y="56" width="28" height="28" fill="#FFC500" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="154" y="78" text-anchor="middle">N</text>
+      <rect x="168" y="56" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="196" y="56" width="28" height="28" fill="#1A1A1A"/>
+
+      <rect x="0" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="28" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="56" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="84" y="84" width="28" height="28" fill="#FFF" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="98" y="106" text-anchor="middle">T</text>
+      <rect x="112" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="140" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="168" y="84" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="196" y="84" width="28" height="28" fill="#1A1A1A"/>
+
+      <rect x="0" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="28" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="56" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="84" y="112" width="28" height="28" fill="#FFF" stroke="#1A1A1A" stroke-width="1"/>
+      <text x="98" y="134" text-anchor="middle">A</text>
+      <rect x="112" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="140" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="168" y="112" width="28" height="28" fill="#1A1A1A"/>
+      <rect x="196" y="112" width="28" height="28" fill="#1A1A1A"/>
+    </g>
+  </g>
+
+  <!-- Timer bar -->
+  <g transform="translate(272, 336)">
+    <rect x="-140" y="-8" width="280" height="16" rx="8" fill="#FFF" stroke="#1A1A1A" stroke-width="2.5"/>
+    <rect x="-138" y="-6" width="160" height="12" rx="6" fill="#FFC500"/>
+  </g>
+
+  <!-- Magni -->
+  <g transform="translate(90, 320)">
+    <ellipse cx="-15" cy="-15" rx="14" ry="9" fill="#FFF" opacity="0.55" stroke="#1A1A1A" stroke-width="1.4"/>
+    <ellipse cx="15" cy="-15" rx="14" ry="9" fill="#FFF" opacity="0.55" stroke="#1A1A1A" stroke-width="1.4"/>
+    <ellipse cx="0" cy="8" rx="23" ry="27" fill="#FFC500" stroke="#1A1A1A" stroke-width="2.5"/>
+    <path d="M -21 0 L 21 0" stroke="#1A1A1A" stroke-width="3.5"/>
+    <path d="M -21 15 L 21 15" stroke="#1A1A1A" stroke-width="3.5"/>
+    <circle cx="0" cy="-22" r="13" fill="#7A4F2E" stroke="#1A1A1A" stroke-width="2.5"/>
+    <circle cx="-4" cy="-22" r="2.4" fill="#FFF"/>
+    <circle cx="4" cy="-23" r="2.4" fill="#FFF"/>
+  </g>
+
+  <!-- Title -->
+  <g transform="translate(256, 64)">
+    <rect x="-220" y="-36" width="440" height="76" rx="18" fill="#1A1A1A" opacity="0.94"/>
+    <text x="0" y="0" text-anchor="middle" font-family="Impact, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#FFC500" letter-spacing="2">CRACK THE DATA CROSSWORD</text>
+    <text x="0" y="22" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="800" fill="#FFF7E2" letter-spacing="3">DATACRUISE WORD GAMES · #2</text>
+  </g>
+</svg>

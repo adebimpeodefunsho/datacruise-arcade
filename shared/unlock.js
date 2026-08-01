@@ -2,10 +2,10 @@
    DataCruise Arcade — Freemium gate
    - Marks paid cards as locked unless an unlock flag is present.
    - Intercepts clicks on locked cards → opens the unlock modal.
-   - Validates a license key via the /api/validate-license Worker
-     and persists the unlocked state to localStorage.
-   - Includes a built-in dev key so the flow can be tested before
-     the Lemon Squeezy account is live.
+   - Validates a per-buyer Gumroad licence key via the
+     /api/validate-license Worker (which forwards to Gumroad's
+     /v2/licenses/verify) and persists the unlocked state to
+     localStorage on success.
 ============================================================ */
 
 (function () {

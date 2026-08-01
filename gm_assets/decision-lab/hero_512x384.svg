@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE9A8"/>
+      <stop offset="0.55" stop-color="#FFB347"/>
+      <stop offset="1" stop-color="#FF6A1A"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="384" fill="url(#sky)"/>
+
+  <g opacity="0.6">
+    <circle cx="70" cy="52" r="15" fill="#FFF"/>
+    <circle cx="92" cy="50" r="19" fill="#FFF"/>
+    <circle cx="114" cy="54" r="13" fill="#FFF"/>
+    <circle cx="418" cy="70" r="16" fill="#FFF"/>
+    <circle cx="440" cy="66" r="13" fill="#FFF"/>
+  </g>
+
+  <!-- Question card -->
+  <g transform="translate(256, 200)">
+    <rect x="-200" y="-60" width="400" height="118" rx="18" fill="#FFF7E2" stroke="#1A1A1A" stroke-width="3"/>
+    <text x="0" y="-30" text-anchor="middle" font-family="Impact, Helvetica, sans-serif" font-size="14" font-weight="900" fill="#5C2A0F" letter-spacing="2">Q3 · WHICH CHART SHOWS TREND?</text>
+    <g transform="translate(-130, 8)">
+      <rect x="-52" y="-20" width="104" height="56" rx="8" fill="#FF6A1A" stroke="#1A1A1A" stroke-width="2.5"/>
+      <polyline points="-38,20 -18,4 -2,14 16,-8 34,4" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(0, 8)">
+      <rect x="-52" y="-20" width="104" height="56" rx="8" fill="#FFF" stroke="#1A1A1A" stroke-width="2.5"/>
+      <g transform="translate(-28, 10)">
+        <rect x="0" y="0" width="12" height="22" fill="#FFC500" stroke="#1A1A1A" stroke-width="1.3"/>
+        <rect x="16" y="-6" width="12" height="28" fill="#FFC500" stroke="#1A1A1A" stroke-width="1.3"/>
+        <rect x="32" y="4" width="12" height="18" fill="#FFC500" stroke="#1A1A1A" stroke-width="1.3"/>
+        <rect x="48" y="-2" width="12" height="24" fill="#FFC500" stroke="#1A1A1A" stroke-width="1.3"/>
+      </g>
+    </g>
+    <g transform="translate(130, 8)">
+      <rect x="-52" y="-20" width="104" height="56" rx="8" fill="#FFF" stroke="#1A1A1A" stroke-width="2.5"/>
+      <g transform="translate(0, 10)">
+        <circle r="18" fill="#1A1A1A"/>
+        <path d="M 0 0 L 0 -16 A 16 16 0 0 1 13 8 Z" fill="#2BB673"/>
+        <path d="M 0 0 L 13 8 A 16 16 0 0 1 -12 9 Z" fill="#5DC1E8"/>
+        <path d="M 0 0 L -12 9 A 16 16 0 0 1 0 -16 Z" fill="#E84A8B"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Timer bar -->
+  <g transform="translate(256, 290)">
+    <rect x="-140" y="-8" width="280" height="16" rx="8" fill="#FFF" stroke="#1A1A1A" stroke-width="2.5"/>
+    <rect x="-138" y="-6" width="160" height="12" rx="6" fill="#FF6A1A"/>
+    <text x="0" y="28" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="800" fill="#1A1A1A" letter-spacing="2">TIMER · 07s</text>
+  </g>
+
+  <!-- Bug-Bug scientist -->
+  <g transform="translate(100, 330)">
+    <rect x="-28" y="10" width="56" height="46" rx="5" fill="#FFF" stroke="#1A1A1A" stroke-width="2.5"/>
+    <ellipse cx="0" cy="4" rx="22" ry="26" fill="#D44A00" stroke="#1A1A1A" stroke-width="2.5"/>
+    <line x1="-22" y1="4" x2="22" y2="4" stroke="#1A1A1A" stroke-width="2"/>
+    <circle cx="-9" cy="-4" r="3" fill="#1A1A1A"/>
+    <circle cx="9" cy="-6" r="3" fill="#1A1A1A"/>
+    <circle cx="0" cy="-18" r="11" fill="#1A1A1A"/>
+    <circle cx="-3" cy="-21" r="2.4" fill="#FFF"/>
+    <circle cx="3" cy="-22" r="2.4" fill="#FFF"/>
+  </g>
+
+  <!-- Beaker -->
+  <g transform="translate(420, 336)">
+    <path d="M -18 -24 L -18 -16 L -24 24 L 24 24 L 18 -16 L 18 -24 Z" fill="#5DC1E8" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2.5"/>
+    <rect x="-21" y="-26" width="42" height="5" fill="#1A1A1A"/>
+    <circle cx="-2" cy="14" r="3" fill="#FFF" opacity="0.7"/>
+    <circle cx="8" cy="10" r="2.5" fill="#FFF" opacity="0.7"/>
+  </g>
+
+  <!-- Title -->
+  <g transform="translate(256, 64)">
+    <rect x="-210" y="-36" width="420" height="76" rx="18" fill="#1A1A1A" opacity="0.94"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Impact, Helvetica, sans-serif" font-size="38" font-weight="900" fill="#FFC500" letter-spacing="2">DECISION LAB</text>
+    <text x="0" y="28" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="800" fill="#FFF7E2" letter-spacing="3">DATACRUISE ARCADE · GAME 6</text>
+  </g>
+</svg>

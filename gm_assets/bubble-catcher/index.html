@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Bug-Bug's Bubble Catcher</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiNGRkM1MDAiLz4KICA8Y2lyY2xlIGN4PSIyMiIgY3k9IjI4IiByPSIxMiIgZmlsbD0iI0ZGNkExQSIgc3Ryb2tlPSIjMUExQTFBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSI0MiIgY3k9IjM4IiByPSI4IiBmaWxsPSIjMkJCNjczIiBzdHJva2U9IiMxQTFBMUEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxjaXJjbGUgY3g9IjQ2IiBjeT0iMjAiIHI9IjYiIGZpbGw9IiM1REMxRTgiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSIzIi8+Cjwvc3ZnPgo="/>
+  <style>
+/* Bug-Bug's Bubble Catcher — DataCruise Arcade #4.
+   Bright orange + black arcade palette, matching the rest of the series. */
+
+* { box-sizing: border-box; }
+
+:root {
+  --bg-top: #FFE9A8;
+  --bg-bot: #FFB347;
+  --ink: #1A1A1A;
+  --paper: #FFF7E2;
+  --orange: #FF6A1A;
+  --orange-deep: #D44A00;
+  --gold: #FFC500;
+  --green: #2BB673;
+  --sky: #5DC1E8;
+  --sky-deep: #2E9DC9;
+  --shadow: 0 6px 0 0 #1A1A1A;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Fredoka", "Quicksand", "Avenir Next", system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--orange);
+  color: var(--ink);
+  font-weight: 800;
+  padding: 12px 22px;
+  font-size: 18px;
+  box-shadow: 0 4px 0 0 var(--ink);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+}
+button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 0 var(--ink); }
+button:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
+button[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 0 var(--ink); }
+button.ghost { background: var(--paper); color: var(--ink); }
+
+/* ============== TITLE / END SCREENS ============== */
+
+.screen { display: grid; place-items: center; min-height: 80vh; }
+
+.card {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 32px 38px;
+  max-width: 640px;
+  text-align: center;
+}
+.card h1 { font-size: 38px; margin: 12px 0 6px; letter-spacing: 1px; line-height: 1.05; }
+.card .subtitle { margin: 0 0 22px; font-weight: 600; color: #5C2A0F; font-size: 15px; }
+.card .big-bug { width: 140px; height: 120px; display: block; margin: 0 auto 4px; }
+
+.howto {
+  text-align: left;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.howto p { margin: 0 0 6px; }
+.howto p:last-child { margin-bottom: 0; }
+.howto strong { color: var(--orange-deep); }
+
+.prompt { font-weight: 800; letter-spacing: 1.5px; font-size: 13px; color: var(--orange-deep); margin: 14px 0 8px; }
+
+/* Difficulty picker on the title card */
+.difficulty-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 0 8px;
+}
+.diff-pill {
+  font-family: inherit;
+  cursor: pointer;
+  background: #FFF;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 10px 6px 8px;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 4px 0 0 var(--ink);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 140ms ease;
+}
+.diff-pill:hover { transform: translateY(-1px); box-shadow: 0 5px 0 0 var(--ink); }
+.diff-pill:active { transform: translateY(2px); box-shadow: 0 2px 0 0 var(--ink); }
+.diff-pill.active {
+  background: var(--gold);
+  box-shadow: 0 4px 0 0 var(--ink), inset 0 0 0 3px var(--orange);
+}
+.diff-icon { font-size: 26px; line-height: 1; }
+.diff-label { font-size: 13px; letter-spacing: 1.5px; }
+.diff-best { font-size: 13px; letter-spacing: 2px; color: var(--orange-deep); }
+.diff-best .dim { opacity: 0.25; color: var(--ink); }
+
+.stars { font-size: 46px; letter-spacing: 6px; margin: 12px 0 8px; }
+.stars .dim { opacity: 0.25; }
+
+.end-chart {
+  display: block;
+  margin: 8px auto 8px;
+  background: #FFF;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 3px 0 0 var(--ink);
+}
+
+.chart-trophy {
+  margin: 6px 0;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+}
+
+.new-best {
+  margin: 0 0 12px;
+  color: var(--orange-deep);
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 16px;
+  animation: bounce-best 0.6s ease;
+}
+@keyframes bounce-best {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.stats { font-size: 15px; line-height: 1.6; margin: 0 0 16px; }
+.stats b { color: var(--orange-deep); }
+
+.end-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ============== GAME SCREEN ============== */
+
+.game { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-weight: 800;
+  flex-wrap: wrap;
+}
+.topbar .title { font-size: 16px; letter-spacing: 1px; }
+
+.sound-toggle {
+  font-size: 20px;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2A2A2A;
+  color: var(--paper);
+  border: 2px solid var(--paper);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+}
+.sound-toggle:hover { background: #3A3A3A; }
+.sound-toggle:active { transform: scale(0.94); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #2A2A2A;
+  border: 2px solid var(--paper);
+  border-radius: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: background 160ms ease, transform 120ms ease;
+}
+.pill-label { opacity: 0.85; font-weight: 800; }
+
+/* Speed-level badge in the topbar */
+.level-badge { gap: 6px; }
+.level-icon { font-size: 18px; line-height: 1; }
+.level-name { font-size: 14px; letter-spacing: 1.5px; }
+.level-badge.level-easy   { background: #1F5C3A; border-color: var(--paper); }
+.level-badge.level-medium { background: #4A2A00; border-color: var(--paper); }
+.level-badge.level-hard   { background: #7E1F00; border-color: var(--paper); }
+.time-num { font-variant-numeric: tabular-nums; font-size: 16px; min-width: 50px; text-align: right; }
+.time-bar {
+  display: inline-block;
+  width: 130px;
+  height: 12px;
+  border: 2px solid var(--paper);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+  position: relative;
+}
+.time-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--orange));
+  transition: width 100ms linear;
+}
+#time-pill.warn { background: linear-gradient(180deg, #7A4A00 0%, #4A2A00 100%); }
+#time-pill.danger {
+  background: linear-gradient(180deg, #B33000 0%, #7E1F00 100%);
+  animation: pulse-pill 0.7s ease-in-out infinite;
+}
+
+.miss-dots { display: inline-flex; gap: 6px; }
+.miss-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: transparent;
+  transition: background 140ms ease;
+}
+.miss-dot.used { background: var(--orange); border-color: var(--orange-deep); }
+#miss-pill.warn { background: linear-gradient(180deg, #7A4A00 0%, #4A2A00 100%); }
+#miss-pill.danger {
+  background: linear-gradient(180deg, #B33000 0%, #7E1F00 100%);
+  animation: pulse-pill 0.7s ease-in-out infinite;
+}
+@keyframes pulse-pill {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.stage {
+  background: #FFFFFF;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.stage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 110px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============== CHART AXES ============== */
+
+.chart-bg {
+  fill: #FFFCF0;
+  stroke: none;
+}
+.grid-line {
+  stroke: #E6D6A0;
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.7;
+}
+.axis-line {
+  stroke: #1A1A1A;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.axis-arrow {
+  fill: #1A1A1A;
+}
+.axis-tick {
+  stroke: #1A1A1A;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.axis-text {
+  font: 700 12px "Fredoka", sans-serif;
+  fill: #5C4A1F;
+  pointer-events: none;
+}
+.axis-title {
+  font: 900 13px "Fredoka", sans-serif;
+  fill: var(--ink);
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+
+/* ============== SLOTS (sketched bubble chart) ============== */
+
+.slot .slot-ring {
+  fill: none;
+  stroke: #9B8A5A;
+  stroke-width: 3;
+  stroke-dasharray: 7 6;
+  transition: stroke 250ms ease;
+}
+.slot .slot-fill {
+  fill: var(--slot-color, #FF6A1A);
+  stroke: var(--ink);
+  stroke-width: 3.5;
+  opacity: 0;
+  transition: opacity 240ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.slot .slot-num {
+  font: 900 24px "Fredoka", sans-serif;
+  fill: #9B8A5A;
+  pointer-events: none;
+  transition: fill 240ms ease;
+}
+.slot.filled .slot-ring { stroke: transparent; }
+.slot.filled .slot-fill { opacity: 1; }
+.slot.filled .slot-num { fill: var(--ink); }
+
+.slot.just-filled .slot-fill { animation: slot-pop 700ms ease; }
+@keyframes slot-pop {
+  0%   { transform: scale(0.6); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* ============== FALLING BUBBLES ============== */
+
+.bubble { pointer-events: none; }
+.bubble .bubble-body { filter: drop-shadow(0 1px 0 rgba(0,0,0,0.25)); }
+.bubble .bubble-shine { pointer-events: none; }
+
+/* ============== STRINGS ============== */
+
+.string {
+  cursor: pointer;
+  pointer-events: bounding-box;
+  transition: transform 120ms cubic-bezier(0.2, 0.8, 0.3, 1.2);
+}
+.string > * { pointer-events: none; }
+.string-line { transition: stroke 140ms ease; }
+.string-bead {
+  transition: fill 140ms ease, r 140ms ease;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.4));
+}
+.string-bead-shine { pointer-events: none; }
+.string-num {
+  font: 900 20px "Fredoka", sans-serif;
+  fill: var(--paper);
+  pointer-events: none;
+}
+.string:hover .string-bead { fill: #FF8035; }
+.string.pulled .string-bead { fill: var(--gold); }
+.string.pulled .string-line { stroke: #FFE680; }
+
+/* ============== BUG-BUG ============== */
+
+.bug-group { pointer-events: none; }
+.bug-body { fill: var(--orange-deep); stroke: var(--ink); stroke-width: 3; }
+.bug-spot { fill: var(--ink); }
+.bug-head { fill: var(--ink); stroke: var(--ink); stroke-width: 2; }
+.bug-eye { fill: #FFF; }
+.bug-pupil { fill: var(--ink); }
+
+/* ============== FLASH CHIP ============== */
+
+#flash-chip { transition: opacity 220ms ease; }
+
+  </style>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script>
+/* ==== state.js ==== */
+// Bug-Bug's Bubble Catcher — state, constants, simulation tick.
+// rAF loop owns mutation; render only reads.
+
+const VIEW = { W: 960, H: 700 };
+
+// --- Sketched bubble-chart slots (centre of stage) ---
+// 5 slots packed in a Tableau-style cluster: largest at centre with smaller
+// bubbles tucked around it. Sizes vary clearly (S/M/L) so a falling bubble's
+// size disambiguates which slot it's heading for when columns visually overlap.
+// id = number label (1..5). x is the column the matching bubble falls in.
+// IDs are deliberately scrambled across positions (4 / 2 / 5 / 1 / 3) so the
+// player has to read each slot's badge instead of relying on a left-to-right
+// 1..5 pattern.
+const SLOTS = [
+  { id: 4, x: 235, y: 305, r: 38, color: "#FF6A1A" },  // orange  M  — upper-left,  labelled 4
+  { id: 2, x: 350, y: 365, r: 58, color: "#FFC500" },  // gold    L  — central,     labelled 2
+  { id: 5, x: 275, y: 440, r: 24, color: "#2BB673" },  // green   S  — lower-left,  labelled 5
+  { id: 1, x: 475, y: 355, r: 46, color: "#5DC1E8" },  // sky     M+ — upper-right, labelled 1
+  { id: 3, x: 530, y: 440, r: 28, color: "#D44A00" },  // deep-or S+ — lower-right, labelled 3
+];
+
+// Spawn lane y-line (top of stage). Bubbles drop straight down through this column.
+const SPAWN_Y = -40;
+
+// Chart "data area" — the framed region where bubbles live. Axes are drawn
+// along its left (Y) and bottom (X) edges. Chosen to comfortably enclose all
+// slot rings with a little breathing room on every side.
+const CHART_AREA = { left: 130, right: 640, top: 215, bottom: 515 };
+// Tick values shown on each axis. Linearly mapped from CHART_AREA bounds.
+const CHART_AXIS_TICKS = [0, 25, 50, 75, 100];
+
+// Catch zone is a +/- band around the slot's centre y. A bubble is catchable
+// while its centre lies in [slot.y - CATCH_RANGE, slot.y + CATCH_RANGE].
+const CATCH_RANGE = 26;
+
+// Bottom of stage — bubble passes here = miss.
+const FLOOR_Y = VIEW.H + 60;
+
+// --- Bug-Bug + strings ---
+// Five strings hang from the top of the stage right of the chart. Bug-Bug
+// slides along the floor underneath them, parking under whichever string was
+// most recently pulled.
+const STRINGS_TOP_Y = 30;
+const STRINGS_BOTTOM_Y = 500;        // rest length of each string
+const STRINGS_X = [725, 765, 805, 845, 885]; // 5 strings, evenly spaced
+const BUG_Y = 610;                   // fixed Bug-Bug vertical position
+const BUG_EASE_TAU_MS = 90;          // characteristic time for slide easing
+const BUG_INITIAL_X = STRINGS_X[2];  // start under the middle string
+
+// --- Game rules ---
+const MAX_MISSES = 3;
+
+// Speed levels. Each level scales fall velocity, spawn cadence and round
+// length. The Tableau-for-Kids audience needs a forgiving Easy and a punchy
+// Hard. Medium matches the original tuning.
+//   fallVStart/fallVEnd:    falling speed at round start / round end (px/s)
+//   spawnMinStart/MaxStart: random spawn interval at round start (ms)
+//   spawnMinEnd/MaxEnd:     random spawn interval at round end   (ms)
+//   roundMs:                soft time limit before the round auto-ends as a loss
+const DIFFICULTIES = {
+  easy:   { key: "easy",   label: "EASY",   icon: "🐢", fallVStart: 70,  fallVEnd: 110, spawnMinStart: 3000, spawnMaxStart: 3800, spawnMinEnd: 1900, spawnMaxEnd: 2500, roundMs: 75_000 },
+  medium: { key: "medium", label: "MEDIUM", icon: "🫧", fallVStart: 110, fallVEnd: 175, spawnMinStart: 2200, spawnMaxStart: 3000, spawnMinEnd: 1100, spawnMaxEnd: 1700, roundMs: 60_000 },
+  hard:   { key: "hard",   label: "HARD",   icon: "⚡", fallVStart: 160, fallVEnd: 235, spawnMinStart: 1500, spawnMaxStart: 2100, spawnMinEnd: 650,  spawnMaxEnd: 1050, roundMs: 50_000 },
+};
+const DIFFICULTY_ORDER = ["easy", "medium", "hard"];
+const DEFAULT_DIFFICULTY = "medium";
+
+// Flash / pull timers
+const PULL_MS = 260;                  // how long the pull-down animation lasts
+const FLASH_OK_MS = 800;
+const FLASH_MISS_MS = 700;
+const CHEER_MS = 1100;
+
+// ---------- Factory ----------
+
+function createGame(difficultyKey = DEFAULT_DIFFICULTY) {
+  const config = DIFFICULTIES[difficultyKey] || DIFFICULTIES[DEFAULT_DIFFICULTY];
+  return {
+    phase: "playing",          // "playing" | "ended"
+    outcome: null,             // "win" | "lose" | null
+
+    // Difficulty selection. `config` is a snapshot so the running round is
+    // unaffected if the menu changes mid-flight.
+    difficulty: config.key,
+    config,
+
+    // Slot fill state. slots[i].filled flips true when its bubble snaps in.
+    slots: SLOTS.map((s) => ({ ...s, filled: false, justFilledMs: 0 })),
+
+    // Active falling bubbles. Each: { id, slotId, x, y, r, color, alive }
+    bubbles: [],
+    nextBubbleId: 1,
+    spawnTimerMs: 600,         // small initial delay before first bubble
+
+    // String pull animations. Indexed by slotId-1 (0..4).
+    stringPullMs: [0, 0, 0, 0, 0],
+
+    // Bug-Bug's current x (slides toward bugTargetX over time).
+    bugX: BUG_INITIAL_X,
+    bugTargetX: BUG_INITIAL_X,
+
+    // Bookkeeping
+    elapsedMs: 0,
+    misses: 0,
+    catches: 0,
+    cheerMs: 0,
+
+    // Flash chip — feedback at top of stage
+    flashMs: 0,
+    flashKind: null,            // "ok" | "miss" | "wrong"
+    flashText: "",
+
+    // Counters increment so main.js can fire SFX on transitions.
+    catchEvents: 0,
+    missEvents: 0,
+    wrongPullEvents: 0,
+    pressEvents: 0,
+  };
+}
+
+function allFilled(state) {
+  for (const s of state.slots) if (!s.filled) return false;
+  return true;
+}
+
+// ---------- Helpers (internal) ----------
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function progress(state) {
+  return Math.min(1, state.elapsedMs / state.config.roundMs);
+}
+
+function pickNextSlotId(state) {
+  const unfilled = state.slots.filter((s) => !s.filled);
+  if (unfilled.length === 0) return null;
+  // Don't spawn two bubbles for the same slot simultaneously.
+  const busy = new Set(state.bubbles.map((b) => b.slotId));
+  const candidates = unfilled.filter((s) => !busy.has(s.id));
+  const pool = candidates.length ? candidates : unfilled;
+  return pool[Math.floor(Math.random() * pool.length)].id;
+}
+
+function spawnBubble(state) {
+  const slotId = pickNextSlotId(state);
+  if (slotId == null) return;
+  const slot = state.slots.find((s) => s.id === slotId);
+  state.bubbles.push({
+    id: state.nextBubbleId++,
+    slotId,
+    x: slot.x,
+    y: SPAWN_Y,
+    r: slot.r,
+    color: slot.color,
+    alive: true,
+  });
+  // Reschedule next spawn.
+  const p = progress(state);
+  const c = state.config;
+  const min = lerp(c.spawnMinStart, c.spawnMinEnd, p);
+  const max = lerp(c.spawnMaxStart, c.spawnMaxEnd, p);
+  state.spawnTimerMs = min + Math.random() * (max - min);
+}
+
+// ---------- Actions ----------
+
+/** Player pulled string `stringId` (1..5). Resolve against active bubbles. */
+function pullString(state, stringId) {
+  if (state.phase !== "playing") return state;
+  const idx = stringId - 1;
+  if (idx < 0 || idx >= state.stringPullMs.length) return state;
+
+  state.stringPullMs[idx] = PULL_MS;
+  state.pressEvents += 1;
+  state.bugTargetX = STRINGS_X[idx];
+
+  // Look for an active bubble currently in the catch window of this slot.
+  const slot = state.slots.find((s) => s.id === stringId);
+  if (!slot || slot.filled) {
+    flash(state, "wrong", "✕  EMPTY STRING");
+    state.wrongPullEvents += 1;
+    return state;
+  }
+
+  let catchIdx = -1;
+  let bestDy = Infinity;
+  for (let i = 0; i < state.bubbles.length; i++) {
+    const b = state.bubbles[i];
+    if (!b.alive) continue;
+    if (b.slotId !== stringId) continue;
+    const dy = Math.abs(b.y - slot.y);
+    if (dy <= CATCH_RANGE && dy < bestDy) {
+      bestDy = dy;
+      catchIdx = i;
+    }
+  }
+
+  if (catchIdx >= 0) {
+    const b = state.bubbles[catchIdx];
+    b.alive = false; // remove next tick
+    slot.filled = true;
+    slot.justFilledMs = 700;
+    state.catches += 1;
+    state.catchEvents += 1;
+    state.cheerMs = CHEER_MS;
+    flash(state, "ok", `✓  SNAPPED #${slot.id}`);
+    // Remove the bubble from the active list right away.
+    state.bubbles.splice(catchIdx, 1);
+
+    if (allFilled(state)) {
+      state.phase = "ended";
+      state.outcome = "win";
+    }
+  } else {
+    flash(state, "wrong", `✕  STRING #${stringId}`);
+    state.wrongPullEvents += 1;
+  }
+
+  return state;
+}
+
+function flash(state, kind, text) {
+  state.flashKind = kind;
+  state.flashText = text;
+  state.flashMs = kind === "ok" ? FLASH_OK_MS : FLASH_MISS_MS;
+}
+
+// ---------- Tick ----------
+
+function tick(state, dtMs) {
+  if (state.phase !== "playing") {
+    decayTimers(state, dtMs);
+    return state;
+  }
+
+  state.elapsedMs += dtMs;
+
+  // Spawn pacing
+  state.spawnTimerMs -= dtMs;
+  if (state.spawnTimerMs <= 0 && state.slots.some((s) => !s.filled)) {
+    spawnBubble(state);
+  }
+
+  // Move bubbles
+  const v = lerp(state.config.fallVStart, state.config.fallVEnd, progress(state));
+  const dSec = dtMs / 1000;
+  for (let i = state.bubbles.length - 1; i >= 0; i--) {
+    const b = state.bubbles[i];
+    b.y += v * dSec;
+    if (b.y > FLOOR_Y) {
+      state.bubbles.splice(i, 1);
+      state.misses += 1;
+      state.missEvents += 1;
+      flash(state, "miss", `✕  MISSED #${b.slotId}`);
+    }
+  }
+
+  // Slide Bug-Bug toward his target string (exponential ease).
+  if (state.bugX !== state.bugTargetX) {
+    const a = 1 - Math.exp(-dtMs / BUG_EASE_TAU_MS);
+    const next = state.bugX + (state.bugTargetX - state.bugX) * a;
+    state.bugX = Math.abs(next - state.bugTargetX) < 0.25 ? state.bugTargetX : next;
+  }
+
+  // Round end checks
+  if (state.misses >= MAX_MISSES) {
+    state.phase = "ended";
+    state.outcome = "lose";
+  } else if (state.elapsedMs >= state.config.roundMs && !allFilled(state)) {
+    state.phase = "ended";
+    state.outcome = "lose";
+  }
+
+  decayTimers(state, dtMs);
+  return state;
+}
+
+function decayTimers(state, dtMs) {
+  if (state.cheerMs > 0) state.cheerMs = Math.max(0, state.cheerMs - dtMs);
+  if (state.flashMs > 0) state.flashMs = Math.max(0, state.flashMs - dtMs);
+  for (let i = 0; i < state.stringPullMs.length; i++) {
+    if (state.stringPullMs[i] > 0) state.stringPullMs[i] = Math.max(0, state.stringPullMs[i] - dtMs);
+  }
+  for (const s of state.slots) {
+    if (s.justFilledMs > 0) s.justFilledMs = Math.max(0, s.justFilledMs - dtMs);
+  }
+}
+
+// ---------- Scoring ----------
+
+/** Stars from fraction of round remaining at win. 1–3 stars, calibrated per level. */
+function starsForWin(elapsedMs, roundMs) {
+  const frac = (roundMs - elapsedMs) / roundMs;
+  if (frac >= 0.55) return 3;
+  if (frac >= 0.25) return 2;
+  return 1;
+}
+
+
+/* ==== sound.js ==== */
+// Web Audio SFX — synthesised, no external assets.
+// Lazy AudioContext, started inside the first user gesture.
+
+let ctx = null;
+let muted = readMuted();
+
+function readMuted() {
+  try { return localStorage.getItem("datacruise.bubblecatcher.muted") === "1"; }
+  catch { return false; }
+}
+
+function writeMuted() {
+  try { localStorage.setItem("datacruise.bubblecatcher.muted", muted ? "1" : "0"); }
+  catch { /* ignore */ }
+}
+
+function getCtx() {
+  if (muted) return null;
+  if (!ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+  }
+  if (ctx.state === "suspended") ctx.resume();
+  return ctx;
+}
+
+function tone({ freq, dur = 0.12, type = "sine", vol = 0.18, slide = 0, attack = 0.005, when = 0 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const t1 = t0 + dur;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slide) {
+    const endFreq = Math.max(20, freq + slide);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, t1);
+  }
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol, t0 + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t1);
+  osc.connect(gain).connect(c.destination);
+  osc.start(t0);
+  osc.stop(t1 + 0.02);
+}
+
+function noise({ dur = 0.12, vol = 0.15, when = 0, cutoff = 1200 }) {
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime + when;
+  const samples = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, samples, c.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < samples; i++) data[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  const filter = c.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = cutoff;
+  const gain = c.createGain();
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter).connect(gain).connect(c.destination);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+const sfx = {
+  // Quick tug — fires every time the player pulls a string.
+  pull() {
+    tone({ freq: 520, dur: 0.06, type: "square", vol: 0.10, slide: -120 });
+  },
+  // Bubble snapped into its slot — bright triad.
+  catch() {
+    tone({ freq: 659, dur: 0.10, type: "triangle", vol: 0.17 });
+    tone({ freq: 988, dur: 0.10, type: "triangle", vol: 0.16, when: 0.06 });
+    tone({ freq: 1319, dur: 0.16, type: "triangle", vol: 0.14, when: 0.13 });
+  },
+  // Wrong string pulled — soft thud.
+  wrong() {
+    tone({ freq: 230, dur: 0.13, type: "sawtooth", vol: 0.12, slide: -50 });
+  },
+  // Bubble fell past the floor.
+  miss() {
+    tone({ freq: 180, dur: 0.22, type: "sawtooth", vol: 0.13, slide: -90 });
+    noise({ dur: 0.12, vol: 0.08, cutoff: 500 });
+  },
+  // All slots filled.
+  win() {
+    [523, 659, 784, 1047, 1319].forEach((freq, i) => {
+      tone({ freq, dur: 0.18, type: "triangle", vol: 0.18, when: i * 0.10 });
+    });
+  },
+  // Out of misses or out of time.
+  lose() {
+    [392, 330, 262].forEach((freq, i) => {
+      tone({ freq, dur: 0.22, type: "sawtooth", vol: 0.14, when: i * 0.15 });
+    });
+  },
+};
+
+function isMuted() { return muted; }
+
+function toggleMuted() {
+  muted = !muted;
+  writeMuted();
+  return muted;
+}
+
+
+/* ==== render.js ==== */
+// DOM/SVG rendering. innerHTML for title/end. The game shell is built once
+// then patched per frame: bubbles re-rendered, slots class-toggled, strings
+// transformed, Bug-Bug positioned, flash chip + timer updated.
+
+
+// ---------- TITLE SCREEN ----------
+
+function renderTitle({ bestByDifficulty, currentDifficulty }) {
+  const cur = DIFFICULTIES[currentDifficulty] || DIFFICULTIES.medium;
+  const curBest = (bestByDifficulty && bestByDifficulty[currentDifficulty]) || 0;
+  return `
+  <div class="screen">
+    <div class="card">
+      ${bugSvg(140, 120)}
+      <h1>BUG-BUG'S<br>BUBBLE CATCHER</h1>
+      <p class="subtitle">DATACRUISE ARCADE · GAME 4</p>
+      <div class="howto">
+        <p><strong>Goal:</strong> snap every falling bubble into its sketched slot to build a bubble chart.</p>
+        <p><strong>Watch:</strong> bubbles drop from the ceiling, each heading toward one slot. The slot's <b>size</b> and <b>position</b> tell you which one.</p>
+        <p><strong>Pull:</strong> when a bubble lines up with its slot, click the matching numbered <b>string</b> on Bug-Bug's side. Time it right and the bubble snaps in alive.</p>
+        <p><strong>Don't miss:</strong> ${MAX_MISSES} misses or the clock running out = chart stays sketched.</p>
+      </div>
+      <p class="prompt">PICK YOUR SPEED</p>
+      <div class="difficulty-group" role="radiogroup" aria-label="Speed level">
+        ${DIFFICULTY_ORDER.map((k) => renderDifficultyPill(k, k === currentDifficulty, bestByDifficulty?.[k] || 0)).join("")}
+      </div>
+      <p class="prompt">BEST ON ${cur.icon} ${cur.label}: ${renderStarsInline(curBest)}</p>
+      <button data-action="start">START CATCHING</button>
+    </div>
+  </div>`;
+}
+
+function renderDifficultyPill(key, active, best) {
+  const d = DIFFICULTIES[key];
+  return `
+    <button type="button" class="diff-pill ${active ? "active" : ""}" data-action="set-difficulty" data-difficulty="${key}" aria-pressed="${active}">
+      <span class="diff-icon">${d.icon}</span>
+      <span class="diff-label">${d.label}</span>
+      <span class="diff-best">${renderStarsTiny(best)}</span>
+    </button>`;
+}
+
+function renderStarsTiny(n) {
+  if (!n) return `<span class="dim">★★★</span>`;
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return s;
+}
+
+function renderStarsInline(n) {
+  if (!n) return `<span class="dim">★ ★ ★</span>`;
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return s;
+}
+
+// ---------- END SCREEN ----------
+
+function renderEnd({ state, prevBest, bestByDifficulty, currentDifficulty }) {
+  const win = state.outcome === "win";
+  const stars = win ? starsForWin(state.elapsedMs, state.config.roundMs) : 0;
+  const isNewBest = win && stars > prevBest;
+  const seconds = (state.elapsedMs / 1000).toFixed(1);
+  const d = state.config;
+  return `
+  <div class="screen">
+    <div class="card">
+      ${win ? "" : bugSvg(110, 92)}
+      <h1>${win ? "BUBBLE CHART BUILT!" : "ROUND OVER"}</h1>
+      <p class="subtitle">${win ? "Bug-Bug, master of strings." : "The chart stayed sketched."} · ${d.icon} ${d.label}</p>
+      ${renderEndChart(state)}
+      ${win ? `<p class="chart-trophy">🎉 YOU JUST BUILT A BUBBLE CHART! 🎉</p>` : ""}
+      ${renderStarsBig(stars)}
+      ${isNewBest ? `<p class="new-best">NEW BEST ON ${d.label}!</p>` : ""}
+      <div class="stats">
+        Bubbles snapped: <b>${state.catches}</b> / ${SLOTS.length}<br>
+        Misses: <b>${state.misses}</b> / ${MAX_MISSES}<br>
+        Time: <b>${seconds}s</b> / ${(d.roundMs / 1000).toFixed(0)}s
+      </div>
+      <p class="prompt">CHANGE SPEED</p>
+      <div class="difficulty-group" role="radiogroup" aria-label="Speed level">
+        ${DIFFICULTY_ORDER.map((k) => renderDifficultyPill(k, k === currentDifficulty, bestByDifficulty?.[k] || 0)).join("")}
+      </div>
+      <div class="end-actions">
+        <button data-action="replay">PLAY AGAIN</button>
+        <button class="ghost" data-action="back-to-title">TITLE SCREEN</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEndChart(state) {
+  // Scaled-down rendering of the final chart state.
+  const sx = 0.22, sy = 0.22;
+  const w = Math.round(VIEW.W * sx);
+  const h = Math.round((SLOTS.reduce((m, s) => Math.max(m, s.y + s.r), 0) + 30) * sy);
+  let bubbles = "";
+  for (const s of state.slots) {
+    const cx = s.x * sx, cy = s.y * sy, r = s.r * sx;
+    const fill = s.filled ? s.color : "#EEE5C9";
+    const stroke = s.filled ? "#1A1A1A" : "#9B8A5A";
+    const dash = s.filled ? "" : `stroke-dasharray="${(4 * sx).toFixed(2)} ${(4 * sx).toFixed(2)}"`;
+    bubbles += `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="${fill}" stroke="${stroke}" stroke-width="${(2.5).toFixed(2)}" ${dash}/>`;
+    bubbles += `<text x="${cx.toFixed(2)}" y="${(cy + r * 0.18).toFixed(2)}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="${(r * 0.9).toFixed(2)}" fill="${s.filled ? "#1A1A1A" : "#9B8A5A"}">${s.id}</text>`;
+  }
+  return `<svg class="end-chart" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${bubbles}</svg>`;
+}
+
+function renderStarsBig(n) {
+  let s = "";
+  for (let i = 0; i < 3; i++) s += i < n ? "★" : `<span class="dim">★</span>`;
+  return `<div class="stars">${s}</div>`;
+}
+
+// ---------- GAME SCREEN ----------
+
+function renderGameShell(state) {
+  return `
+  <div class="game">
+    <div class="topbar">
+      <div class="title">🫧 BUBBLE CATCHER</div>
+      <div class="pill level-badge level-${state.difficulty}">
+        <span class="pill-label">SPEED</span>
+        <span class="level-icon">${state.config.icon}</span>
+        <span class="level-name">${state.config.label}</span>
+      </div>
+      <div class="pill" id="time-pill">
+        <span class="pill-label">TIME</span>
+        <span class="time-bar"><span class="time-fill" id="time-fill"></span></span>
+        <span class="time-num" id="time-num">${(state.config.roundMs / 1000).toFixed(0)}s</span>
+      </div>
+      <div class="pill" id="miss-pill">
+        <span class="pill-label">MISSES</span>
+        <span class="miss-dots" id="miss-dots">${renderMissDots(state)}</span>
+      </div>
+      <button class="sound-toggle" id="sound-toggle" data-action="toggle-sound" aria-label="Toggle sound">${isMuted() ? "🔇" : "🔊"}</button>
+    </div>
+
+    <div class="stage">
+      <svg viewBox="0 0 ${VIEW.W} ${VIEW.H}" preserveAspectRatio="xMidYMid meet" id="stage-svg">
+        <!-- Backdrop: sky-paper gradient -->
+        <defs>
+          <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFF7E2"/>
+            <stop offset="100%" stop-color="#FFE0A8"/>
+          </linearGradient>
+          <pattern id="dashRing" patternUnits="userSpaceOnUse" width="8" height="8"/>
+        </defs>
+        <rect x="0" y="0" width="${VIEW.W}" height="${VIEW.H}" fill="url(#bgGrad)"/>
+
+        <!-- "Build the chart" label up top -->
+        <g transform="translate(${VIEW.W / 2 - 130}, 40)">
+          <rect x="-110" y="-22" width="220" height="40" rx="14" fill="#1A1A1A"/>
+          <text x="0" y="6" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="20" fill="#FFC500" letter-spacing="2">BUILD THE CHART!</text>
+        </g>
+
+        <!-- Chart frame: data-area background, gridlines, X/Y axes, ticks, labels, titles. -->
+        <g id="axes">${renderAxes()}</g>
+
+        <!-- Sketched bubble chart slots — dashed outlines with number badges. -->
+        <g id="slots">${renderSlots(state)}</g>
+
+        <!-- Falling bubbles layer (re-rendered each frame). -->
+        <g id="bubbles">${renderBubbles(state)}</g>
+
+        <!-- Ceiling beam where strings hang from. -->
+        <line x1="${STRINGS_X[0] - 30}" y1="${STRINGS_TOP_Y - 4}" x2="${STRINGS_X[STRINGS_X.length - 1] + 30}" y2="${STRINGS_TOP_Y - 4}" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round"/>
+
+        <!-- Strings (5). Each is a clickable group: line + bead + numeric label. -->
+        <g id="strings">${renderStrings(state)}</g>
+
+        <!-- Bug-Bug under the strings. Slides horizontally to whichever was pulled last. -->
+        <g id="bug" class="bug-group" transform="translate(${state.bugX}, ${BUG_Y})">
+          <g class="bug-inner">${bugInnerSvg()}</g>
+        </g>
+
+        <!-- Flash chip — top centre, dynamic text. -->
+        <g id="flash-chip" transform="translate(${VIEW.W / 2 + 140}, 40)" opacity="0">
+          <rect id="flash-chip-rect" x="-110" y="-22" width="220" height="40" rx="14" fill="#1A1A1A"/>
+          <text id="flash-chip-text" x="0" y="6" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="900" font-size="18" fill="#FFC500" letter-spacing="1">—</text>
+        </g>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function renderMissDots(state) {
+  let s = "";
+  for (let i = 0; i < MAX_MISSES; i++) {
+    s += `<span class="miss-dot${i < state.misses ? " used" : ""}"></span>`;
+  }
+  return s;
+}
+
+function renderAxes() {
+  const { left: L, right: R, top: T, bottom: B } = CHART_AREA;
+  const xAt = (v) => L + (v / 100) * (R - L);
+  const yAt = (v) => B - (v / 100) * (B - T);
+  let g = "";
+
+  // Data-area background — a slightly brighter paper so the chart "page" reads
+  // as the chart and the rest of the stage reads as scaffolding.
+  g += `<rect class="chart-bg" x="${L}" y="${T}" width="${R - L}" height="${B - T}"/>`;
+
+  // Gridlines — light dashed, drawn first so axes/ticks sit on top.
+  for (const v of CHART_AXIS_TICKS) {
+    if (v === 0) continue;
+    const x = xAt(v);
+    g += `<line class="grid-line" x1="${x}" y1="${T}" x2="${x}" y2="${B}"/>`;
+  }
+  for (const v of CHART_AXIS_TICKS) {
+    if (v === 0) continue;
+    const y = yAt(v);
+    g += `<line class="grid-line" x1="${L}" y1="${y}" x2="${R}" y2="${y}"/>`;
+  }
+
+  // Axes (L-shape) with little arrowheads pointing outward.
+  g += `<line class="axis-line" x1="${L}" y1="${B}" x2="${R + 14}" y2="${B}"/>`;
+  g += `<line class="axis-line" x1="${L}" y1="${B}" x2="${L}" y2="${T - 14}"/>`;
+  g += `<polygon class="axis-arrow" points="${R + 18},${B} ${R + 8},${B - 6} ${R + 8},${B + 6}"/>`;
+  g += `<polygon class="axis-arrow" points="${L},${T - 18} ${L - 6},${T - 8} ${L + 6},${T - 8}"/>`;
+
+  // X ticks + numeric labels.
+  for (const v of CHART_AXIS_TICKS) {
+    const x = xAt(v);
+    g += `<line class="axis-tick" x1="${x}" y1="${B}" x2="${x}" y2="${B + 7}"/>`;
+    g += `<text class="axis-text" x="${x}" y="${B + 22}" text-anchor="middle">${v}</text>`;
+  }
+  // Y ticks + numeric labels.
+  for (const v of CHART_AXIS_TICKS) {
+    const y = yAt(v);
+    g += `<line class="axis-tick" x1="${L - 7}" y1="${y}" x2="${L}" y2="${y}"/>`;
+    g += `<text class="axis-text" x="${L - 11}" y="${y + 5}" text-anchor="end">${v}</text>`;
+  }
+
+  // Axis titles.
+  g += `<text class="axis-title" x="${(L + R) / 2}" y="${B + 44}" text-anchor="middle">VALUE X</text>`;
+  g += `<text class="axis-title" transform="translate(${L - 40}, ${(T + B) / 2}) rotate(-90)" text-anchor="middle">VALUE Y</text>`;
+
+  return g;
+}
+
+function renderSlots(state) {
+  let g = "";
+  for (const s of state.slots) {
+    const cls = s.filled ? "slot filled" : "slot empty";
+    g += `
+      <g class="${cls}" id="slot-${s.id}" style="--slot-color:${s.color}">
+        <circle class="slot-ring" cx="${s.x}" cy="${s.y}" r="${s.r}"/>
+        <circle class="slot-fill" cx="${s.x}" cy="${s.y}" r="${s.r}"/>
+        <text class="slot-num" x="${s.x}" y="${s.y + s.r * 0.34}" text-anchor="middle" font-size="${(s.r * 1.05).toFixed(1)}">${s.id}</text>
+      </g>`;
+  }
+  return g;
+}
+
+function renderBubbles(state) {
+  let g = "";
+  for (const b of state.bubbles) {
+    g += `
+      <g class="bubble" data-bubble-id="${b.id}">
+        <circle class="bubble-shadow" cx="${b.x.toFixed(2)}" cy="${(b.y + 4).toFixed(2)}" r="${b.r.toFixed(2)}" fill="rgba(0,0,0,0.18)"/>
+        <circle class="bubble-body" cx="${b.x.toFixed(2)}" cy="${b.y.toFixed(2)}" r="${b.r.toFixed(2)}" fill="${b.color}" stroke="#1A1A1A" stroke-width="3.5"/>
+        <ellipse class="bubble-shine" cx="${(b.x - b.r * 0.35).toFixed(2)}" cy="${(b.y - b.r * 0.4).toFixed(2)}" rx="${(b.r * 0.32).toFixed(2)}" ry="${(b.r * 0.18).toFixed(2)}" fill="rgba(255,255,255,0.7)"/>
+      </g>`;
+  }
+  return g;
+}
+
+function renderStrings(state) {
+  let g = "";
+  for (let i = 0; i < STRINGS_X.length; i++) {
+    const x = STRINGS_X[i];
+    const id = i + 1;
+    g += `
+      <g class="string" id="string-${id}" data-action="pull" data-string="${id}" transform="translate(0, 0)">
+        <line class="string-line" x1="${x}" y1="${STRINGS_TOP_Y}" x2="${x}" y2="${STRINGS_BOTTOM_Y}" stroke="#FFC500" stroke-width="3" stroke-linecap="round"/>
+        <line class="string-line-glow" x1="${x}" y1="${STRINGS_TOP_Y}" x2="${x}" y2="${STRINGS_BOTTOM_Y}" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
+        <circle class="string-bead" cx="${x}" cy="${STRINGS_BOTTOM_Y}" r="18" fill="#FF6A1A" stroke="#1A1A1A" stroke-width="3"/>
+        <circle class="string-bead-shine" cx="${x - 5}" cy="${STRINGS_BOTTOM_Y - 5}" r="4" fill="rgba(255,255,255,0.75)"/>
+        <text class="string-num" x="${x}" y="${STRINGS_BOTTOM_Y + 6}" text-anchor="middle" font-size="20">${id}</text>
+      </g>`;
+  }
+  return g;
+}
+
+// ---------- LIVE PATCH ----------
+
+function patchGame(state) {
+  // Timer bar + label — proportional thresholds so each level pulses the
+  // pill at the same fraction-remaining instead of a hard-coded second count.
+  const roundMs = state.config.roundMs;
+  const fill = document.getElementById("time-fill");
+  const tnum = document.getElementById("time-num");
+  if (fill && tnum) {
+    const remaining = Math.max(0, roundMs - state.elapsedMs);
+    fill.style.width = `${(remaining / roundMs * 100).toFixed(2)}%`;
+    tnum.textContent = `${(remaining / 1000).toFixed(1)}s`;
+  }
+  const tpill = document.getElementById("time-pill");
+  if (tpill) {
+    const frac = (roundMs - state.elapsedMs) / roundMs;
+    tpill.classList.toggle("warn", frac <= 0.35 && frac > 0.15);
+    tpill.classList.toggle("danger", frac <= 0.15);
+  }
+
+  // Miss dots
+  const dots = document.getElementById("miss-dots");
+  if (dots) dots.innerHTML = renderMissDots(state);
+  const mpill = document.getElementById("miss-pill");
+  if (mpill) {
+    const left = MAX_MISSES - state.misses;
+    mpill.classList.toggle("warn", left === 2);
+    mpill.classList.toggle("danger", left <= 1);
+  }
+
+  // Bubbles — re-render (count is small).
+  const bubbles = document.getElementById("bubbles");
+  if (bubbles) bubbles.innerHTML = renderBubbles(state);
+
+  // Slots — toggle filled class + just-filled pop.
+  for (const s of state.slots) {
+    const node = document.getElementById(`slot-${s.id}`);
+    if (!node) continue;
+    node.classList.toggle("filled", s.filled);
+    node.classList.toggle("empty", !s.filled);
+    node.classList.toggle("just-filled", s.justFilledMs > 0);
+  }
+
+  // String pulls — animate the group down a few px during PULL_MS.
+  for (let i = 0; i < state.stringPullMs.length; i++) {
+    const node = document.getElementById(`string-${i + 1}`);
+    if (!node) continue;
+    const t = state.stringPullMs[i] / PULL_MS;
+    // Sin-curve dip: 0 → 1 → 0 over PULL_MS, peak at the midpoint.
+    const dy = t > 0 ? Math.sin((1 - t) * Math.PI) * 26 : 0;
+    node.setAttribute("transform", `translate(0, ${dy.toFixed(2)})`);
+    node.classList.toggle("pulled", t > 0);
+  }
+
+  // Bug-Bug — slide horizontally (state.bugX) + bob vertically during cheer.
+  const bug = document.getElementById("bug");
+  if (bug) {
+    let dy = 0;
+    if (state.cheerMs > 0) {
+      const t = 1 - state.cheerMs / CHEER_MS;
+      dy -= 24 * Math.sin(t * Math.PI);
+    }
+    bug.setAttribute("transform", `translate(${state.bugX.toFixed(2)}, ${(BUG_Y + dy).toFixed(2)})`);
+  }
+
+  // Flash chip
+  const chip = document.getElementById("flash-chip");
+  const chipText = document.getElementById("flash-chip-text");
+  const chipRect = document.getElementById("flash-chip-rect");
+  if (chip && chipText && chipRect) {
+    if (state.flashMs > 0) {
+      let fillCol;
+      if (state.flashKind === "ok") fillCol = "#FFC500";
+      else if (state.flashKind === "wrong") fillCol = "#FF6A1A";
+      else fillCol = "#5DC1E8";
+      chip.setAttribute("opacity", "1");
+      chipText.textContent = state.flashText;
+      chipText.setAttribute("fill", fillCol);
+    } else {
+      chip.setAttribute("opacity", "0");
+    }
+  }
+}
+
+// ---------- BUG-BUG SVG ----------
+
+// Title/end Bug-Bug — same vertical pose used on the stage. No reaching arms;
+// just a standing bug. He moves under the active string during gameplay.
+function bugSvg(w, h) {
+  return `<svg class="big-bug" viewBox="-50 -70 100 140" width="${w}" height="${h}">${bugInnerSvg()}</svg>`;
+}
+
+function bugInnerSvg() {
+  return `
+    <!-- Body: vertical ellipse -->
+    <ellipse class="bug-body" cx="0" cy="14" rx="30" ry="40"/>
+    <!-- Wing divider -->
+    <line x1="-30" y1="14" x2="30" y2="14" stroke="#1A1A1A" stroke-width="3"/>
+    <!-- Spots -->
+    <circle class="bug-spot" cx="-13" cy="-2" r="4.5"/>
+    <circle class="bug-spot" cx="13" cy="-4" r="4.5"/>
+    <circle class="bug-spot" cx="-13" cy="28" r="4.5"/>
+    <circle class="bug-spot" cx="13" cy="26" r="4.5"/>
+    <!-- Head -->
+    <circle class="bug-head" cx="0" cy="-32" r="16"/>
+    <!-- Eyes -->
+    <circle class="bug-eye" cx="-6" cy="-36" r="4"/>
+    <circle class="bug-eye" cx="6" cy="-36" r="4"/>
+    <circle class="bug-pupil" cx="-6" cy="-38" r="2"/>
+    <circle class="bug-pupil" cx="6" cy="-38" r="2"/>
+    <!-- Smile -->
+    <path d="M -5 -26 Q 0 -22 5 -26" stroke="#1A1A1A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <!-- Antennae -->
+    <path d="M -8 -46 Q -16 -54 -14 -62" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="-14" cy="-62" r="3" fill="#1A1A1A"/>
+    <path d="M 8 -46 Q 16 -54 14 -62" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+    <circle cx="14" cy="-62" r="3" fill="#1A1A1A"/>
+    <!-- Six legs -->
+    <line x1="-24" y1="46" x2="-30" y2="58" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-10" y1="52" x2="-14" y2="64" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="10" y1="52" x2="14" y2="64" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+    <line x1="24" y1="46" x2="30" y2="58" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+  `;
+}
+
+
+/* ==== main.js ==== */
+// Bootstrap, rAF loop, click router.
+
+
+const BEST_KEY = "datacruise.bubblecatcher.best.v2";
+const DIFF_KEY = "datacruise.bubblecatcher.difficulty.v1";
+const app = document.getElementById("app");
+
+let state = null;
+let bestByDifficulty = readBest();        // { easy, medium, hard } -> 0..3
+let currentDifficulty = readDifficulty(); // "easy" | "medium" | "hard"
+let rafId = null;
+
+// Dedup paired click + pointerup gestures.
+let lastActionAt = 0;
+let lastActionKey = "";
+
+renderInitial();
+document.addEventListener("click", onClick);
+// pointerup fallback — SVG <g> hit-testing can drop the synthetic click if
+// mousedown and mouseup land on different children.
+document.addEventListener("pointerup", onClick);
+
+// ---------- top-level render ----------
+
+function renderInitial() {
+  app.innerHTML = renderTitle({
+    bestByDifficulty,
+    currentDifficulty,
+  });
+}
+
+function showGameShell() {
+  app.innerHTML = renderGameShell(state);
+}
+
+function showEnd() {
+  app.innerHTML = renderEnd({
+    state,
+    prevBest: bestByDifficulty[state.difficulty] || 0,
+    bestByDifficulty,
+    currentDifficulty,
+  });
+}
+
+// ---------- click routing ----------
+
+function onClick(e) {
+  const t = e.target.closest("[data-action]");
+  if (!t) return;
+  const action = t.getAttribute("data-action");
+  const stringId = t.getAttribute("data-string");
+  const difficulty = t.getAttribute("data-difficulty");
+  const key = action + (stringId ? `:${stringId}` : "") + (difficulty ? `:${difficulty}` : "");
+
+  // Dedup click+pointerup pair from the same gesture.
+  const now = performance.now();
+  if (key === lastActionKey && now - lastActionAt < 250) return;
+  lastActionAt = now;
+  lastActionKey = key;
+
+  if (action === "set-difficulty" && difficulty && DIFFICULTIES[difficulty]) {
+    currentDifficulty = difficulty;
+    writeDifficulty();
+    // Re-render whichever screen we're on so the active pill updates without
+    // bouncing back to the title.
+    if (state && state.phase === "ended") showEnd();
+    else renderInitial();
+    return;
+  }
+
+  if (action === "start" || action === "replay") {
+    state = createGame(currentDifficulty);
+    showGameShell();
+    startLoop();
+    return;
+  }
+
+  if (action === "back-to-title") {
+    cancelLoop();
+    state = null;
+    renderInitial();
+    return;
+  }
+
+  if (action === "toggle-sound") {
+    const nowMuted = toggleMuted();
+    const btn = document.getElementById("sound-toggle");
+    if (btn) btn.textContent = nowMuted ? "🔇" : "🔊";
+    return;
+  }
+
+  if (action === "pull" && state && state.phase === "playing") {
+    const id = parseInt(stringId, 10);
+    if (!Number.isFinite(id)) return;
+    sfx.pull();
+    pullString(state, id);
+    return;
+  }
+}
+
+// ---------- loop ----------
+
+function startLoop() {
+  cancelLoop();
+  let lastFrameMs = performance.now();
+  let snap = snapshotForSfx(state);
+  const step = (nowMs) => {
+    const dt = Math.min(48, nowMs - lastFrameMs);
+    lastFrameMs = nowMs;
+    if (!state) return;
+    tick(state, dt);
+    playSfxForDelta(snap, state);
+    snap = snapshotForSfx(state);
+    patchGame(state);
+    if (state.phase === "ended") {
+      if (state.outcome === "win") {
+        sfx.win();
+        const stars = starsForWin(state.elapsedMs, state.config.roundMs);
+        const prev = bestByDifficulty[state.difficulty] || 0;
+        if (stars > prev) {
+          bestByDifficulty[state.difficulty] = stars;
+          writeBest();
+        }
+      } else {
+        sfx.lose();
+      }
+      cancelLoop();
+      const rStars = state.outcome === "win" ? starsForWin(state.elapsedMs, state.config.roundMs) : 0;
+      window.DataCruiseResult && DataCruiseResult.ready({
+        slug: "bubble-catcher", game: "Bubble Catcher",
+        headline: state.outcome === "win" ? state.catches + " caught" : "Missed it!",
+        sub: state.outcome === "win" ? "only " + state.misses + " misses 🫧" : "pop them all next time",
+        stars: rStars, starsMax: 3,
+      });
+      // Brief pause so the last snap animation reads before the end card.
+      setTimeout(showEnd, 900);
+      return;
+    }
+    rafId = requestAnimationFrame(step);
+  };
+  rafId = requestAnimationFrame(step);
+}
+
+function snapshotForSfx(s) {
+  return {
+    catchEvents: s.catchEvents,
+    missEvents: s.missEvents,
+    wrongPullEvents: s.wrongPullEvents,
+  };
+}
+
+function playSfxForDelta(prev, cur) {
+  if (cur.catchEvents > prev.catchEvents) sfx.catch();
+  if (cur.missEvents > prev.missEvents) sfx.miss();
+  if (cur.wrongPullEvents > prev.wrongPullEvents) sfx.wrong();
+}
+
+function cancelLoop() {
+  if (rafId != null) cancelAnimationFrame(rafId);
+  rafId = null;
+}
+
+// ---------- storage ----------
+
+function readBest() {
+  const defaults = { easy: 0, medium: 0, hard: 0 };
+  try {
+    const raw = localStorage.getItem(BEST_KEY);
+    if (!raw) return defaults;
+    const parsed = JSON.parse(raw);
+    return {
+      easy: clampStar(parsed.easy),
+      medium: clampStar(parsed.medium),
+      hard: clampStar(parsed.hard),
+    };
+  } catch { return defaults; }
+}
+
+function writeBest() {
+  try { localStorage.setItem(BEST_KEY, JSON.stringify(bestByDifficulty)); }
+  catch { /* ignore */ }
+}
+
+function clampStar(n) {
+  const v = parseInt(n, 10);
+  return Number.isFinite(v) ? Math.max(0, Math.min(3, v)) : 0;
+}
+
+function readDifficulty() {
+  try {
+    const raw = localStorage.getItem(DIFF_KEY);
+    return DIFFICULTY_ORDER.includes(raw) ? raw : DEFAULT_DIFFICULTY;
+  } catch { return DEFAULT_DIFFICULTY; }
+}
+
+function writeDifficulty() {
+  try { localStorage.setItem(DIFF_KEY, currentDifficulty); }
+  catch { /* ignore */ }
+}
+
+
+
+/* ==== GameMonetize SDK bootstrap ==== */
+const PLATFORM = "site";
+const AD = { enabled: true, gameId: "xk0s68gbzszr1m0tvq4zc1jcniryq7u0" };
+let _gmReady = false, _gmPending = null;
+// Enable GameMonetize test-ad mode on localhost / dev origins so ads actually
+// serve during local verification. Real domains (GameMonetize's player,
+// arcade.datacruise.app, etc.) get the production ad stack instead.
+const _gmIsLocalOrigin = /^(127\.0\.0\.1|localhost|0\.0\.0\.0|::1)$/.test(location.hostname);
+if (PLATFORM === "site" && AD.enabled && AD.gameId) {
+  window.SDK_OPTIONS = {
+    gameId: AD.gameId,
+    testing: _gmIsLocalOrigin,
+    debug: _gmIsLocalOrigin,
+    onEvent: function (a) {
+      switch (a && a.name) {
+        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
+        case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
+        case "SDK_GAME_START":              _gmResolve(true); break;
+        case "SDK_ERROR":                   _gmResolve(false); break;
+      }
+    }
+  };
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://api.gamemonetize.com/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, "script", "gamemonetize-sdk");
+}
+function _gmResolve(ok) {
+  if (!_gmPending) return;
+  const g = _gmPending; _gmPending = null;
+  clearTimeout(g.timer);
+  if (typeof g.done === "function") g.done(!!ok);
+}
+function showRewardedAd(onReward) {
+  const done = (ok) => { if (ok && typeof onReward === "function") onReward(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 25000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  setTimeout(() => done(true), 800);
+}
+
+/* ==== Rewarded-ad hook ==== */
+function _handleWatchAdContinue() {
+  if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+  showRewardedAd(() => {
+    state.phase = 'playing';
+            state.outcome = null;
+            state.misses = Math.max(0, (state.misses || 0) - 2);
+            state.elapsedMs = Math.max(0, (state.elapsedMs || 0) - 10000);
+            state.flashMs = 0;
+            state.cheerMs = 0;
+            app.innerHTML = renderGameShell(state);
+            startLoop();
+  });
+}
+
+(function () {
+  const seen = new WeakSet();
+  const check = () => {
+    if (!(state && state.phase === 'ended' && state.outcome === 'lose')) return;
+    const actions = document.querySelector(".end-actions, .card .actions, .game-over-actions, .actions-row");
+    if (!actions || seen.has(actions)) return;
+    if (actions.querySelector('[data-action="watch-ad-continue"]')) return;
+    seen.add(actions);
+    const btn = document.createElement("button");
+    btn.className = "gold";
+    btn.setAttribute("data-action", "watch-ad-continue");
+    btn.textContent = "▶ WATCH AD → 2 CATCHES + 10s";
+    const refNode = actions.firstChild;
+    actions.insertBefore(btn, refNode);
+  };
+  setInterval(check, 400);
+}());
+
+document.addEventListener("click", function (e) {
+  const t = e.target.closest && e.target.closest("[data-action]");
+  if (t && t.getAttribute("data-action") === "watch-ad-continue") {
+    e.preventDefault();
+    _handleWatchAdContinue();
+  }
+}, true);
+
+  </script>
+</body>
+</html>

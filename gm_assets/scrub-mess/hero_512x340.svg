@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="340" viewBox="0 0 512 340">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B78FE8"/>
+      <stop offset="1" stop-color="#6B3EB0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="340" fill="url(#sky)"/>
+
+  <g fill="#FFF7E2" opacity="0.85">
+    <circle cx="70" cy="50" r="1.8"/>
+    <circle cx="140" cy="42" r="1.4"/>
+    <circle cx="380" cy="50" r="2.2"/>
+    <circle cx="450" cy="80" r="1.8"/>
+  </g>
+
+  <!-- Clean words (left) -->
+  <g font-family="Impact, Helvetica, sans-serif" font-size="14" font-weight="900">
+    <g transform="translate(80, 150)">
+      <rect x="-38" y="-12" width="76" height="22" rx="6" fill="#2BB673" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="0" y="4" text-anchor="middle" fill="#1A1A1A" letter-spacing="1">MEAN</text>
+    </g>
+    <g transform="translate(75, 195)">
+      <rect x="-38" y="-12" width="76" height="22" rx="6" fill="#2BB673" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="0" y="4" text-anchor="middle" fill="#1A1A1A" letter-spacing="1">JOIN</text>
+    </g>
+  </g>
+
+  <!-- Messy words (right, tilted) -->
+  <g font-family="Impact, Helvetica, sans-serif" font-size="13" font-weight="900">
+    <g transform="translate(360, 150) rotate(-7)">
+      <rect x="-42" y="-12" width="84" height="22" rx="6" fill="#E84A8B" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="0" y="4" text-anchor="middle" fill="#FFF" letter-spacing="1">MEEN</text>
+    </g>
+    <g transform="translate(390, 200) rotate(5)">
+      <rect x="-46" y="-12" width="92" height="22" rx="6" fill="#E84A8B" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="0" y="4" text-anchor="middle" fill="#FFF" letter-spacing="1">FOOTBALL</text>
+    </g>
+  </g>
+
+  <!-- Trash bin (center-bottom) -->
+  <g transform="translate(256, 258)">
+    <rect x="-58" y="-6" width="116" height="10" rx="3" fill="#5C2A0F" stroke="#1A1A1A" stroke-width="2.5"/>
+    <rect x="-12" y="-13" width="24" height="8" rx="3" fill="#5C2A0F" stroke="#1A1A1A" stroke-width="2.5"/>
+    <path d="M -50 4 L 50 4 L 42 68 L -42 68 Z" fill="#8B4513" stroke="#1A1A1A" stroke-width="2.5"/>
+    <line x1="-44" y1="18" x2="44" y2="18" stroke="#1A1A1A" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-46" y1="34" x2="46" y2="34" stroke="#1A1A1A" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-48" y1="50" x2="48" y2="50" stroke="#1A1A1A" stroke-width="1.5" opacity="0.4"/>
+    <g transform="translate(0, 40)">
+      <path d="M -10 -6 L -3 -12 L -6 -3 Z M 3 -12 L 10 -6 L 6 -3 Z M -3 6 L 3 6 L 0 12 Z" fill="#FFC500"/>
+    </g>
+  </g>
+
+  <!-- Magni bee -->
+  <g transform="translate(88, 275)">
+    <ellipse cx="-13" cy="-13" rx="13" ry="8" fill="#FFF" opacity="0.55" stroke="#1A1A1A" stroke-width="1.2"/>
+    <ellipse cx="13" cy="-13" rx="13" ry="8" fill="#FFF" opacity="0.55" stroke="#1A1A1A" stroke-width="1.2"/>
+    <ellipse cx="0" cy="8" rx="21" ry="25" fill="#FFC500" stroke="#1A1A1A" stroke-width="2.5"/>
+    <path d="M -19 0 L 19 0" stroke="#1A1A1A" stroke-width="3"/>
+    <path d="M -19 14 L 19 14" stroke="#1A1A1A" stroke-width="3"/>
+    <circle cx="0" cy="-19" r="12" fill="#7A4F2E" stroke="#1A1A1A" stroke-width="2.5"/>
+    <circle cx="-4" cy="-20" r="2.4" fill="#FFF"/>
+    <circle cx="4" cy="-21" r="2.4" fill="#FFF"/>
+  </g>
+
+  <!-- Title -->
+  <g transform="translate(256, 60)">
+    <rect x="-220" y="-32" width="440" height="66" rx="18" fill="#1A1A1A" opacity="0.94"/>
+    <text x="0" y="0" text-anchor="middle" font-family="Impact, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#FFC500" letter-spacing="2">SCRUB THE DATA MESS</text>
+    <text x="0" y="22" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="800" fill="#FFF7E2" letter-spacing="3">DATACRUISE WORD GAMES · #4</text>
+  </g>
+</svg>

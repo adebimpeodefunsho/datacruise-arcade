@@ -3,47 +3,63 @@
    ------------------------------------------------------------
    Two concerns:
 
-   1. POST /api/validate-license  — checks the submitted code
-      against the shared UNLOCK_CODE secret.
+   1. POST /api/validate-license  — verifies the submitted key
+      against Gumroad's /v2/licenses/verify. Each buyer gets a
+      UNIQUE licence key from Gumroad; we check that key against
+      the Arcade's product_id. Optional owner-override for support.
    2. Everything else — delegated to the ASSETS binding, which
       serves the static site (index.html, /games/<slug>/..., etc.)
 
-   Why a static code instead of per-buyer licence keys?
-   -------------------------------------------------------------
-   The initial plan was to validate per-buyer keys via Lemon
-   Squeezy, then Gumroad. LS rejected the seller's identity
-   verification, and Gumroad's /v2/licenses/verify endpoint
-   returned "license does not exist" for valid Gumroad-issued
-   keys (their support ticket pending). To unblock launch we
-   switched to a single shared unlock code delivered to every
-   buyer via Gumroad's welcome content. The downside is one
-   buyer can in principle share the code with friends — but at
-   v1 volume the piracy risk is negligible, and rotating the
-   code is a 5-second Cloudflare secret update.
-
-   Configuration via env var set in the Cloudflare dashboard
+   Configuration via env vars set in the Cloudflare dashboard
    (Workers & Pages → datacruise-arcade → Settings → Variables
    and Secrets):
 
-   UNLOCK_CODE  — encrypted secret. The code every buyer receives
-                  in their Gumroad welcome.txt. Stored encrypted
-                  at rest, never logged. Matching is
-                  case-insensitive and whitespace-tolerant so
-                  buyers who mis-capitalise or add extra spaces
-                  still unlock.
+   GUMROAD_PRODUCT_ID   — Optional override. Plain text. The Arcade
+                          product's base64-looking product_id from
+                          Gumroad. Baked in as DEFAULT_PRODUCT_ID
+                          below (Gumroad exposes it publicly on the
+                          product page, so it's not a secret). Set
+                          this env var only if you migrate the
+                          Arcade to a different Gumroad product.
+                          Gumroad REQUIRES product_id — the older
+                          product_permalink field is rejected for
+                          licence-keyed products.
+
+   GUMROAD_MAX_USES     — Optional. Number. If set, blocks a key
+                          once it has been activated on more than
+                          this many devices (Gumroad returns a
+                          usage count with each verify call).
+                          Omit to leave activations open.
+
+   UNLOCK_CODE          — Optional. Secret (encrypted). A PRIVATE
+                          owner-override code — matches case- and
+                          whitespace-insensitively. Keep it secret;
+                          it's for support edge cases (buyer lost
+                          their key, Gumroad is down, etc.). Never
+                          include it in Gumroad's welcome content.
 ============================================================ */
+
+// Gumroad exposes this on the product page, so it isn't a secret. Baking it
+// in means the unlock works with zero env-var setup. Override with a Cloudflare
+// env var GUMROAD_PRODUCT_ID if the Arcade ever migrates to a new product.
+const DEFAULT_PRODUCT_ID = '1TPpVG8FPlhhg1_ylRjoGA==';   // datacruise.gumroad.com/l/wxahk
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'cache-control': 'no-store',
+      'access-control-allow-origin': '*',
+    },
   });
 }
 
 /**
- * Normalise an unlock code for comparison: lowercase, trim,
- * collapse any run of whitespace to a single space.
- * Lets "DataCruise Arcade Unlocked" match "  datacruise   arcade unlocked  ".
+ * Normalise a code for comparison: lowercase, trim, collapse any
+ * run of whitespace to a single space. Only used for the optional
+ * owner-override — Gumroad keys go through verbatim (Gumroad's
+ * own compare is exact).
  */
 function normaliseCode(s) {
   return String(s || '')
@@ -53,6 +69,16 @@ function normaliseCode(s) {
 }
 
 async function handleValidateLicense(request, env) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'access-control-allow-origin': '*',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+      },
+    });
+  }
   if (request.method !== 'POST') {
     return json(405, { valid: false, error: 'Method not allowed.' });
   }
@@ -64,30 +90,61 @@ async function handleValidateLicense(request, env) {
   } catch (_) {
     return json(400, { valid: false, error: 'Invalid request body.' });
   }
-  const submitted = normaliseCode(payload && payload.license_key);
-  if (!submitted) {
-    return json(400, { valid: false, error: 'Missing license_key.' });
+  const key = String((payload && payload.license_key) || '').trim();
+  if (!key) {
+    return json(200, { valid: false, error: 'Please enter your unlock key.' });
   }
 
-  // 2. Check the Worker is configured
-  if (!env.UNLOCK_CODE) {
-    return json(500, {
+  // 2. Owner-override — silent fallback for support cases. Only fires when
+  //    UNLOCK_CODE is set AND matches. Never advertise this to buyers.
+  if (env.UNLOCK_CODE && normaliseCode(key) === normaliseCode(env.UNLOCK_CODE)) {
+    return json(200, { valid: true, source: 'owner' });
+  }
+
+  // 3. Gumroad licence verify. Uses the baked-in product_id by default.
+  const productId = env.GUMROAD_PRODUCT_ID || DEFAULT_PRODUCT_ID;
+
+  const form = new URLSearchParams();
+  form.set('product_id', productId);
+  form.set('license_key', key);
+  form.set('increment_uses_count', 'true');
+
+  let data = {};
+  try {
+    const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: form.toString(),
+    });
+    data = await r.json().catch(() => ({}));
+  } catch (_) {
+    return json(200, {
       valid: false,
-      error:
-        'Unlock service is not configured yet. Please contact support.',
+      error: 'Could not reach the licence server — please try again.',
     });
   }
 
-  // 3. Compare against the configured secret
-  const expected = normaliseCode(env.UNLOCK_CODE);
-  if (submitted === expected) {
-    return json(200, { valid: true });
+  if (!data || !data.success) {
+    return json(200, {
+      valid: false,
+      error: 'That code doesn’t match. Check the email from your purchase.',
+    });
   }
-
-  return json(200, {
-    valid: false,
-    error: 'That code doesn’t match. Check the email from your purchase.',
-  });
+  const p = data.purchase || {};
+  if (p.refunded || p.chargebacked || p.disputed) {
+    return json(200, {
+      valid: false,
+      error: 'This purchase is no longer active.',
+    });
+  }
+  const maxUses = parseInt(env.GUMROAD_MAX_USES || '0', 10);
+  if (maxUses > 0 && typeof data.uses === 'number' && data.uses > maxUses) {
+    return json(200, {
+      valid: false,
+      error: 'This code has already been used on too many devices.',
+    });
+  }
+  return json(200, { valid: true, uses: data.uses || 1 });
 }
 
 /* ============================================================

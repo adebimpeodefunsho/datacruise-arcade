@@ -25,9 +25,15 @@
     "nodejs_compat"
   ],
   "vars": {
-    // UNLOCK_CODE is intentionally NOT here — it's set as an encrypted
-    // secret in the Cloudflare dashboard (Workers & Pages → datacruise-arcade
-    // → Settings → Variables and Secrets) so it stays out of the public
-    // git repo.
+    // Licence-verify config lives in the Cloudflare dashboard rather than in
+    // this repo (Workers & Pages → datacruise-arcade → Settings → Variables
+    // and Secrets):
+    //
+    //   GUMROAD_PRODUCT_ID   — optional override (baked-in default is public,
+    //                          so this is only needed to migrate to a new
+    //                          Gumroad product).
+    //   GUMROAD_MAX_USES     — optional device-activation cap.
+    //   UNLOCK_CODE          — encrypted secret. Private owner-override code
+    //                          for support cases; never advertise it.
   }
 }
