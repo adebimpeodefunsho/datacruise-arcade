@@ -426,4 +426,20 @@ button.ghost {
   }
   .game { width: 100%; }
   .stage svg { max-height: none; }
+
+  /* The "BUG-BUG IS FULL — DROP NOW!" banner is oversized on phones and
+     covers the play area, blocking taps. Shrink it to a small top pill. */
+  .max-warning {
+    top: 6px;
+    gap: 5px;
+    padding: 5px 11px;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    border-width: 2px;
+    border-radius: 9px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    max-width: calc(100vw - 24px);
+    white-space: nowrap;
+  }
+  .max-warning .max-warning-icon { font-size: 13px; }
 }
