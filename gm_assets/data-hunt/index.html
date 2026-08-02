@@ -1960,7 +1960,10 @@ function startGame(difficulty) {
   startScreen.classList.add('hidden');
   gameScreen.classList.remove('hidden');
   ensureAudio();
-  startSession();
+  // Preroll interstitial (fired on the difficulty-button gesture), then start
+  // the first session once the ad finishes. This is the ad request the
+  // GameMonetize review looks for.
+  showInterstitial(startSession);
 }
 
 function startSession() {
@@ -2075,7 +2078,8 @@ nextBtn.addEventListener('click', () => {
   if (state.sessionIdx >= state.gameSessions.length) {
     showGameEnd();
   } else {
-    startSession();
+    // Interstitial at the natural break between sessions (SDK caps frequency).
+    showInterstitial(startSession);
   }
 });
 
@@ -2371,6 +2375,22 @@ function showRewardedAd(onReward) {
     return;
   }
   setTimeout(() => done(true), 800);
+}
+
+/* Fire-and-forget interstitial used as a PREROLL (game start) and between
+   sessions — so an ad request actually starts during normal play. Calls
+   `after` once the ad finishes (SDK_GAME_START), on the safety timeout, or
+   immediately if the SDK isn't ready / has no fill. The SDK frequency-caps
+   these, so back-to-back sessions won't spam ads. */
+function showInterstitial(after) {
+  const go = () => { if (typeof after === "function") after(); };
+  if (_gmReady && typeof sdk !== "undefined" && sdk && typeof sdk.showBanner === "function") {
+    _gmPending = { done: go, earned: false, adShown: false,
+                     timer: setTimeout(() => _gmResolve(true), 20000) };
+    try { sdk.showBanner(); } catch (e) { _gmResolve(true); }
+    return;
+  }
+  go();
 }
 
 /* ==== Rewarded-ad hook ==== */
