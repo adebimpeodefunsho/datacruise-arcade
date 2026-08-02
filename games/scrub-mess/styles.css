@@ -671,7 +671,14 @@ body {
   .hud-right { gap: 6px; }
   .timer { min-width: 60px; font-size: 22px; }
   .btn-ghost-sm { padding: 5px 8px; font-size: 11px; }
-  .playfield { grid-template-columns: 1fr 122px; }
-  .bin { width: 100px; height: 126px; }
-  .magni-side { width: 52px; height: 52px; }
+  /* Stack the bin BELOW the heap so the word pile gets the full phone
+     width — tiles then lay out in readable rows instead of piling up. */
+  .playfield { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .bin-area {
+    flex-direction: row; justify-content: center; align-items: center;
+    gap: 18px; padding: 6px 8px 8px; background: none;
+  }
+  .magni-side { width: 40px; height: 40px; }
+  .bin { width: 74px; height: 90px; }
+  .tile { font-size: 13px; padding: 4px 9px; }
 }

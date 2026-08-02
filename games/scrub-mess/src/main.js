@@ -182,72 +182,69 @@ function renderResultPanel() {
 function layoutHeap() {
   const heap = document.getElementById('heap');
   if (!heap) return;
-  const rect = heap.getBoundingClientRect();
-  const W = rect.width;
-  const H = rect.height;
-
-  // Layout items in rows, narrower at the top (mountain shape).
-  // We sort items by length so wider tiles tend to sit on lower rows.
-  const sorted = [...state.items].sort((a, b) => b.text.length - a.text.length);
-  const n = sorted.length;
-  // More rows = a taller mountain. Use up the available vertical space.
-  const rows = Math.max(5, Math.ceil(Math.sqrt(n * 1.4)));
-  const bottomPadding = 12;
-  const rowHeight = Math.max(56, (H - bottomPadding * 2) / rows);
-
-  // Distribute items across rows — more on the bottom rows.
-  // Bottom-heavy weighting: row i (from top, 0..rows-1) gets count proportional to (i+1).
-  const weights = [];
-  let totalW = 0;
-  for (let i = 0; i < rows; i++) { weights[i] = (i + 1); totalW += weights[i]; }
-  const rowCounts = weights.map(w => Math.max(1, Math.round(n * w / totalW)));
-  // Adjust to match n exactly.
-  let diff = n - rowCounts.reduce((a, b) => a + b, 0);
-  let idx = rows - 1;
-  while (diff !== 0) {
-    rowCounts[idx] += Math.sign(diff);
-    idx = (idx - 1 + rows) % rows;
-    diff = n - rowCounts.reduce((a, b) => a + b, 0);
-  }
+  const W = heap.clientWidth;
+  const H = heap.clientHeight;
 
   heap.innerHTML = '';
-  let cursor = 0;
-  for (let r = 0; r < rows; r++) {
-    const count = rowCounts[r];
-    // Row r from top: row 0 = peak (narrowest), row rows-1 = base (widest).
-    const yFromBottom = (rows - 1 - r) * rowHeight + bottomPadding;
-    const top = H - yFromBottom - rowHeight;
 
-    // Width shrinks toward the top.
-    const widthFrac = 0.45 + 0.55 * (r / Math.max(1, rows - 1));
-    const rowWidth = W * widthFrac;
-    const xStart = (W - rowWidth) / 2;
-    const slot = rowWidth / count;
+  // Build every tile first so we can measure its real rendered width, then
+  // flow-pack them into rows by width so they NEVER overlap (the old
+  // algorithm forced a fixed count per row and piled them up on narrow
+  // phones). Order is shuffled for a scattered "mess" feel.
+  const items = [...state.items].sort(() => Math.random() - 0.5);
+  const gapX = 8, gapY = 10, padX = 8, padTop = 12, padBottom = 14;
 
-    for (let k = 0; k < count; k++) {
-      const item = sorted[cursor++];
-      if (!item) break;
-      const jitterX = (Math.random() - 0.5) * Math.min(18, slot * 0.45);
-      const jitterY = (Math.random() - 0.5) * 10;
-      const rot = (Math.random() - 0.5) * 14;
-      const x = xStart + slot * k + slot / 2 + jitterX;
-      const y = top + jitterY;
+  const built = items.map((item) => {
+    const tile = document.createElement('button');
+    // Colour each tile from a hash of its TEXT — vibrant "paper scrap" look,
+    // deliberately NOT tied to messy/clean so it never hints the answer.
+    let _h = 0;
+    for (let k = 0; k < item.text.length; k++) _h = (_h * 31 + item.text.charCodeAt(k)) >>> 0;
+    tile.className = 'tile tile-c' + (_h % 8);
+    tile.type = 'button';
+    tile.dataset.id = item.id;
+    tile.innerHTML = `<span class="tile-text">${escapeHtml(item.text)}</span>`;
+    tile.addEventListener('click', (e) => handleTileClick(e, item));
+    heap.appendChild(tile);
+    return tile;
+  });
 
-      const tile = document.createElement('button');
-      // Colour each tile from a hash of its TEXT — vibrant "paper scrap" look,
-      // deliberately NOT tied to messy/clean so it never hints the answer.
-      let _h = 0;
-      for (let k = 0; k < item.text.length; k++) _h = (_h * 31 + item.text.charCodeAt(k)) >>> 0;
-      tile.className = 'tile tile-c' + (_h % 8);
-      tile.type = 'button';
-      tile.dataset.id = item.id;
-      tile.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0) rotate(${rot}deg)`;
-      tile.style.zIndex = String(100 + r);
-      tile.innerHTML = `<span class="tile-text">${escapeHtml(item.text)}</span>`;
-      tile.addEventListener('click', (e) => handleTileClick(e, item));
-      heap.appendChild(tile);
+  // Pack into rows using measured widths.
+  const rowsBuf = [];
+  let cur = [], x = padX, rowH = 0;
+  for (const tile of built) {
+    const tw = tile.offsetWidth, th = tile.offsetHeight;
+    if (cur.length && x + tw > W - padX) {
+      rowsBuf.push({ items: cur, h: rowH });
+      cur = []; x = padX; rowH = 0;
     }
+    cur.push({ tile, tw, th });
+    x += tw + gapX;
+    rowH = Math.max(rowH, th);
   }
+  if (cur.length) rowsBuf.push({ items: cur, h: rowH });
+
+  // Spread the rows down the heap (a loose pile), clamped to the height.
+  const totalH = rowsBuf.reduce((s, r) => s + r.h, 0);
+  const slack = Math.max(0, H - padTop - padBottom - totalH);
+  const vGap = rowsBuf.length > 1
+    ? Math.min(gapY + 12, slack / (rowsBuf.length - 1))
+    : gapY;
+
+  let y = padTop;
+  rowsBuf.forEach((row, ri) => {
+    const rowWidth = row.items.reduce((s, it) => s + it.tw, 0) + gapX * (row.items.length - 1);
+    let cx = Math.max(padX, (W - rowWidth) / 2);
+    row.items.forEach((it) => {
+      const jy = (Math.random() - 0.5) * 5;
+      const rot = (Math.random() - 0.5) * 7;
+      it.tile.style.transform =
+        `translate(${Math.round(cx)}px, ${Math.round(y + jy)}px) rotate(${rot}deg)`;
+      it.tile.style.zIndex = String(100 + ri);
+      cx += it.tw + gapX;
+    });
+    y += row.h + vGap;
+  });
 
   // If we relayout during reveal (e.g. window resize), re-apply reveal styling.
   if (state.phase === 'reveal') revealHeap();
