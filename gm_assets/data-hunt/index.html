@@ -2344,7 +2344,16 @@ if (PLATFORM === "site" && AD.enabled && AD.gameId) {
     debug: _gmIsLocalOrigin,
     onEvent: function (a) {
       switch (a && a.name) {
-        case "SDK_READY":                   _gmReady = true; break;
+        case "SDK_READY":
+          _gmReady = true;
+          // Fire an ad request the moment the SDK is ready — on load, before any
+          // interaction — so GameMonetize's review (which just opens the game and
+          // waits) sees the request start. The SDK frequency-caps this against the
+          // in-game interstitials.
+          setTimeout(function () {
+            try { if (window.sdk && typeof sdk.showBanner === "function") sdk.showBanner(); } catch (e) {}
+          }, 500);
+          break;
         case "SDK_GAME_PAUSE":               if (_gmPending) _gmPending.adShown = true; break;
         case "SDK_REWARDED_WATCH_COMPLETE": if (_gmPending) _gmPending.earned = true; break;
         case "SDK_GAME_START":              _gmResolve(true); break;
