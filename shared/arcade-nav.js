@@ -103,3 +103,13 @@
     inject();
   }
 })();
+
+/* Offline support: every game page loads this file, so it is the one place
+   that reaches all 11 games without editing each of them. */
+(function () {
+  if (document.querySelector('script[src="/shared/sw-register.js"]')) return;
+  var t = document.createElement('script');
+  t.src = '/shared/sw-register.js';
+  t.defer = true;
+  document.head.appendChild(t);
+})();
