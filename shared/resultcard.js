@@ -446,6 +446,33 @@
     });
   }
 
+  /* The results screens do not scroll — they are fixed-height, centred
+     layouts — so anything this fixed button covers is simply unreachable.
+     On Pie Spinner it sat on 26px of the 55px "TITLE SCREEN" button.
+     Lift it until it clears every visible button and link, in small steps,
+     and give up rather than climb into the header. */
+  function keepClear(fab) {
+    var GAP = 10, STEP = 22, LIMIT = 10;
+    for (var i = 0; i < LIMIT; i++) {
+      var z = fab.getBoundingClientRect();
+      var clash = false;
+      var others = document.querySelectorAll('button, a[href], [role="button"]');
+      for (var j = 0; j < others.length; j++) {
+        var e = others[j];
+        if (e === fab || fab.contains(e) || e.contains(fab)) continue;
+        var r = e.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        if (r.left < z.right + GAP && r.right + GAP > z.left &&
+            r.top < z.bottom + GAP && r.bottom + GAP > z.top) { clash = true; break; }
+      }
+      if (!clash) return;
+      var bottom = parseFloat(window.getComputedStyle(fab).bottom) || 22;
+      /* never climb past halfway up the screen */
+      if (bottom + STEP > window.innerHeight / 2) return;
+      fab.style.bottom = (bottom + STEP) + 'px';
+    }
+  }
+
   function showFab(o) {
     injectStyle();
     var old = document.querySelector('.dc-res-fab'); if (old) old.remove();
@@ -454,6 +481,7 @@
     fab.className = 'dc-res-fab';
     fab.innerHTML = '<span aria-hidden="true">📸</span><span>Share my score</span>';
     document.body.appendChild(fab);
+    keepClear(fab);
     celebrate(fab);
     fab.addEventListener('click', function () {
       var canvas = drawCard(o);
