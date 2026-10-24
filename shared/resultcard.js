@@ -265,6 +265,11 @@
       'font-family:' + FAM + ';font-weight:900;font-size:19px;box-shadow:0 6px 0 0 #0e0e10;',
       '-webkit-tap-highlight-color:transparent;animation:dc-pop .4s ease, dc-bob 1.8s ease-in-out .5s infinite;}',
       '.dc-res-fab:active{transform:translateX(-50%) translateY(3px);box-shadow:0 2px 0 0 #0e0e10;}',
+      /* fallback when the screen is too full to clear: a corner badge */
+      '.dc-res-fab-mini{left:auto;right:12px;transform:none;padding:0;font-size:20px;'
+      + 'min-width:44px;min-height:44px;justify-content:center;}',
+      '.dc-res-fab-mini:active{transform:translateY(3px);}',
+      '.dc-res-fab-mini span:last-child{display:none;}',
       '@keyframes dc-pop{from{transform:translateX(-50%) scale(.6);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}',
       '@keyframes dc-bob{0%,100%{margin-bottom:0}50%{margin-bottom:8px}}',
       '.dc-res-ov{position:fixed;inset:0;z-index:2147483603;display:none;align-items:center;justify-content:center;',
@@ -447,30 +452,64 @@
   }
 
   /* The results screens do not scroll — they are fixed-height, centred
-     layouts — so anything this fixed button covers is simply unreachable.
-     On Pie Spinner it sat on 26px of the 55px "TITLE SCREEN" button.
-     Lift it until it clears every visible button and link, in small steps,
-     and give up rather than climb into the header. */
-  function keepClear(fab) {
-    var GAP = 10, STEP = 22, LIMIT = 10;
-    for (var i = 0; i < LIMIT; i++) {
-      var z = fab.getBoundingClientRect();
-      var clash = false;
-      var others = document.querySelectorAll('button, a[href], [role="button"]');
-      for (var j = 0; j < others.length; j++) {
-        var e = others[j];
-        if (e === fab || fab.contains(e) || e.contains(fab)) continue;
-        var r = e.getBoundingClientRect();
-        if (!r.width || !r.height) continue;
-        if (r.left < z.right + GAP && r.right + GAP > z.left &&
-            r.top < z.bottom + GAP && r.bottom + GAP > z.top) { clash = true; break; }
+     layouts — so anything this fixed button covers is unreachable or
+     unreadable. Pie Spinner put it on 26px of the "TITLE SCREEN" button;
+     Scrub the Mess put it on "Mistakes" and "Best streak".
+
+     Try to find it a clear spot by sliding it up from the bottom. If the big
+     pill will not fit, shrink to an icon badge — which fits almost anywhere —
+     and search again rather than guessing a corner, because the corners are
+     not reliably empty either (the badge first landed on Scrub's QUIT). */
+  /* Everything the share button must not sit on: the screen's controls, and
+     the leaf elements that actually carry words (not their wrappers). */
+  function obstacles(fab) {
+    var out = [];
+    var all = document.querySelectorAll('button, a[href], [role="button"], p, span, strong, b, div, h1, h2, h3');
+    for (var i = 0; i < all.length; i++) {
+      var e = all[i];
+      if (e === fab || fab.contains(e) || e.contains(fab)) continue;
+      var isControl = e.tagName === 'BUTTON' || e.tagName === 'A' || e.getAttribute('role') === 'button';
+      if (!isControl) {
+        if (e.children.length) continue;
+        if (!(e.textContent || '').trim()) continue;
       }
-      if (!clash) return;
-      var bottom = parseFloat(window.getComputedStyle(fab).bottom) || 22;
-      /* never climb past halfway up the screen */
-      if (bottom + STEP > window.innerHeight / 2) return;
-      fab.style.bottom = (bottom + STEP) + 'px';
+      var r = e.getBoundingClientRect();
+      if (r.width < 18 || r.height < 10) continue;
+      if (r.bottom < 0 || r.top > window.innerHeight) continue;
+      out.push(r);
     }
+    return out;
+  }
+
+  function fits(fab) {
+    var GAP = 8, z = fab.getBoundingClientRect();
+    var list = obstacles(fab);
+    for (var j = 0; j < list.length; j++) {
+      var r = list[j];
+      if (r.left < z.right + GAP && r.right + GAP > z.left &&
+          r.top < z.bottom + GAP && r.bottom + GAP > z.top) return false;
+    }
+    return true;
+  }
+
+  function search(fab, from, to, step) {
+    for (var b = from; b <= to; b += step) {
+      fab.style.bottom = b + 'px';
+      if (fits(fab)) return true;
+    }
+    return false;
+  }
+
+  function keepClear(fab) {
+    if (search(fab, 22, 130, 20)) return true;
+    fab.classList.add('dc-res-fab-mini');
+    /* the words are hidden in this form, so the button needs them spoken */
+    fab.setAttribute('aria-label', 'Share my score');
+    fab.setAttribute('title', 'Share my score');
+    if (search(fab, 14, Math.max(160, window.innerHeight - 160), 18)) return true;
+    /* Still nowhere — leave it low and small, where it covers least. */
+    fab.style.bottom = '14px';
+    return false;
   }
 
   function showFab(o) {
