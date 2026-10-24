@@ -319,3 +319,13 @@ button.ghost[disabled] { box-shadow: none; }
    — a button hidden under a button. This bar only exists once a game is
    running, which is why the menu screens measured clean. */
 .topbar { padding-top: 60px; }
+
+/* Narrow phones. The topbar is a flex row — title, spins-left pill, sound —
+   and flex items default to min-width:auto, so none of them would give way:
+   at 320px the bar came to 321px inside a 296px column and ran off the
+   right edge. Let it wrap and let the parts shrink. 360px and up are
+   unaffected. */
+@media (max-width: 420px) {
+  .topbar { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+  .topbar > * { min-width: 0; }
+}
