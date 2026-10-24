@@ -501,6 +501,10 @@
   }
 
   function keepClear(fab) {
+    /* start from scratch each pass, so a later check can restore the full
+       pill if whatever was in the way has gone */
+    fab.classList.remove('dc-res-fab-mini');
+    fab.style.top = 'auto';
     if (search(fab, 22, 130, 20)) return true;
     fab.classList.add('dc-res-fab-mini');
     /* the words are hidden in this form, so the button needs them spoken */
@@ -520,7 +524,18 @@
     fab.className = 'dc-res-fab';
     fab.innerHTML = '<span aria-hidden="true">📸</span><span>Share my score</span>';
     document.body.appendChild(fab);
+    /* Check more than once. Some games animate their result panel in after
+       this button appears — Bubble Catcher's PLAY AGAIN and TITLE SCREEN did
+       not exist yet on the first pass, so the button stayed at 22px and
+       landed on both. Re-check as the screen settles, and again if the
+       window changes shape. */
     keepClear(fab);
+    var recheck = function () { if (document.body.contains(fab)) keepClear(fab); };
+    setTimeout(recheck, 700);
+    setTimeout(recheck, 1800);
+    setTimeout(recheck, 3200);
+    window.addEventListener('resize', recheck);
+    window.addEventListener('orientationchange', recheck);
     celebrate(fab);
     fab.addEventListener('click', function () {
       var canvas = drawCard(o);
