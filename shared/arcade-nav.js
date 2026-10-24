@@ -80,6 +80,9 @@
       align-items: center;
       gap: 6px;
       padding: 8px 14px 8px 10px;
+      /* 44px is what a finger needs; this sits on every game page. */
+      min-height: 44px;
+      box-sizing: border-box;
       background: #ff6a00;
       color: #fff;
       font-family: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;

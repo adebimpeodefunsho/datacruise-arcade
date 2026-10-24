@@ -157,8 +157,8 @@ body {
   background: transparent;
   border: 1px solid var(--border-hi);
   color: var(--text-dim);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 4px;
   cursor: pointer;
   font-family: var(--mono);
@@ -520,3 +520,11 @@ body {
   box-shadow: 0 1px 0 var(--edge); }
 
 .mute-btn[disabled] { box-shadow: none; }
+
+/* 44px is what a finger needs — these measured 19–43px on a phone. */
+.mute-btn { min-height: 44px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; }
+
+/* 44px is what a finger needs — these measured 19–43px on a phone. */
+.btn { min-height: 44px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; }

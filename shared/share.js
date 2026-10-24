@@ -70,6 +70,8 @@
       position: fixed; top: 12px; right: 12px; z-index: 2147483601;
       display: inline-flex; align-items: center; gap: 7px;
       padding: 8px 14px 8px 12px;
+      /* 44px is what a finger needs; this sits on every game page. */
+      min-height: 44px; box-sizing: border-box;
       background: #ffd23f; color: #0e0e10;
       font-family: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
       font-weight: 800; font-size: 14px; letter-spacing: 0.01em;

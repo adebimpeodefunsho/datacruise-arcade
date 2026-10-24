@@ -710,3 +710,15 @@ body {
 .diff-btn:not([disabled]):active { transform: translateY(3px);
   box-shadow: 0 1px 0 var(--edge); }
 .diff-btn[disabled] { box-shadow: none; }
+
+/* 44px is what a finger needs — these measured 19–43px on a phone. */
+.btn-ghost-sm { min-height: 44px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; }
+
+/* 44px is what a finger needs — these measured 19–43px on a phone. */
+.diff-btn { min-height: 44px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; }
+
+/* 44px is what a finger needs — these measured 40–43px on a phone. */
+.btn-primary, .btn-ghost { min-height: 44px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; }
