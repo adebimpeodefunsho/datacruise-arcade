@@ -737,3 +737,13 @@ body {
   height: auto;
   min-height: 100vh;
 }
+
+/* Mobile fit, narrow phones. The HUD is a flex row whose children keep their
+   natural width — flex items default to min-width:auto — so on a 360px
+   screen it ran 30px past its own column and the QUIT button was clipped.
+   Let it wrap and let the parts shrink. 375px and up are unaffected. */
+@media (max-width: 420px) {
+  .hud { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+  .hud > *, .hud-left, .hud-right { min-width: 0; }
+  .hud-right { margin-left: auto; }
+}

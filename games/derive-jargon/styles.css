@@ -1087,3 +1087,11 @@ body {
 
 /* 44px square — it measured 31px wide. */
 .mute-btn { min-width: 44px; }
+
+/* The terminal path would not shrink, so it pushed the 44px mute button 9px
+   off the right edge of a 375px screen, where .term's overflow:hidden then
+   clipped it. A flex item defaults to min-width:auto — it refuses to go
+   narrower than its own text — so it needs min-width:0 before it will give
+   way. It now truncates and the button stays on screen. */
+.term-bar .path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.term-bar .mute-btn { flex: none; }

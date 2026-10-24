@@ -480,7 +480,17 @@ body {
   .term-body { padding: 18px 12px 22px; }
   .hud { grid-template-columns: repeat(3, 1fr); }
   .hud-cell:nth-child(4) { display: none; }
-  .grid { grid-template-columns: repeat(10, 28px); grid-auto-rows: 28px; gap: 2px; padding: 6px; }
+  /* Fluid cells below 480px. A fixed 28px made the grid 312px wide — wider
+     than a 320px screen once the page padding is counted — so the last
+     column was clipped by body{overflow-x:hidden} and could not be tapped.
+     The min() keeps 28px wherever it fits, so 375px and up are unchanged. */
+  .grid {
+    --xcell: min(28px, (100vw - 72px) / 10);
+    grid-template-columns: repeat(10, var(--xcell));
+    grid-auto-rows: var(--xcell);
+    gap: 2px;
+    padding: 6px;
+  }
   .cell { font-size: 14px; }
   .splash h1 { font-size: 26px; }
   .splash .mascot { width: 130px; height: 130px; }
@@ -544,3 +554,11 @@ body {
 
 /* 44px square — it measured 31px wide. */
 .mute-btn { min-width: 44px; }
+
+/* The terminal path would not shrink, so it pushed the 44px mute button 9px
+   off the right edge of a 375px screen, where .term's overflow:hidden then
+   clipped it. A flex item defaults to min-width:auto — it refuses to go
+   narrower than its own text — so it needs min-width:0 before it will give
+   way. It now truncates and the button stays on screen. */
+.term-bar .path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.term-bar .mute-btn { flex: none; }
