@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Only the hub and the FREE games belong here.
+
+  The 7 paid games (pie-spinner, bubble-catcher, dashboard-drop,
+  data-crossword, scrub-mess, data-hunt, decision-lab) are deliberately
+  omitted: listing them invited search engines to index pages that sit behind
+  the £7.99 unlock, so a visitor could land on a paid game straight from a
+  search result and never see the locked card on the hub.
+
+  <loc> must be an absolute URL — the sitemap protocol rejects relative paths.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>/index.html</loc><changefreq>monthly</changefreq></url>
-  <url><loc>/games/mountain-climb/index.html</loc></url>
-  <url><loc>/games/block-city/index.html</loc></url>
-  <url><loc>/games/pie-spinner/index.html</loc></url>
-  <url><loc>/games/bubble-catcher/index.html</loc></url>
-  <url><loc>/games/dashboard-drop/index.html</loc></url>
-  <url><loc>/games/derive-jargon/index.html</loc></url>
-  <url><loc>/games/data-crossword/index.html</loc></url>
-  <url><loc>/games/sentence-builder/index.html</loc></url>
-  <url><loc>/games/scrub-mess/index.html</loc></url>
-  <url><loc>/games/data-hunt/index.html</loc></url>
-  <url><loc>/games/decision-lab/index.html</loc></url>
+  <url><loc>https://arcade.datacruise.app/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://arcade.datacruise.app/games/mountain-climb/</loc></url>
+  <url><loc>https://arcade.datacruise.app/games/block-city/</loc></url>
+  <url><loc>https://arcade.datacruise.app/games/derive-jargon/</loc></url>
+  <url><loc>https://arcade.datacruise.app/games/sentence-builder/</loc></url>
 </urlset>

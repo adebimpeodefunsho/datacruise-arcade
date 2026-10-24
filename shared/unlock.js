@@ -341,6 +341,14 @@
     decorateCards();
     bindCardClicks();
     bindModal();
+
+    /* Arrived here from a locked game page (shared/arcade-nav.js redirects to
+       /#unlock). Open the unlock modal straight away so the visitor sees why
+       they were sent back, then drop the hash so a refresh doesn't reopen it. */
+    if (window.location.hash === '#unlock') {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      if (!getUnlocked()) openModal();
+    }
   }
 
   if (document.readyState === 'loading') {

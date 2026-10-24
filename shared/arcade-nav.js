@@ -1,8 +1,55 @@
 /* ============================================================
    DataCruise Arcade — shared script loaded by every game page
-     1. Injects the floating "← Arcade" back-to-hub button.
-     2. Loads Cloudflare Web Analytics (privacy-friendly, no cookies).
+     1. Gates the 7 paid games behind the unlock.
+     2. Injects the floating "← Arcade" back-to-hub button.
+     3. Loads Cloudflare Web Analytics (privacy-friendly, no cookies).
 ============================================================ */
+
+/* ---- Paywall gate -------------------------------------------------------
+   Every game page loads this file, so it is the only place that can gate all
+   11 games without editing each of them. Runs FIRST, before the nav button and
+   before the game's own (also deferred) scripts.
+
+   Before this existed, the lock lived only on the hub's cards: typing or
+   following a paid game's URL played it in full, for free.
+
+   NOTE — deliberate duplication: PAID below mirrors CATALOGUE.paid in
+   shared/unlock.js. unlock.js is an IIFE that only ever runs on the hub, and
+   game pages load nothing but this file, so sharing one constant would mean
+   adding a script tag to all 11 game HTML files. If a game moves between free
+   and paid, EDIT BOTH LISTS.
+
+   This is a client-side gate, exactly like the hub's. It closes the casual and
+   organic route in (a search result, a shared link, a guessed URL). It is not a
+   hard paywall — anyone with devtools can still set the flag. Hard enforcement
+   would mean serving the paid games' files from the Worker behind a signed
+   cookie, which is a much larger change.
+------------------------------------------------------------------------- */
+(function gatePaidGames() {
+  var PAID = [
+    'pie-spinner', 'bubble-catcher', 'dashboard-drop', 'data-crossword',
+    'scrub-mess', 'data-hunt', 'decision-lab'
+  ];
+  var STORAGE_KEY = 'datacruise.unlock.v1';
+
+  var match = window.location.pathname.match(/\/games\/([a-z0-9-]+)(?:\/|\/index\.html)?$/i);
+  var slug = match ? match[1].toLowerCase() : '';
+  if (!slug || PAID.indexOf(slug) === -1) return;   // hub, or a free game
+
+  var unlocked;
+  try {
+    var obj = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    unlocked = !!(obj && obj.unlocked);
+  } catch (_) {
+    /* Storage blocked (private mode, cookies off). Fail OPEN: locking out a
+       buyer who paid is far worse than letting a rare visitor through. */
+    unlocked = true;
+  }
+  if (unlocked) return;
+
+  /* replace(), not assign() — Back must not bounce them into the game again. */
+  window.location.replace('/#unlock');
+})();
 
 // ---- Cloudflare Web Analytics --------------------------------
 (function loadCfAnalytics() {

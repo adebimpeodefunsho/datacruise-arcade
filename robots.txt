@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+# The paid games sit behind the £7.99 unlock. Keep them out of search results
+# so nobody lands on one straight from Google, past the locked card.
+Disallow: /games/pie-spinner/
+Disallow: /games/bubble-catcher/
+Disallow: /games/dashboard-drop/
+Disallow: /games/data-crossword/
+Disallow: /games/scrub-mess/
+Disallow: /games/data-hunt/
+Disallow: /games/decision-lab/
+
+# Must be an absolute URL — a relative path here is ignored.
+Sitemap: https://arcade.datacruise.app/sitemap.xml
