@@ -487,7 +487,7 @@ button { font-family: inherit; cursor: pointer; }
 /* Floating in the corner of the title or end card */
 .mute-toggle-floating {
   position: absolute;
-  top: 16px;
+  top: 64px;
   right: 16px;
 }
 .title-card, .end-card { position: relative; }
@@ -1164,3 +1164,6 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: 0 1px 0 var(--edge); }
 
 .continue-btn[disabled] { box-shadow: none; }
+
+/* 64px, not 16: the Arcade's fixed "↗ Share" button occupies the top-right
+   corner down to 52px, and this mute button was sitting underneath it. */

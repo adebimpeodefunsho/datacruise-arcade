@@ -722,3 +722,9 @@ body {
 /* 44px is what a finger needs — these measured 40–43px on a phone. */
 .btn-primary, .btn-ghost { min-height: 44px; box-sizing: border-box;
   display: inline-flex; align-items: center; justify-content: center; }
+
+/* ── clearance for the Arcade's floating buttons ──
+   "← Arcade" and "↗ Share" are fixed at top:8 and 44px tall, so they occupy
+   the first 52px of every game page. Without this the terminal header ran
+   underneath them. 60px clears the band with a little air. */
+body { padding-top: 60px; }
