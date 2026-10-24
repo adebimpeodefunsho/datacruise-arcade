@@ -1151,3 +1151,16 @@ button { font-family: inherit; cursor: pointer; }
   .cards-card { padding: 10px 12px; }
   .tip-card { display: none; }
 }
+
+
+.continue-btn { --edge: rgba(0,0,0,.26);
+
+  box-shadow: 0 4px 0 var(--edge);
+
+  transition: transform .07s ease, box-shadow .07s ease; }
+
+.continue-btn:not([disabled]):active { transform: translateY(3px);
+
+  box-shadow: 0 1px 0 var(--edge); }
+
+.continue-btn[disabled] { box-shadow: none; }

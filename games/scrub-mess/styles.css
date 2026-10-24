@@ -682,3 +682,31 @@ body {
   .bin { width: 74px; height: 90px; }
   .tile { font-size: 13px; padding: 4px 9px; }
 }
+
+.btn-primary { --edge: #0b0f14;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.btn-primary:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.btn-primary[disabled] { box-shadow: none; }
+
+.btn-ghost { --edge: #1d2430;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.btn-ghost:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.btn-ghost[disabled] { box-shadow: none; }
+
+.btn-ghost-sm { --edge: rgba(255,255,255,.30);
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.btn-ghost-sm:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.btn-ghost-sm[disabled] { box-shadow: none; }
+
+.diff-btn { --edge: #0b0f14;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.diff-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.diff-btn[disabled] { box-shadow: none; }

@@ -409,3 +409,10 @@ button.sky { background: var(--sky); }
   .game { width: 100%; }
   .stage svg { max-height: none; }
 }
+
+.diff-row button { --edge: rgba(0,0,0,.26);
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.diff-row button:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.diff-row button[disabled] { box-shadow: none; }

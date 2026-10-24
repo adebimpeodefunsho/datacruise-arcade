@@ -715,3 +715,16 @@ html, body {
   .stat b { font-size: 15px; }
   .brand h2 { font-size: 16px; }
 }
+
+
+.diff-btn { --edge: #32200e;
+
+  box-shadow: 0 4px 0 var(--edge);
+
+  transition: transform .07s ease, box-shadow .07s ease; }
+
+.diff-btn:not([disabled]):active { transform: translateY(3px);
+
+  box-shadow: 0 1px 0 var(--edge); }
+
+.diff-btn[disabled] { box-shadow: none; }

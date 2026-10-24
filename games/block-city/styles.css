@@ -443,3 +443,30 @@ button.ghost {
   }
   .max-warning .max-warning-icon { font-size: 13px; }
 }
+
+button.ghost { --edge: #a8a395;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+button.ghost:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+button.ghost[disabled] { box-shadow: none; }
+
+.speed-btn { --edge: #a84611;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.speed-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.speed-btn[disabled] { box-shadow: none; }
+
+
+.demolish-btn { --edge: rgba(0,0,0,.26);
+
+  box-shadow: 0 4px 0 var(--edge);
+
+  transition: transform .07s ease, box-shadow .07s ease; }
+
+.demolish-btn:not([disabled]):active { transform: translateY(3px);
+
+  box-shadow: 0 1px 0 var(--edge); }
+
+.demolish-btn[disabled] { box-shadow: none; }

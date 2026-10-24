@@ -662,3 +662,44 @@ button { font-family: inherit; }
   .answer-form, .answer-input { width: 100%; box-sizing: border-box; }
   .answer-input-area { flex: 1 1 auto; }
 }
+
+
+.primary-btn { --edge: #a84600;
+
+  box-shadow: 0 4px 0 var(--edge);
+
+  transition: transform .07s ease, box-shadow .07s ease; }
+
+.primary-btn:not([disabled]):active { transform: translateY(3px);
+
+  box-shadow: 0 1px 0 var(--edge); }
+
+.primary-btn[disabled] { box-shadow: none; }
+
+.mc-btn { --edge: #a8a49f;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.mc-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.mc-btn[disabled] { box-shadow: none; }
+
+.pod-continue-btn { --edge: rgba(0,0,0,.26);
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.pod-continue-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.pod-continue-btn[disabled] { box-shadow: none; }
+
+.pod-submit-btn { --edge: rgba(0,0,0,.26);
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.pod-submit-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.pod-submit-btn[disabled] { box-shadow: none; }
+
+.mute-btn { --edge: #a8a8a8;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.mute-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.mute-btn[disabled] { box-shadow: none; }

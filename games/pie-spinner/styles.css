@@ -298,3 +298,10 @@ button.ghost { background: var(--paper); color: var(--ink); }
   .game { width: 100%; }
   .stage svg { max-height: none; }
 }
+
+button.ghost { --edge: #a8a395;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+button.ghost:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+button.ghost[disabled] { box-shadow: none; }

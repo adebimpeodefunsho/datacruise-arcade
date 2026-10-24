@@ -504,3 +504,17 @@ body {
   .hud { margin-bottom: 6px; }
   .clues { max-height: 198px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 }
+
+.btn { --edge: #00b26d;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.btn[disabled] { box-shadow: none; }
+
+.mute-btn { --edge: #1d2430;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.mute-btn:not([disabled]):active { transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--edge); }
+.mute-btn[disabled] { box-shadow: none; }
