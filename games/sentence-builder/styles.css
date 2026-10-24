@@ -559,3 +559,19 @@ body {
 
 /* 44px square — it measured 31px wide. */
 .mute-btn { min-width: 44px; }
+
+/* The × that empties a filled slot sits inline inside a sentence, so it
+   cannot grow to 44px without pushing the words apart. Give it a 44px hit
+   area instead: the button keeps its 28px look, and an invisible overlay
+   centred on it catches the tap. position:relative on the button so the
+   overlay is measured from it, and the slot stays the click target behind. */
+.slot-clear { position: relative; }
+.slot-clear::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
