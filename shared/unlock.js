@@ -18,6 +18,12 @@
   };
 
   // ---------- config -----------------------------------------
+  // FREE_MODE — the full pack is currently given away: all 11 games are open to everyone
+  // and the price reads "Free". Nothing below is removed — the Gumroad licence check, the
+  // unlock modal and the stored unlock state all still work, so setting this back to false
+  // restores the paid £8 one-time unlock exactly as it was.
+  const FREE_MODE = true;
+
   const STORAGE_KEY = 'datacruise.unlock.v1';
   const VALIDATE_ENDPOINT = '/api/validate-license';
 
@@ -45,6 +51,7 @@
 
   // ---------- card lock rendering ----------------------------
   function isLocked(slug) {
+    if (FREE_MODE) return false;
     return CATALOGUE.paid.includes(slug);
   }
 
@@ -87,7 +94,13 @@
       const icon = meta.querySelector('.hero-meta-icon');
       const text = meta.querySelector('.hero-meta-text');
       const action = meta.querySelector('[data-unlock-open]');
-      if (unlocked) {
+      if (FREE_MODE) {
+        // Nothing to unlock and no key to manage — say so and retire the action.
+        if (icon) icon.textContent = '🎉';
+        if (text) text.textContent = 'All 11 games are free.';
+        if (action) action.style.display = 'none';
+        meta.classList.add('is-unlocked');
+      } else if (unlocked) {
         if (icon) icon.textContent = '✓';
         if (text) text.textContent = 'Full pack unlocked on this device.';
         if (action) {

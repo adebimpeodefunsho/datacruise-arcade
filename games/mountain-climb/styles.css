@@ -1167,3 +1167,9 @@ button { font-family: inherit; cursor: pointer; }
 
 /* 64px, not 16: the Arcade's fixed "↗ Share" button occupies the top-right
    corner down to 52px, and this mute button was sitting underneath it. */
+
+/* The header/floating mute is a real button — give it the same press. */
+.mute-toggle { --edge: rgba(0,0,0,.26);
+  box-shadow: 0 3px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.mute-toggle:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }

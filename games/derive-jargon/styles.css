@@ -1066,4 +1066,24 @@ body {
    "← Arcade" and "↗ Share" are fixed at top:8 and 44px tall, so they occupy
    the first 52px of every game page. Without this the terminal header ran
    underneath them. 60px clears the band with a little air. */
-body { padding-top: 60px; }
+body {
+  padding-top: 60px;
+  /* height:auto + min-height, not the original height:100vh. With
+     box-sizing:border-box a fixed 100vh makes padding eat the viewport
+     instead of pushing content down: the body became its own scroller and
+     scrolled straight past the 60px, putting the header back under the
+     buttons. */
+  height: auto;
+  min-height: 100vh;
+}
+
+/* Multiple-choice answers are pressed, so they press — same as Decision
+   Lab's .mc-btn. */
+.ans { --edge: rgba(0,0,0,.30);
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.ans:not([disabled]):active { transform: translateY(3px); box-shadow: 0 1px 0 var(--edge); }
+.ans[disabled] { box-shadow: none; }
+
+/* 44px square — it measured 31px wide. */
+.mute-btn { min-width: 44px; }

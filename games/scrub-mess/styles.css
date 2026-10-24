@@ -727,4 +727,13 @@ body {
    "← Arcade" and "↗ Share" are fixed at top:8 and 44px tall, so they occupy
    the first 52px of every game page. Without this the terminal header ran
    underneath them. 60px clears the band with a little air. */
-body { padding-top: 60px; }
+body {
+  padding-top: 60px;
+  /* height:auto + min-height, not the original height:100vh. With
+     box-sizing:border-box a fixed 100vh makes padding eat the viewport
+     instead of pushing content down: the body became its own scroller and
+     scrolled straight past the 60px, putting the header back under the
+     buttons. */
+  height: auto;
+  min-height: 100vh;
+}

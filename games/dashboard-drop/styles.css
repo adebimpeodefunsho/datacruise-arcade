@@ -416,3 +416,10 @@ button.sky { background: var(--sky); }
 .diff-row button:not([disabled]):active { transform: translateY(3px);
   box-shadow: 0 1px 0 var(--edge); }
 .diff-row button[disabled] { box-shadow: none; }
+
+/* In-game sound toggle: a real button, and it was 38×38 — under a finger.
+   Same press as every other control on the Arcade. */
+.sound-toggle { --edge: rgba(0,0,0,.26); width: 44px; height: 44px;
+  box-shadow: 0 3px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.sound-toggle:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }

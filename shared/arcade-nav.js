@@ -26,6 +26,13 @@
    cookie, which is a much larger change.
 ------------------------------------------------------------------------- */
 (function gatePaidGames() {
+  /* FREE_MODE — the full pack is currently given away, so this gate stands down and
+     every game URL plays. Mirrors FREE_MODE in shared/unlock.js: if one is flipped the
+     other must be too, or the hub and the direct URLs will disagree. Set both back to
+     false to restore the paid £8 gate exactly as it was. */
+  var FREE_MODE = true;
+  if (FREE_MODE) return;
+
   var PAID = [
     'pie-spinner', 'bubble-catcher', 'dashboard-drop', 'data-crossword',
     'scrub-mess', 'data-hunt', 'decision-lab'

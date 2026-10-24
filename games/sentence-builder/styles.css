@@ -533,4 +533,29 @@ body {
    "← Arcade" and "↗ Share" are fixed at top:8 and 44px tall, so they occupy
    the first 52px of every game page. Without this the terminal header ran
    underneath them. 60px clears the band with a little air. */
-body { padding-top: 60px; }
+body {
+  padding-top: 60px;
+  /* height:auto + min-height, not the original height:100vh. With
+     box-sizing:border-box a fixed 100vh makes padding eat the viewport
+     instead of pushing content down: the body became its own scroller and
+     scrolled straight past the 60px, putting the header back under the
+     buttons. */
+  height: auto;
+  min-height: 100vh;
+}
+
+/* Word-bank tiles are picked up by tapping, and the small × that empties a
+   filled slot was 18×18 — far too small to hit on a phone. */
+.word { --edge: rgba(0,0,0,.34);
+  /* 44px: these are the primary tap target of the game — you tap a word,
+     then tap a slot — and they measured 28px tall. */
+  min-height: 44px; display: inline-flex; align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 3px 0 var(--edge);
+  transition: transform .07s ease, box-shadow .07s ease; }
+.word:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+
+.slot-clear { width: 28px; height: 28px; line-height: 26px; font-size: 15px; }
+
+/* 44px square — it measured 31px wide. */
+.mute-btn { min-width: 44px; }
