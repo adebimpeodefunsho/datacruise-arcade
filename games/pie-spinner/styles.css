@@ -312,3 +312,10 @@ button.ghost[disabled] { box-shadow: none; }
   box-shadow: 0 3px 0 var(--edge);
   transition: transform .07s ease, box-shadow .07s ease; }
 .sound-toggle:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+
+/* ── clearance for the Arcade's floating buttons ──
+   The in-game topbar sat at top:20, so "← Arcade" covered its title and, on
+   a wide screen where the bar stretches, "↗ Share" covered the sound toggle
+   — a button hidden under a button. This bar only exists once a game is
+   running, which is why the menu screens measured clean. */
+.topbar { padding-top: 60px; }

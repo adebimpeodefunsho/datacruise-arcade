@@ -728,3 +728,10 @@ html, body {
   box-shadow: 0 1px 0 var(--edge); }
 
 .diff-btn[disabled] { box-shadow: none; }
+
+/* ── clearance for the Arcade's floating buttons ──
+   The in-game header sat at top:0, so "← Arcade" covered the title and
+   "↗ Share" covered the live Time and Tries counters — you could not see
+   how long was left. This header only exists once a game is running, which
+   is why a check of the menu screen missed it. */
+.game-header { padding-top: 60px; }
