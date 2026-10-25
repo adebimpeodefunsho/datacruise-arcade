@@ -516,27 +516,29 @@
     return false;
   }
 
-  /* The labels of every control currently on screen, minus the share button
-     itself — a cheap fingerprint of "which screen am I looking at". */
-  function visibleControlLabels(fab) {
+  /* Every results screen in the Arcade offers a way to play again — "PLAY
+     AGAIN", "NEW PUZZLE", "NEW HEAP", "NEW CLIMB", "Next Session", "TITLE
+     SCREEN". A live board never does. That is the signal: while one of
+     those is on screen we are on a results screen, and once they are all
+     gone the game has moved on.
+
+     Matching the *continue* button instead was the original bug — it only
+     knew the words start / play again / menu / quit / home, so Crossword's
+     "NEW PUZZLE" slipped past it. Comparing whole-screen fingerprints
+     failed too: Scrub leaves the finished board on screen behind its
+     results, so the two screens shared enough labels to look identical. */
+  var REPLAY_RE = /play ?again|new (heap|puzzle|climb|game|round|board)|next session|title screen|replay|start over|see final/i;
+
+  function replayControlsOnScreen(fab) {
     var out = [];
     var all = document.querySelectorAll('button, a[href], [role="button"]');
     for (var i = 0; i < all.length; i++) {
       var e = all[i];
       if (e === fab || (fab && fab.contains(e))) continue;
-      if (e.classList && (e.classList.contains('arcade-nav-back') ||
-                          e.classList.contains('dc-share-btn'))) continue;
       var r = e.getBoundingClientRect();
       if (!r.width || !r.height) continue;
-      var label = (e.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 28);
-      if (!label) continue;
-      /* Skip chrome that sits on every screen — mute, home, quit and the
-         like. Crossword's results and its next puzzle both show a speaker
-         and a HOME button, so counting those made every screen look like
-         the results screen and the button never left. */
-      if (/^(home|quit|menu|back|exit|mute|sound|arcade|share)$/i.test(label.replace(/[^a-z]/gi, ''))) continue;
-      if (!/[a-z0-9]/i.test(label)) continue;     // emoji-only controls
-      out.push(label);
+      var label = (e.textContent || '').trim().replace(/\s+/g, ' ');
+      if (REPLAY_RE.test(label)) out.push(label.slice(0, 28));
     }
     return out;
   }
@@ -576,15 +578,13 @@
        Match the screen instead of the label. Remember which controls were on
        the results screen when this appeared; once none of them are left, the
        game has moved on and the button goes with it. */
-    var signature = visibleControlLabels(fab);
+    /* If the game offers no replay control at all, there is nothing to watch
+       for, so leave the button alone rather than guessing. */
+    var hadReplay = replayControlsOnScreen(fab).length > 0;
 
     var stillOnResults = function () {
-      if (!signature.length) return true;          // nothing to compare against
-      var now = visibleControlLabels(fab);
-      for (var i = 0; i < signature.length; i++) {
-        if (now.indexOf(signature[i]) !== -1) return true;
-      }
-      return false;
+      if (!hadReplay) return true;
+      return replayControlsOnScreen(fab).length > 0;
     };
 
     var dismiss = function () {
