@@ -143,12 +143,22 @@
     btn.type = 'button';
     btn.className = 'dc-share-btn';
     btn.setAttribute('aria-label', 'Share this game');
+    btn.setAttribute('aria-haspopup', 'menu');
+    btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML = '<span class="dc-share-ico" aria-hidden="true">↗</span><span>Share</span>';
     document.body.appendChild(btn);
 
     const pop = document.createElement('div');
     pop.className = 'dc-share-pop';
     pop.setAttribute('role', 'menu');
+    // Every open/close goes through here: the class and aria-expanded are
+    // one state, and a keyboard user gets focus back on the button.
+    function setOpen(flag, refocus) {
+      pop.classList.toggle('open', flag);
+      btn.setAttribute('aria-expanded', flag ? 'true' : 'false');
+      if (!flag && refocus) btn.focus();
+    }
+
     const title = document.createElement('div');
     title.className = 'dc-title';
     title.textContent = 'Share to';
@@ -177,7 +187,7 @@
       const done = function () {
         copyBtn.querySelector('span:last-child').textContent = 'Copied!';
         copyBtn.classList.add('dc-share-copied');
-        setTimeout(function () { pop.classList.remove('open'); }, 900);
+        setTimeout(function () { setOpen(false); }, 900);
       };
       const val = linkUrl;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -197,7 +207,7 @@
       moreBtn.type = 'button';
       moreBtn.innerHTML = '<span class="dc-share-ic dc-ic-more" aria-hidden="true">⋯</span><span>More apps…</span>';
       moreBtn.addEventListener('click', function () {
-        pop.classList.remove('open');
+        setOpen(false);
         navigator.share({ title: shareTitle, text: shareText, url: linkUrl }).catch(function () {});
       });
       pop.appendChild(moreBtn);
@@ -207,13 +217,21 @@
 
     btn.addEventListener('click', function () {
       refreshLinks();
-      pop.classList.toggle('open');
+      setOpen(!pop.classList.contains('open'));
     });
 
     document.addEventListener('click', function (e) {
       if (!pop.classList.contains('open')) return;
       if (e.target === btn || btn.contains(e.target) || pop.contains(e.target)) return;
-      pop.classList.remove('open');
+      setOpen(false);
+    });
+
+    // Escape closes it. Mouse and touch already had outside-click and a
+    // second tap; this is the keyboard's way out.
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      if (!pop.classList.contains('open')) return;
+      setOpen(false, true);
     });
   }
 
