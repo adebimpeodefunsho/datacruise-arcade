@@ -516,6 +516,31 @@
     return false;
   }
 
+  /* The labels of every control currently on screen, minus the share button
+     itself — a cheap fingerprint of "which screen am I looking at". */
+  function visibleControlLabels(fab) {
+    var out = [];
+    var all = document.querySelectorAll('button, a[href], [role="button"]');
+    for (var i = 0; i < all.length; i++) {
+      var e = all[i];
+      if (e === fab || (fab && fab.contains(e))) continue;
+      if (e.classList && (e.classList.contains('arcade-nav-back') ||
+                          e.classList.contains('dc-share-btn'))) continue;
+      var r = e.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      var label = (e.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 28);
+      if (!label) continue;
+      /* Skip chrome that sits on every screen — mute, home, quit and the
+         like. Crossword's results and its next puzzle both show a speaker
+         and a HOME button, so counting those made every screen look like
+         the results screen and the button never left. */
+      if (/^(home|quit|menu|back|exit|mute|sound|arcade|share)$/i.test(label.replace(/[^a-z]/gi, ''))) continue;
+      if (!/[a-z0-9]/i.test(label)) continue;     // emoji-only controls
+      out.push(label);
+    }
+    return out;
+  }
+
   function showFab(o) {
     injectStyle();
     var old = document.querySelector('.dc-res-fab'); if (old) old.remove();
@@ -542,18 +567,53 @@
       canvasToBlob(canvas).then(function (blob) { openModal(o, canvas, blob); });
     });
 
-    // Auto-dismiss the button once the player heads into a new game / menu,
-    // so it never lingers over fresh gameplay. Only ever removes the button.
-    var killer = function (e) {
-      var t = e.target && e.target.closest ? e.target.closest('[data-action],button,a') : null;
-      if (!t || t === fab || fab.contains(e.target)) return;
-      var sig = (t.getAttribute && t.getAttribute('data-action') || '') + ' ' + (t.textContent || '');
-      if (/start|restart|play.?again|new ?game|again|menu|quit|home/i.test(sig)) {
-        fab.remove();
-        document.removeEventListener('click', killer, true);
+    /* Auto-dismiss once play resumes, so the button never sits over a live
+       board. This used to match button labels — start, play again, menu,
+       quit, home — which missed every multi-round game: those continue via
+       "Next round" or "Continue", so the button survived into round two and
+       covered what the player was trying to read.
+
+       Match the screen instead of the label. Remember which controls were on
+       the results screen when this appeared; once none of them are left, the
+       game has moved on and the button goes with it. */
+    var signature = visibleControlLabels(fab);
+
+    var stillOnResults = function () {
+      if (!signature.length) return true;          // nothing to compare against
+      var now = visibleControlLabels(fab);
+      for (var i = 0; i < signature.length; i++) {
+        if (now.indexOf(signature[i]) !== -1) return true;
       }
+      return false;
+    };
+
+    var dismiss = function () {
+      fab.remove();
+      document.removeEventListener('click', killer, true);
+      if (watcher) watcher.disconnect();
+      clearInterval(poll);
+    };
+
+    var killer = function (e) {
+      if (fab.contains(e.target)) return;
+      /* let the click land and the screen redraw before judging it */
+      setTimeout(function () { if (!stillOnResults()) dismiss(); }, 250);
     };
     document.addEventListener('click', killer, true);
+
+    var watcher = null;
+    if (window.MutationObserver) {
+      watcher = new MutationObserver(function () {
+        if (!stillOnResults()) dismiss();
+      });
+      watcher.observe(document.body, {childList: true, subtree: true});
+    }
+    /* backstop for games that redraw to a canvas rather than the DOM */
+    var poll = setInterval(function () {
+      if (!document.body.contains(fab)) { clearInterval(poll); return; }
+      if (!stillOnResults()) dismiss();
+    }, 1000);
+
     return fab;
   }
 
