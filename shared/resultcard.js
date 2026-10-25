@@ -578,13 +578,16 @@
        Match the screen instead of the label. Remember which controls were on
        the results screen when this appeared; once none of them are left, the
        game has moved on and the button goes with it. */
-    /* If the game offers no replay control at all, there is nothing to watch
-       for, so leave the button alone rather than guessing. */
-    var hadReplay = replayControlsOnScreen(fab).length > 0;
+    /* Latch rather than sample once. Pie Spinner draws its results buttons
+       after this one appears, so checking at show time saw no replay control,
+       concluded there was nothing to watch for, and never dismissed. Wait
+       until a replay control has actually been seen; only then does its
+       absence mean the game has moved on. */
+    var seenReplay = false;
 
     var stillOnResults = function () {
-      if (!hadReplay) return true;
-      return replayControlsOnScreen(fab).length > 0;
+      if (replayControlsOnScreen(fab).length > 0) { seenReplay = true; return true; }
+      return !seenReplay;
     };
 
     var dismiss = function () {
