@@ -647,3 +647,12 @@ footer {
   box-shadow: 0 1px 0 var(--edge); }
 
 .btn[disabled] { box-shadow: none; }
+
+/* ── unlock modal: 44px tap targets ──
+   These three sat at 32–40px. Every earlier tap-target sweep missed them
+   because the modal was closed at the time, the same way the in-game
+   headers and results screens were missed — a closed overlay measures as
+   nothing at all. */
+.unlock-close { width: 44px; height: 44px; }
+.unlock-section input[type="text"] { min-height: 44px; }
+.unlock-section form .btn { min-height: 44px; }
