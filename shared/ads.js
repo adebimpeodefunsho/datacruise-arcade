@@ -75,9 +75,12 @@
        Google's own tool — see ADS_SETUP.md step 3. */
     CHILD_DIRECTED: true,
 
-    /* House ads: promote DataCruise's own work when there is no paid ad.
-       Set false to leave the slot collapsed instead. */
-    HOUSE_ADS: true
+    /* House ads (promos for DataCruise's own books/courses/apps).
+       OFF by deliberate choice: these slots are for Google's paid ads, which
+       is where the revenue is meant to come from. The house-ad machinery is
+       left intact — flip this to true to use them as a fallback for inventory
+       AdSense cannot fill, which is the only sensible use for them now. */
+    HOUSE_ADS: false
   };
 
   /* ---------------------------------------------------------------

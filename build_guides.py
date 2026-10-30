@@ -403,7 +403,8 @@ def page(slug, g):
 
   <footer class="guide-foot">
     <a href="/">All 11 games</a> · <a href="/#chart-games">Chart Games</a> ·
-    <a href="/#word-games">Word Games</a> · © DataCruise
+    <a href="/#word-games">Word Games</a> ·
+    <a href="/privacy/">Privacy &amp; cookies</a> · © DataCruise
   </footer>
 </body>
 </html>
