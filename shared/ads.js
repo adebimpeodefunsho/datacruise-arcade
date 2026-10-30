@@ -63,9 +63,11 @@
        gives you when you create a unit). A placement with no ID here falls
        back to a house ad, so you can switch them on one at a time. */
     SLOTS: {
-      'hub-mid':  '',   /* hub, between Chart Games and Word Games */
-      'hub-foot': '',   /* hub, above the footer */
-      'result':   ''    /* end-of-game result screen */
+      'hub-mid':    '',   /* hub, between Chart Games and Word Games */
+      'hub-foot':   '',   /* hub, above the footer */
+      'result':     '',   /* end-of-game result screen */
+      'guide-mid':  '',   /* /play/<slug>/, after "What it teaches" */
+      'guide-foot': ''    /* /play/<slug>/, below the final Play button */
     },
 
     /* Child-directed treatment. Forces non-personalised ads on every
@@ -85,6 +87,7 @@
   --------------------------------------------------------------- */
   var HOUSE = [
     {
+      key: 'books',
       eyebrow: 'Picture books',
       title: 'The Grandma &amp; Grandpa Village books',
       body: 'Warm illustrated stories for ages 3–6 and 7–12, posted straight from the author.',
@@ -93,6 +96,7 @@
       tone: 'orange'
     },
     {
+      key: 'course',
       eyebrow: 'Free course',
       title: 'Learn to actually read your data',
       body: 'Free Tableau and data-analysis lessons on the Data Cruise blog. No sign-up wall.',
@@ -101,6 +105,7 @@
       tone: 'blue'
     },
     {
+      key: 'apps',
       eyebrow: 'More free apps',
       title: 'Nine more DataCruise apps — all free',
       body: 'Speech practice, prayer, migraine tracking, home organising. Nothing to pay, nothing to install.',
@@ -109,6 +114,7 @@
       tone: 'lilac'
     },
     {
+      key: 'speakle',
       eyebrow: 'For younger kids',
       title: 'Speakle — gentle speech practice',
       body: 'A kind, private little app that helps a child practise sounds and words at their own pace.',
@@ -117,6 +123,7 @@
       tone: 'teal'
     },
     {
+      key: 'session',
       eyebrow: 'One-to-one',
       title: 'Stuck on your own data at work?',
       body: 'Book a 1:1 session and leave with the chart, the method and the answer.',
@@ -125,6 +132,42 @@
       tone: 'orange'
     }
   ];
+
+  /* ---------------------------------------------------------------
+     Attribution. Every house-ad link carries UTM parameters, so the
+     analytics already running on the DESTINATION (the blog, the store,
+     datacruise.app) reports how many visitors the Arcade sent, which ad
+     sent them, and from which slot — and, where there is a checkout,
+     whether they bought.
+
+     Without this there is no way to tell a house ad that works from one
+     that nobody ever touches, and no way to choose what to write next.
+
+       utm_source   = arcade        (which property sent them)
+       utm_medium   = house_ad      (separates these from social/search)
+       utm_campaign = <ad key>      (which creative)
+       utm_content  = <slot name>   (hub-mid / hub-foot / result)
+  --------------------------------------------------------------- */
+  function trackedUrl(ad, slotName) {
+    var params = {
+      utm_source: 'arcade',
+      utm_medium: 'house_ad',
+      utm_campaign: ad.key || 'unknown',
+      utm_content: slotName || 'unknown'
+    };
+    try {
+      var u = new URL(ad.url);
+      Object.keys(params).forEach(function (k) {
+        /* Never clobber a parameter the destination URL already sets. */
+        if (!u.searchParams.has(k)) u.searchParams.set(k, params[k]);
+      });
+      return u.toString();
+    } catch (e) {
+      /* Malformed URL, or no URL support — send them to the plain link
+         rather than dropping the click entirely. */
+      return ad.url;
+    }
+  }
 
   if (!CONFIG.ADS_ENABLED) return;
 
@@ -226,12 +269,13 @@
     return ad;
   }
 
-  function renderHouse(box) {
+  function renderHouse(box, slotName) {
     if (!CONFIG.HOUSE_ADS) return false;
     var ad = nextHouse();
     var a = document.createElement('a');
     a.className = 'dc-house t-' + ad.tone;
-    a.href = ad.url;
+    a.href = trackedUrl(ad, slotName);
+    a.setAttribute('data-house-ad', ad.key);
     a.target = '_blank';
     a.rel = 'noopener';
     a.innerHTML =
@@ -248,7 +292,7 @@
      comes back unfilled (common on low-traffic and child-directed
      inventory — an empty bordered box looks broken, a house ad does not).
   --------------------------------------------------------------- */
-  function renderAdSense(box, slotId) {
+  function renderAdSense(box, slotId, slotName) {
     loadAdSense();
 
     var ins = document.createElement('ins');
@@ -263,7 +307,7 @@
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {
-      renderHouse(box);
+      renderHouse(box, slotName);
       return;
     }
 
@@ -272,7 +316,7 @@
     setTimeout(function () {
       if (ins.getAttribute('data-ad-status') === 'unfilled') {
         ins.remove();
-        renderHouse(box);
+        renderHouse(box, slotName);
       }
     }, 2500);
   }
@@ -304,8 +348,8 @@
     el.appendChild(box);
 
     if (paid) {
-      renderAdSense(box, slotId);
-    } else if (!renderHouse(box)) {
+      renderAdSense(box, slotId, name);
+    } else if (!renderHouse(box, name)) {
       el.remove();   /* house ads off and no paid unit — leave no empty frame */
     }
   }

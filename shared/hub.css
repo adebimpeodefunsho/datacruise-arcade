@@ -656,3 +656,39 @@ footer {
 .unlock-close { width: 44px; height: 44px; }
 .unlock-section input[type="text"] { min-height: 44px; }
 .unlock-section form .btn { min-height: 44px; }
+
+/* ===== guide links under each series grid =====
+   The game cards are themselves <a> elements, so a per-card "what it teaches"
+   link cannot be nested inside one. These sit under the grid instead, which
+   also gives the hub a crawlable link to all 11 guide pages. */
+.guide-links-label {
+  max-width: 1120px;
+  margin: 26px auto 8px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.guide-links {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.guide-links a {
+  display: inline-block;
+  padding: 7px 13px;
+  min-height: 36px;
+  line-height: 22px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.guide-links a:hover { background: var(--yellow); }
+.section-word .guide-links a:hover { background: #ede9fe; }

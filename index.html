@@ -7,6 +7,7 @@
   <meta name="description" content="A pack of 11 browser games from DataCruise. Build charts, untangle data jargon, take the data quiz, and learn the language of data through play." />
 
   <!-- Icons & PWA -->
+  <link rel="canonical" href="https://arcade.datacruise.app/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
   <link rel="manifest" href="/manifest.webmanifest" />
@@ -40,6 +41,45 @@
   <!-- Cloudflare Web Analytics (privacy-friendly, no cookies) -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
           data-cf-beacon='{"token": "b41ed92d610147e3bfc623898279857d"}'></script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://arcade.datacruise.app/#website",
+      "url": "https://arcade.datacruise.app/",
+      "name": "DataCruise Arcade",
+      "description": "Eleven free browser games that teach the feel of data.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://datacruise.app/#org" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://datacruise.app/#org",
+      "name": "DataCruise",
+      "url": "https://datacruise.app/",
+      "description": "An independent education studio making free apps, games and courses."
+    },
+    {
+      "@type": "ItemList",
+      "name": "DataCruise Arcade games",
+      "numberOfItems": 11,
+      "itemListElement": [
+      { "@type": "ListItem", "position": 1, "url": "https://arcade.datacruise.app/play/mountain-climb/", "name": "Mountain Climb" },
+      { "@type": "ListItem", "position": 2, "url": "https://arcade.datacruise.app/play/block-city/", "name": "Block City" },
+      { "@type": "ListItem", "position": 3, "url": "https://arcade.datacruise.app/play/pie-spinner/", "name": "Pie Spinner" },
+      { "@type": "ListItem", "position": 4, "url": "https://arcade.datacruise.app/play/bubble-catcher/", "name": "Bubble Catcher" },
+      { "@type": "ListItem", "position": 5, "url": "https://arcade.datacruise.app/play/dashboard-drop/", "name": "Dashboard Drop" },
+      { "@type": "ListItem", "position": 6, "url": "https://arcade.datacruise.app/play/decision-lab/", "name": "Decision Lab" },
+      { "@type": "ListItem", "position": 7, "url": "https://arcade.datacruise.app/play/derive-jargon/", "name": "Derive the Data Jargon" },
+      { "@type": "ListItem", "position": 8, "url": "https://arcade.datacruise.app/play/data-crossword/", "name": "Crack the Data Crossword" },
+      { "@type": "ListItem", "position": 9, "url": "https://arcade.datacruise.app/play/sentence-builder/", "name": "Bridge the Data Sentence" },
+      { "@type": "ListItem", "position": 10, "url": "https://arcade.datacruise.app/play/scrub-mess/", "name": "Scrub the Data Mess" },
+      { "@type": "ListItem", "position": 11, "url": "https://arcade.datacruise.app/play/data-hunt/", "name": "Hunt the Data Treasure" }
+      ]
+    }
+  ]
+}</script>
 </head>
 <body>
   <header class="hero">
@@ -131,6 +171,16 @@
           </div>
         </a>
       </div>
+    
+      <p class="guide-links-label">What each game teaches:</p>
+      <nav class="guide-links" aria-label="Chart Games guides">
+          <a href="/play/mountain-climb/">Mountain Climb</a>
+          <a href="/play/block-city/">Block City</a>
+          <a href="/play/pie-spinner/">Pie Spinner</a>
+          <a href="/play/bubble-catcher/">Bubble Catcher</a>
+          <a href="/play/dashboard-drop/">Dashboard Drop</a>
+          <a href="/play/decision-lab/">Decision Lab</a>
+      </nav>
     </section>
 
     <!-- Ad slot. Between the two series, in normal page flow — never over a
@@ -191,6 +241,15 @@
           </div>
         </a>
       </div>
+    
+      <p class="guide-links-label">What each game teaches:</p>
+      <nav class="guide-links" aria-label="Word Games guides">
+          <a href="/play/derive-jargon/">Derive the Data Jargon</a>
+          <a href="/play/data-crossword/">Crack the Data Crossword</a>
+          <a href="/play/sentence-builder/">Bridge the Data Sentence</a>
+          <a href="/play/scrub-mess/">Scrub the Data Mess</a>
+          <a href="/play/data-hunt/">Hunt the Data Treasure</a>
+      </nav>
     </section>
 
     <!-- ============ ABOUT ============ -->

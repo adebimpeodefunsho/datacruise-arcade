@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Every game belongs here now.
+  The hub plus the 11 guide pages.
 
-  This file used to list only the hub and the 4 free games, because the other 7
-  sat behind the £7.99 unlock. All 11 are free today, and the Arcade earns from
-  advertising — which is paid per visit — so hiding 64% of the site from Google
-  was directly suppressing income. Full list restored 2026-10-30.
+  The guides at /play/<slug>/ are listed rather than the games at
+  /games/<slug>/. Each game page is a JavaScript canvas carrying 6-8 words of
+  crawlable text and cannot be given more (every game sets height:100vh on
+  <body>; five also use position:fixed or overflow:hidden), so there is nothing
+  there for Google to rank. The guides hold the real content and link straight
+  through to the game. The game pages are marked noindex,follow.
 
   <loc> must be an absolute URL — the sitemap protocol rejects relative paths.
-  All 11 directory URLs verified 200 before listing.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://arcade.datacruise.app/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
-
-  <!-- Chart Games -->
-  <url><loc>https://arcade.datacruise.app/games/mountain-climb/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/block-city/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/pie-spinner/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/bubble-catcher/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/dashboard-drop/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/decision-lab/</loc><priority>0.8</priority></url>
-
-  <!-- Word Games -->
-  <url><loc>https://arcade.datacruise.app/games/derive-jargon/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/data-crossword/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/sentence-builder/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/scrub-mess/</loc><priority>0.8</priority></url>
-  <url><loc>https://arcade.datacruise.app/games/data-hunt/</loc><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/mountain-climb/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/block-city/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/pie-spinner/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/bubble-catcher/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/dashboard-drop/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/decision-lab/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/derive-jargon/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/data-crossword/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/sentence-builder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/scrub-mess/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://arcade.datacruise.app/play/data-hunt/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

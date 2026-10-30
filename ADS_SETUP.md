@@ -119,25 +119,26 @@ Read this before moving any ad.
 
 ---
 
-## 6. The other option worth taking: GameMonetize self-hosting
+## 6. Third-party game networks are closed to us
 
-You already have **10 games registered on GameMonetize** with real game IDs,
-and `build_gm.py` already wires up their SDK, including rewarded video
-("watch ad → refill stamina"). Today that only earns on *their* portals.
+**Do not spend more time here.** GameMonetize and CrazyGames have both rejected
+the Arcade, on the grounds that the games fall below their production standard.
+Two attempts, two refusals — that route is shut, and an earlier version of this
+document was wrong to push it.
 
-GameMonetize also allows running their SDK on **your own domain**. Their
-published split is 45% as the developer, plus a further 45% as the site owner —
-so roughly **90% when you own both**, versus 45% today. It needs an email to
-`info@gamemonetize.com` to enable self-hosting for your domain.
+The practical consequence: **house ads are not a stopgap, they are the
+business.** Everything in this repo should be aimed at making them earn, which
+means two things and only two things:
 
-This is a better fit than AdSense for game inventory, because rewarded video is
-*opt-in* — the player chooses to watch — which sidesteps the whole accidental-
-click problem and pays far better per impression than a banner.
+1. **Traffic** — getting people onto the pages at all.
+2. **Conversion** — turning those visitors into book buyers, session bookings,
+   course readers and mailing-list subscribers.
 
-**Suggested order: house ads (done) → fix SEO (done) → email GameMonetize →
-apply to AdSense.**
-
----
+A useful side effect of going in-house: the accidental-click rule in section 5
+only ever mattered because invalid clicks get an *AdSense* account banned.
+House ads are your own links, so a mis-tap costs nothing. Placement can be more
+generous than section 5 allows — the remaining limit is simply not spoiling the
+game for a child.
 
 ## 7. What was not done, and why
 

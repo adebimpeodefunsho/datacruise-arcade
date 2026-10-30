@@ -1,0 +1,133 @@
+/* ============================================================
+   DataCruise Arcade — guide pages (/play/<slug>/)
+   Loaded after hub.css, which supplies the colour tokens and font.
+
+   These pages exist because the game pages cannot hold text: every
+   game sets height:100vh on <body> and several use position:fixed or
+   overflow:hidden, so anything appended below the canvas would be
+   unreachable — and unreachable text reads as cloaking. The guides are
+   therefore where the readable, indexable content lives.
+============================================================ */
+
+.guide-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 3px solid var(--line);
+  background: var(--card);
+}
+.guide-top .logo-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--orange); border: 2px solid var(--line);
+}
+.guide-top a { font-weight: 900; font-size: 15px; }
+.guide-top em { font-style: normal; color: var(--orange-dk); }
+
+.guide {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 26px 20px 60px;
+}
+
+.crumb {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.crumb a { font-weight: 700; color: var(--ink-soft); }
+.crumb a:hover { color: var(--orange-dk); }
+
+.guide h1 {
+  font-size: clamp(27px, 6vw, 40px);
+  line-height: 1.12;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+.guide .kicker {
+  display: inline-block;
+  font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 11px; border-radius: 999px;
+  border: 2px solid var(--line); background: var(--yellow);
+  margin-bottom: 12px;
+}
+.guide.word .kicker { background: #ede9fe; }
+
+.guide .lede {
+  font-size: 17.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 0 22px;
+}
+
+.play-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 52px; padding: 13px 26px;
+  background: var(--orange); color: #fff;
+  font-size: 17px; font-weight: 900;
+  border: 3px solid var(--line); border-radius: 999px;
+  box-shadow: 0 5px 0 0 var(--line);
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+.guide.word .play-cta { background: #7c5cf0; }
+.play-cta:hover { transform: translateY(-2px); box-shadow: 0 7px 0 0 var(--line); }
+.play-cta:active { transform: translateY(2px); box-shadow: 0 2px 0 0 var(--line); }
+.play-note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+
+.shot {
+  display: block; width: 100%; height: auto;
+  margin: 26px 0 8px;
+  border: 3px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--card);
+}
+.shot-cap { font-size: 12.5px; color: var(--muted); margin: 0 0 8px; text-align: center; }
+
+.guide h2 {
+  font-size: 22px; margin: 34px 0 10px; letter-spacing: -0.01em;
+}
+.guide p { font-size: 16px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 13px; }
+.guide ol, .guide ul { font-size: 16px; line-height: 1.6; color: var(--ink-soft); padding-left: 22px; margin: 0 0 13px; }
+.guide li { margin-bottom: 7px; }
+.guide strong { color: var(--ink); }
+
+.facts {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px; margin: 16px 0 6px; padding: 0; list-style: none;
+}
+.facts li {
+  background: var(--card); border: 2px solid var(--line); border-radius: 11px;
+  padding: 11px 13px; font-size: 14px; margin: 0;
+}
+.facts b { display: block; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+
+.more-games { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.more-games li { margin: 0; }
+.more-games a {
+  display: block; background: var(--card);
+  border: 2px solid var(--line); border-radius: 11px;
+  padding: 13px 15px; box-shadow: 0 3px 0 0 var(--line);
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+.more-games a:hover { transform: translateY(-2px); box-shadow: 0 5px 0 0 var(--line); }
+.more-games strong { display: block; font-size: 15.5px; }
+.more-games span { font-size: 13.5px; color: var(--muted); }
+
+.guide-foot {
+  border-top: 3px solid var(--line);
+  padding: 20px; text-align: center;
+  font-size: 13.5px; color: var(--muted);
+}
+.guide-foot a { font-weight: 700; color: var(--ink-soft); }
+.guide-foot a:hover { color: var(--orange-dk); }
+
+@media (max-width: 480px) {
+  .guide { padding: 20px 16px 48px; }
+  .guide .lede { font-size: 16.5px; }
+  .play-cta { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play-cta, .more-games a { transition: none; }
+  .play-cta:hover, .play-cta:active { transform: none; box-shadow: 0 5px 0 0 var(--line); }
+  .more-games a:hover { transform: none; box-shadow: 0 3px 0 0 var(--line); }
+}
