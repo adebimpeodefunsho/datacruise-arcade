@@ -103,7 +103,7 @@
       title: 'Learn to actually read your data',
       body: 'Free Tableau and data-analysis lessons on the Data Cruise blog. No sign-up wall.',
       cta: 'Start learning',
-      url: 'https://datacruise.blog/',
+      url: 'https://datacruise.blog/courses/',
       tone: 'blue'
     },
     {
@@ -147,9 +147,9 @@
       fits: ['chart', 'hub'],
       eyebrow: 'One-to-one',
       title: 'Stuck on your own data at work?',
-      body: 'Book a 1:1 session and leave with the chart, the method and the answer.',
-      cta: 'Book a session',
-      url: 'https://datacruise.blog/',
+      body: 'A 60-minute 1:1 session — leave with the chart, the method and the answer. Free intro call first.',
+      cta: 'See how it works',
+      url: 'https://datacruise.blog/one-to-one-sessions/',
       tone: 'orange'
     }
   ];

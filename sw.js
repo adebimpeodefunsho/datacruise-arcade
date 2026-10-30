@@ -13,7 +13,7 @@
  *
  * BUMP CACHE_VERSION ON EVERY DEPLOY THAT TOUCHES JS/CSS/HTML.
  */
-const CACHE_VERSION = 'arcade-v21';
+const CACHE_VERSION = 'arcade-v22';
 
 /* Small enough to fetch up front — the hub shell only. Game files and the
    2MB of preview art are cached as they are actually used, so a first visit
