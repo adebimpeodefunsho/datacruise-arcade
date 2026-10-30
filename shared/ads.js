@@ -88,6 +88,7 @@
   var HOUSE = [
     {
       key: 'books',
+      fits: ['word', 'hub'],
       eyebrow: 'Picture books',
       title: 'The Grandma &amp; Grandpa Village books',
       body: 'Warm illustrated stories for ages 3–6 and 7–12, posted straight from the author.',
@@ -97,6 +98,7 @@
     },
     {
       key: 'course',
+      fits: ['chart', 'hub'],
       eyebrow: 'Free course',
       title: 'Learn to actually read your data',
       body: 'Free Tableau and data-analysis lessons on the Data Cruise blog. No sign-up wall.',
@@ -106,6 +108,7 @@
     },
     {
       key: 'apps',
+      fits: ['hub', 'chart', 'word'],
       eyebrow: 'More free apps',
       title: 'Nine more DataCruise apps — all free',
       body: 'Speech practice, prayer, migraine tracking, home organising. Nothing to pay, nothing to install.',
@@ -115,6 +118,7 @@
     },
     {
       key: 'speakle',
+      fits: ['word', 'hub'],
       eyebrow: 'For younger kids',
       title: 'Speakle — gentle speech practice',
       body: 'A kind, private little app that helps a child practise sounds and words at their own pace.',
@@ -123,7 +127,24 @@
       tone: 'teal'
     },
     {
+      /* Deliberately points at the BLOG's existing subscribe form rather than
+         collecting an address here. The Arcade is child-directed, and taking
+         an email address on a site aimed at under-13s pulls in COPPA's
+         verifiable-parental-consent machinery and the UK Children's code.
+         The blog is a general-audience site and already has a working Jetpack
+         form, so the list gets built there with none of that exposure. */
+      key: 'newsletter',
+      fits: ['hub', 'chart', 'word'],
+      eyebrow: 'Stay in touch',
+      title: 'New games and lessons, by email',
+      body: 'Subscribe to Data Cruise and hear first when a new game or free lesson goes up.',
+      cta: 'Subscribe free',
+      url: 'https://datacruise.blog/',
+      tone: 'teal'
+    },
+    {
       key: 'session',
+      fits: ['chart', 'hub'],
       eyebrow: 'One-to-one',
       title: 'Stuck on your own data at work?',
       body: 'Book a 1:1 session and leave with the chart, the method and the answer.',
@@ -132,6 +153,27 @@
       tone: 'orange'
     }
   ];
+
+  /* ---------------------------------------------------------------
+     Context. Which series is this page about? A visitor reading about a
+     bar chart is a different person from one reading about data jargon,
+     and showing each the nearer product converts better than rotating
+     blindly through all five.
+
+     Works from the URL alone, so it needs no per-page markup and is
+     correct on hub, guide (/play/<slug>/) and game (/games/<slug>/) alike.
+  --------------------------------------------------------------- */
+  var WORD_GAMES = [
+    'derive-jargon', 'data-crossword', 'sentence-builder', 'scrub-mess', 'data-hunt'
+  ];
+
+  function pageContext() {
+    var m = window.location.pathname.match(/\/(?:play|games)\/([a-z0-9-]+)/i);
+    if (!m) return 'hub';
+    return WORD_GAMES.indexOf(m[1].toLowerCase()) !== -1 ? 'word' : 'chart';
+  }
+
+  var CONTEXT = pageContext();
 
   /* ---------------------------------------------------------------
      Attribution. Every house-ad link carries UTM parameters, so the
@@ -261,10 +303,19 @@
   /* ---------------------------------------------------------------
      House ad rendering
   --------------------------------------------------------------- */
-  var houseCursor = Math.floor(Math.random() * HOUSE.length);
+  /* Only the ads that suit this page, falling back to everything if a
+     context somehow matches nothing. */
+  var POOL = HOUSE.filter(function (ad) {
+    return !ad.fits || ad.fits.indexOf(CONTEXT) !== -1;
+  });
+  if (!POOL.length) POOL = HOUSE;
+
+  /* Random start so repeat visitors do not always meet the same ad first,
+     then step through the pool so two slots on one page never match. */
+  var houseCursor = Math.floor(Math.random() * POOL.length);
 
   function nextHouse() {
-    var ad = HOUSE[houseCursor % HOUSE.length];
+    var ad = POOL[houseCursor % POOL.length];
     houseCursor++;
     return ad;
   }

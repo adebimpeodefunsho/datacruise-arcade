@@ -1,153 +1,134 @@
-# DataCruise Arcade — advertising setup
+# DataCruise Arcade — earning from a free arcade
 
-All 11 games are free, so advertising is the earning path. This is what was
-built, what it earns today, and the account steps that only you can do.
+All 11 games are free, and third-party game networks are closed to us:
+**GameMonetize and CrazyGames have both rejected the Arcade** as below their
+production standard. So house ads are not a stopgap — they are the business.
 
----
+That makes the job two things, and only two things:
 
-## 1. What is already working
-
-`shared/ads.js` is the only place ad code lives. It is live-ready right now and
-is currently filling every slot with **house ads** — your own books, courses and
-apps. No account, no approval, no review needed; it earns from day one.
-
-Three placements, deliberately few:
-
-| Slot name  | Where | Why there |
-|---|---|---|
-| `hub-mid`  | Hub, between Chart Games and Word Games | Natural break in the page, in normal flow |
-| `hub-foot` | Hub, above the footer | End of the browse, high intent |
-| `result`   | End-of-game result modal, below every button | A real break in play, never during it |
-
-**There is no ad on a game page itself.** No banner over the canvas, no fixed
-bar during play, nothing beside a control. That is a deliberate safety
-decision, not an omission — see section 5.
+1. **Traffic** — get people onto the pages at all.
+2. **Conversion** — turn them into book buyers, session bookings, course
+   readers and subscribers.
 
 ---
 
-## 2. Switching real ads on (two edits)
+## 1. How the ad system works
 
-Once AdSense approves the site:
+`shared/ads.js` is the only place ad code lives. Mark a spot with
+`<div data-dc-ad="name"></div>` and it fills.
 
-1. In `shared/ads.js`, set `ADSENSE_CLIENT` to your publisher ID
-   (`'ca-pub-1234567890123456'`).
-2. In `shared/ads.js`, paste the three ad-unit IDs into `SLOTS`.
-3. In `/ads.txt`, uncomment the last line and put the same publisher ID in
-   (without the `ca-` prefix).
-4. Bump `CACHE_VERSION` in `sw.js`, then push.
+Five placements:
 
-That is the whole switch. House ads automatically become the *fallback* for any
-unit AdSense cannot fill, so a slot is never an empty box.
+| Slot | Where |
+|---|---|
+| `hub-mid`    | Hub, between Chart Games and Word Games |
+| `hub-foot`   | Hub, above the footer |
+| `guide-mid`  | `/play/<slug>/`, after "What it teaches" |
+| `guide-foot` | `/play/<slug>/`, below the final Play button |
+| `result`     | End-of-game result modal, below every button |
 
-To turn all advertising off again, set `ADS_ENABLED: false`. One line, same
-pattern as `FREE_MODE`.
+**Contextual.** The ad is chosen by what the page is about, worked out from the
+URL. A chart-game page shows the 1:1 session and the Tableau course; a
+word-game page shows the books and Speakle; the hub shows everything. Two slots
+on one page never show the same ad.
 
----
+**Attributed.** Every link carries UTMs — `utm_source=arcade`,
+`utm_medium=house_ad`, `utm_campaign=<ad>`, `utm_content=<slot>`. The analytics
+already running on datacruise.blog, the store and datacruise.app will report
+which ad sent a visitor, from which slot, and whether they bought. **This is how
+you decide what to write more of** — check it monthly.
 
-## 3. The account steps — only you can do these
-
-I cannot create accounts or accept terms on your behalf, so these are yours:
-
-1. **Apply to AdSense** at <https://adsense.google.com> with
-   `arcade.datacruise.app`. Approval usually takes a few days to a few weeks.
-   The site is in decent shape for review: real original content, a privacy
-   story, no thin pages.
-
-2. **Tag the site as child-directed.** This is not optional — the Arcade is
-   aimed at kids and classrooms. Use Google's tool:
-   <https://support.google.com/webmasters/answer/3221080>. Tag the whole
-   `arcade.datacruise.app` domain. This disables interest-based advertising and
-   remarketing on every ad request from the site.
-   `CHILD_DIRECTED: true` in `ads.js` is the request-level half of this; the
-   domain tag is the authoritative half. **Do both.**
-
-3. **Turn on a consent banner for the EEA/UK.** Since January 2024 Google
-   requires a *certified* CMP to serve ads to EEA, UK and Swiss users —
-   without one, only "Limited Ads" serve. Google's own is free and already
-   certified: AdSense → **Privacy & messaging** → create the
-   *European regulations* message. You are UK-based, so this one matters
-   immediately.
-
-4. **Create three ad units** in AdSense (Display → Responsive), named to match
-   the table above, and paste their IDs into `SLOTS`.
+**Switches.** `ADS_ENABLED: false` turns everything off. `ADSENSE_CLIENT` +
+`SLOTS` turn on paid AdSense (house ads then become the unfilled-fallback);
+if you ever do that, also fill in `/ads.txt`, tag the domain child-directed,
+and read section 4.
 
 ---
 
-## 4. What this will realistically earn
+## 2. Why the content lives at /play/<slug>/
 
-Be clear-eyed about the arithmetic, because it drives what to do next:
+Every game page is a JavaScript canvas carrying **6–8 words** of crawlable
+text. Google had nothing to rank — which is the real reason there was no
+traffic, not the ad setup.
 
-- Ad income = **traffic × RPM**. Nothing else.
-- Child-directed, non-personalised inventory earns roughly **£0.50–£2.50 per
-  1,000 pageviews** — well below the £5–15 a general-audience site might see.
-  That gap is the price of the compliance position, and it is not negotiable.
-- So **~1,000 visits/month ≈ £1–3/month.** **~100,000 visits/month ≈ £100–250.**
-- AdSense does not pay out until you reach **£60** in accrued earnings.
+The games cannot be given that text. All 11 set `height:100vh` on `<body>`, and
+derive-jargon, data-crossword, sentence-builder, scrub-mess and data-hunt add
+`position:fixed` or `overflow:hidden`. Anything appended below the canvas would
+be unreachable on those five — and unreachable text is cloaking, which is worse
+than no text.
 
-The honest conclusion: at low traffic the house ads are worth more than AdSense
-will be, because one book sale or one £80 session beats thousands of ad
-impressions. **Traffic is the whole game.** Which is why the SEO fixes below
-mattered more than the ad code.
+So each game has a guide page instead: `/play/<slug>/`, about 250 words on what
+the game actually teaches, how to play, and a Play button straight into the
+untouched game. These are what Google indexes and where the house ads earn.
 
-### Already fixed as part of this work
+- Game pages are `noindex,follow` so a thin canvas can never outrank its own
+  guide. Direct links, social cards and play are unaffected.
+- `sitemap.xml` lists the hub plus the 11 guides.
+- The hub links every guide under each series grid, and each guide links two
+  siblings.
 
-`robots.txt` was still blocking **7 of the 11 games** from Google, and
-`sitemap.xml` listed only 4 — both left over from when those games sat behind
-the £7.99 unlock. With the pack now free and earning per visit, that was
-suppressing most of the site's search traffic. Both files now cover all 11
-games.
-
-**After deploying, resubmit the sitemap** in Google Search Console so the seven
-newly-unblocked games get crawled.
+**To edit a game's copy:** change `GAMES` in `build_guides.py`, run
+`python3 build_guides.py`, bump `CACHE_VERSION` in `sw.js`, push.
 
 ---
 
-## 5. The rules that protect the account
+## 3. What to do next
 
-Read this before moving any ad.
+**Yours, and currently the bottleneck:**
 
-- **Never put an ad over, beside, or under gameplay.** Players here are
-  children. A mis-tap next to a game button is an *invalid click*, and enough
-  invalid clicks gets an AdSense account banned — permanently, and appeals
-  essentially never succeed. This is why game pages carry no ads and the result
-  modal's ad sits below every button behind a divider.
-- **Never click your own ads**, or ask anyone to.
-- **Keep `CHILD_DIRECTED: true`.** It is a legal position (COPPA, UK
-  Children's code), not a revenue setting.
-- Paid units are labelled "Advertisement"; house ads are labelled "From
-  DataCruise" rather than hiding behind the same word.
+1. **Google Search Console** — <https://search.google.com/search-console>. Add
+   `arcade.datacruise.app`, verify, submit
+   `https://arcade.datacruise.app/sitemap.xml`. Until this happens the guide
+   pages may sit undiscovered for weeks. Google does not accept IndexNow.
+2. **Check the UTM reports monthly.** If nobody clicks the books ad, write a
+   different one; if the session ad converts, make more pages that suit it.
+
+**Already done, no action needed:**
+
+- IndexNow submitted — Bing, Yandex and Seznam have all 12 URLs
+  (`./indexnow.sh` re-runs it after any content deploy; the key file at the
+  repo root must stay served).
+- `robots.txt` no longer blocks anything; it used to hide 7 of the 11 games.
+- Canonicals on every page, and the two meta descriptions that were missing.
+- `VideoGame` structured data per guide; `WebSite` / `Organization` /
+  `ItemList` on the hub.
+
+**Worth doing when there is traffic to justify it:**
+
+- More guide-page content — a worked example, a printable, a short video.
+  These pages are the asset now; every addition compounds.
+- Premium game-ad networks (Playwire, Venatus) need roughly 500k monthly
+  pageviews. Not now.
 
 ---
 
-## 6. Third-party game networks are closed to us
+## 4. Rules, if you ever add AdSense
 
-**Do not spend more time here.** GameMonetize and CrazyGames have both rejected
-the Arcade, on the grounds that the games fall below their production standard.
-Two attempts, two refusals — that route is shut, and an earlier version of this
-document was wrong to push it.
+These only matter for paid ads — a mis-tap on your own link costs nothing, but
+on an AdSense unit it is an *invalid click*, and enough of those bans an
+account permanently.
 
-The practical consequence: **house ads are not a stopgap, they are the
-business.** Everything in this repo should be aimed at making them earn, which
-means two things and only two things:
+- No ad over, beside or under gameplay. That is why the result-modal unit sits
+  below every button behind a divider, and why game pages carry nothing else.
+- Keep `CHILD_DIRECTED: true`. It is a legal position (COPPA, UK Children's
+  code), not a revenue setting — and it also means non-personalised ads, which
+  earn roughly £0.50–£2.50 per 1,000 views rather than £5–15.
+- You would also need: the child-directed domain tag
+  (<https://support.google.com/webmasters/answer/3221080>) and a certified
+  consent banner for EEA/UK traffic (AdSense → Privacy & messaging →
+  *European regulations*, which is free).
 
-1. **Traffic** — getting people onto the pages at all.
-2. **Conversion** — turning those visitors into book buyers, session bookings,
-   course readers and mailing-list subscribers.
+**Never collect email addresses on the Arcade itself.** It is child-directed,
+so taking an address here pulls in COPPA's verifiable-parental-consent
+machinery and the UK Children's code. The newsletter house ad points at the
+blog's existing form instead, where the audience is general and the exposure
+is not.
 
-A useful side effect of going in-house: the accidental-click rule in section 5
-only ever mattered because invalid clicks get an *AdSense* account banned.
-House ads are your own links, so a mis-tap costs nothing. Placement can be more
-generous than section 5 allows — the remaining limit is simply not spoiling the
-game for a child.
+---
 
-## 7. What was not done, and why
+## 5. What was ruled out
 
-- **No ChatGPT/OpenAI ads.** OpenAI's ad platform launched in February 2026 but
-  it is **buy-side only** — a way for advertisers to place ads *inside
-  ChatGPT*. There is no publisher programme that lets a website carry OpenAI
-  ads and earn from them. Nothing to integrate.
-- **No premium game-ad networks** (Playwire, Venatus, AdinPlay). They are the
-  right answer eventually, but they require roughly 500k+ monthly pageviews.
-  Revisit once traffic justifies it.
-- **No AdSense account created.** I cannot create accounts or accept terms on
-  your behalf.
+- **ChatGPT / OpenAI ads.** OpenAI's ad platform is buy-side only — ads *inside*
+  ChatGPT. There is no publisher programme for websites. Nothing to integrate.
+- **GameMonetize, CrazyGames.** Both rejected the Arcade. `build_gm.py` and the
+  10 registered game IDs are dead weight; do not spend more time there.
