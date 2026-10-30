@@ -1,0 +1,18 @@
+# ads.txt — authorised digital sellers for arcade.datacruise.app
+# Spec: https://iabtechlab.com/ads-txt/
+#
+# Google reads this file to confirm that the publisher ID serving ads on this
+# site really is allowed to sell its inventory. Without a matching line here,
+# AdSense reports "Earnings at risk" and some buyers will not bid at all.
+#
+# ---------------------------------------------------------------------------
+# TO ACTIVATE: uncomment the line below and replace pub-0000000000000000 with
+# your own AdSense publisher ID (it is the 'ca-pub-...' value with the 'ca-'
+# prefix dropped). The long hex string is Google's own ID and is the same for
+# every publisher — do not change it.
+#
+# Keep this in step with ADSENSE_CLIENT in shared/ads.js. Those two values are
+# the only edits needed to go live.
+# ---------------------------------------------------------------------------
+
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

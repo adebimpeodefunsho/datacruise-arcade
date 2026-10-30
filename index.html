@@ -35,6 +35,7 @@
   <script src="/shared/unlock.js" defer></script>
   <script src="/shared/share.js?v=2" defer></script>
   <script src="/shared/sw-register.js" defer></script>
+  <script src="/shared/ads.js" defer></script>
 
   <!-- Cloudflare Web Analytics (privacy-friendly, no cookies) -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -132,6 +133,10 @@
       </div>
     </section>
 
+    <!-- Ad slot. Between the two series, in normal page flow — never over a
+         game. See shared/ads.js for why placement is so restricted here. -->
+    <div data-dc-ad="hub-mid"></div>
+
     <!-- ============ WORD GAMES ============ -->
     <section id="word-games" class="games-section section-word">
       <div class="section-header">
@@ -203,6 +208,8 @@
         </p>
       </div>
     </section>
+
+    <div data-dc-ad="hub-foot"></div>
   </main>
 
   <footer>

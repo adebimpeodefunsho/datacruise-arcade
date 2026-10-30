@@ -13,7 +13,7 @@
  *
  * BUMP CACHE_VERSION ON EVERY DEPLOY THAT TOUCHES JS/CSS/HTML.
  */
-const CACHE_VERSION = 'arcade-v17';
+const CACHE_VERSION = 'arcade-v18';
 
 /* Small enough to fetch up front — the hub shell only. Game files and the
    2MB of preview art are cached as they are actually used, so a first visit
@@ -24,6 +24,7 @@ const SHELL = [
   '/shared/unlock.js',
   '/shared/share.js',
   '/shared/arcade-nav.js',
+  '/shared/ads.js',
   '/manifest.webmanifest',
   '/favicon.svg',
   '/apple-touch-icon.svg',

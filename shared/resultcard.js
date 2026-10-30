@@ -377,6 +377,22 @@
     closeBtn.textContent = 'Close';
     modal.appendChild(closeBtn);
 
+    /* ---- one ad, at the very bottom of the modal ---------------------------
+       Deliberately placed BELOW every control and behind a divider with a wide
+       gap. Players are children: an ad wedged between the share buttons and
+       Close would collect mis-taps, and mis-taps are invalid clicks — which is
+       how an AdSense account gets banned. Optional dependency: if ads.js is
+       not loaded, or has nothing to show, the modal is unchanged. */
+    if (window.DataCruiseAds && window.DataCruiseAds.enabled) {
+      var adEl = window.DataCruiseAds.unit('result', { compact: true });
+      if (adEl) {
+        adEl.style.marginTop = '26px';
+        adEl.style.paddingTop = '16px';
+        adEl.style.borderTop = '1px solid #e6e6ea';
+        modal.appendChild(adEl);
+      }
+    }
+
     ov.appendChild(modal);
     document.body.appendChild(ov);
     requestAnimationFrame(function () { ov.classList.add('open'); });

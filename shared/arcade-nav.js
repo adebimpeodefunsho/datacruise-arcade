@@ -170,3 +170,15 @@
   t.defer = true;
   document.head.appendChild(t);
 })();
+
+/* Advertising: same reasoning — one place that reaches all 11 games. ads.js
+   puts NOTHING on the game page itself (no banner over the canvas, no fixed
+   bar during play); it is loaded here purely so the end-of-game result modal
+   can carry a single unit at its foot. See shared/ads.js. */
+(function () {
+  if (document.querySelector('script[src="/shared/ads.js"]')) return;
+  var t = document.createElement('script');
+  t.src = '/shared/ads.js';
+  t.defer = true;
+  document.head.appendChild(t);
+})();
